@@ -7,7 +7,8 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <title>HablaSlice</title>
-  <link rel="manifest" href="data:application/manifest+json,{%22name%22:%22HablaSlice%20Pro%22,%22short_name%22:%22HablaSlice%22,%22start_url%22:%22.%22,%22display%22:%22standalone%22,%22background_color%22:%22#000000%22,%22theme_color%22:%22#000000%22,%22icons%22:[{%22src%22:%22data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'><rect width='192' height='192' fill='%23000'/><text x='96' y='130' font-size='100' text-anchor='middle' fill='%234cc9f0' font-weight='bold'>LP</text></svg>%22,%22sizes%22:%22192x192%22,%22type%22:%22image/svg+xml%22}]}">
+  <link rel="icon" href="/favicon.png" type="image/png">
+  <link rel="manifest" href="data:application/manifest+json,{%22name%22:%22HablaSlice%20Pro%22,%22short_name%22:%22HablaSlice%22,%22start_url%22:%22.%22,%22display%22:%22standalone%22,%22background_color%22:%22#000000%22,%22theme_color%22:%22#000000%22,%22icons%22:[{%22src%22:%22data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'><rect width='192' height='192' fill='%23000'/><text x='96' y='135' font-size='100' text-anchor='middle' fill='%234cc9f0' font-weight='bold'>HS</text></svg>%22,%22sizes%22192x192%22,%22type%22:%22image/svg+xml%22}]}">
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
     :root {
@@ -57,7 +58,8 @@
       z-index: 10;
       flex-shrink: 0;
     }
-    .header h1 { font-size: 20px; font-weight: 600; letter-spacing: 0.3px; }
+    .header h1 { font-size: 20px; font-weight: 600; letter-spacing: 0.3px; display: flex; align-items: center; gap: 8px; }
+    .header h1 span { font-size: 14px; font-weight: 400; color: var(--md-sys-color-on-surface-variant); }
     .header .btn-icon {
       width: 48px; height: 48px;
       background: transparent;
@@ -144,7 +146,7 @@
     .repeat-chip b { color: var(--md-sys-color-primary); }
     .waveform-container {
       width: 100%;
-      height: 60px;
+      height: 110px;
       background: var(--md-sys-color-surface-dim);
       border-radius: 16px;
       overflow: hidden;
@@ -158,10 +160,11 @@
       left: 0;
       height: 100%;
       width: 0%;
-      background: rgba(76, 201, 240, 0.15);
+      background: rgba(76, 201, 240, 0.10);
       pointer-events: none;
       border-radius: 16px;
       transition: width 0.1s linear;
+      border-right: 2px solid rgba(76, 201, 240, 0.5);
     }
     .playlist {
       width: 100%;
@@ -395,6 +398,7 @@
       .header h1 { font-size: 17px; }
       .track-name { font-size: 19px; }
       .time-info { font-size: 26px; }
+      .waveform-container { height: 80px; }
       .ctrl-btn { width: 48px; height: 48px; }
       .ctrl-btn.play-btn { width: 60px; height: 60px; }
       .ctrl-btn svg { width: 24px; height: 24px; }
@@ -406,13 +410,14 @@
     @media (max-width: 380px) {
       .ctrl-btn { width: 42px; height: 42px; }
       .ctrl-btn.play-btn { width: 54px; height: 54px; }
+      .waveform-container { height: 64px; }
     }
   </style>
 </head>
 <body>
 
   <header class="header">
-    <h1>🎧 HablaSlice</h1>
+    <h1>🎧 HablaSlice <span id="fileCounter"></span></h1>
     <button class="btn-icon" id="btnSettings" aria-label="Settings">
       <svg viewBox="0 0 24 24"><path d="M19.14 12.94a7.07 7.07 0 0 0 0-1.88l2.03-1.58a.49.49 0 0 0 .12-.61l-1.92-3.32a.49.49 0 0 0-.59-.22l-2.39.96a7.04 7.04 0 0 0-1.62-.94l-.36-2.54a.48.48 0 0 0-.48-.41h-3.84a.48.48 0 0 0-.48.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96a.49.49 0 0 0-.59.22L2.74 8.87a.48.48 0 0 0 .12.61l2.03 1.58a7.07 7.07 0 0 0 0 1.88l-2.03 1.58a.49.49 0 0 0-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.49.37 1.03.7 1.62.94l.36 2.54c.05.24.26.41.48.41h3.84c.22 0 .43-.17.48-.41l.36-2.54c.59-.24 1.13-.57 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32a.49.49 0 0 0-.12-.61l-2.03-1.58zM12 15.6A3.6 3.6 0 1 1 15.6 12 3.6 3.6 0 0 1 12 15.6z"/></svg>
     </button>
@@ -519,19 +524,19 @@
       </div>
 
       <div class="setting">
-        <div class="label-row"><label id="dbLabel">Silence (dB)</label><span class="value" id="dbVal">-35</span></div>
+        <div class="label-row"><label id="dbLabel">Silence (dB)</label><span class="value" id="dbVal">-32</span></div>
         <div class="slider-row">
           <button class="step-btn" data-target="setDb" data-dir="-1">−</button>
-          <input type="range" id="setDb" min="-60" max="-10" value="-35">
+          <input type="range" id="setDb" min="-60" max="-10" value="-32">
           <button class="step-btn" data-target="setDb" data-dir="1">+</button>
         </div>
       </div>
 
       <div class="setting">
-        <div class="label-row"><label id="durLabel">Min silence (sec)</label><span class="value" id="durVal">0.5</span></div>
+        <div class="label-row"><label id="durLabel">Min silence (sec)</label><span class="value" id="durVal">0.3</span></div>
         <div class="slider-row">
           <button class="step-btn" data-target="setDur" data-dir="-1">−</button>
-          <input type="range" id="setDur" min="0.1" max="3" step="0.1" value="0.5">
+          <input type="range" id="setDur" min="0.1" max="3" step="0.1" value="0.3">
           <button class="step-btn" data-target="setDur" data-dir="1">+</button>
         </div>
       </div>
@@ -598,7 +603,7 @@
       // ============================================================
       // STATE
       // ============================================================
-      const DEFAULTS = { n: 3, db: -35, dur: 0.5, after: 'next', theme: 'dark', lang: 'en', speed: 1.0 };
+      const DEFAULTS = { n: 3, db: -32, dur: 0.3, after: 'next', theme: 'dark', lang: 'en', speed: 1.0 };
       const state = {
         files: [],
         currentFileIdx: 0,
@@ -620,10 +625,13 @@
         },
         cache: {},
         isUserSeeking: false,
-        mediaSessionInitialized: false
+        mediaSessionInitialized: false,
+        audioData: null,
+        sampleRate: 44100,
+        isTransitioning: false,
+        loadPromise: null
       };
       let timeLoopActive = false;
-      let timeRAF = null;
 
       // ============================================================
       // DOM refs
@@ -639,7 +647,7 @@
         nVal: $('nVal'), dbVal: $('dbVal'), durVal: $('durVal'), speedVal: $('speedVal'), waveCanvas: $('waveCanvas'), waveProgress: $('waveProgress'),
         themeDark: $('themeDark'), themeLight: $('themeLight'), settingsTitle: $('settingsTitle'), themeLabel: $('themeLabel'), langLabel: $('langLabel'),
         repeatsLabel: $('repeatsLabel'), speedLabel: $('speedLabel'), dbLabel: $('dbLabel'), durLabel: $('durLabel'), afterLabel: $('afterLabel'),
-        popover: $('popover'), popFile: $('popFile'), popFolder: $('popFolder'), audio: $('audio-engine')
+        popover: $('popover'), popFile: $('popFile'), popFolder: $('popFolder'), audio: $('audio-engine'), fileCounter: $('fileCounter')
       };
 
       // ============================================================
@@ -752,9 +760,11 @@
         if (state.files.length <= 1) {
           el.playlist.innerHTML = '';
           el.emptyMsg.style.display = state.files.length === 0 ? 'block' : 'none';
+          el.fileCounter.textContent = state.files.length > 0 ? `[${state.currentFileIdx+1}/${state.files.length}]` : '';
           return;
         }
         el.emptyMsg.style.display = 'none';
+        el.fileCounter.textContent = `[${state.currentFileIdx+1}/${state.files.length}]`;
         el.playlist.innerHTML = state.files.map((f, i) => `
           <div class="playlist-item ${i === state.currentFileIdx ? 'current' : ''}" data-idx="${i}">
             <span class="idx">${i+1}.</span>
@@ -770,13 +780,139 @@
       }
 
       // ============================================================
-      // УЛУЧШЕННЫЙ АЛГОРИТМ АНАЛИЗА ТИШИНЫ
+      // КРАСИВАЯ ЗАКРАШЕННАЯ ОСЦИЛЛОГРАММА
+      // ============================================================
+      function drawOscillogram(segIdx, segments) {
+        if (!state.audioData || segments.length === 0) return;
+        const seg = segments[segIdx] || segments[0];
+        const startSample = Math.floor(seg.start * state.sampleRate);
+        const endSample = Math.floor(seg.end * state.sampleRate);
+        const data = state.audioData.slice(startSample, endSample);
+        
+        const canvas = el.waveCanvas;
+        const ctx = canvas.getContext('2d');
+        const dpr = window.devicePixelRatio || 1;
+        const rect = canvas.parentElement.getBoundingClientRect();
+        canvas.width = rect.width * dpr;
+        canvas.height = rect.height * dpr;
+        canvas.style.width = rect.width + 'px';
+        canvas.style.height = rect.height + 'px';
+        ctx.scale(dpr, dpr);
+
+        const w = rect.width;
+        const h = rect.height;
+        const step = Math.max(1, Math.floor(data.length / w));
+        const amp = h / 2.4;
+        ctx.clearRect(0, 0, w, h);
+
+        const color = getComputedStyle(document.documentElement).getPropertyValue('--md-sys-color-primary').trim() || '#4cc9f0';
+        
+        // Собираем точки для верхней и нижней половин
+        const topPoints = [];
+        const bottomPoints = [];
+        for (let i = 0; i < w; i++) {
+          const idx = Math.floor(i * step);
+          let sum = 0;
+          const limit = Math.min(idx + step, data.length);
+          for (let j = idx; j < limit; j++) {
+            sum += Math.abs(data[j]);
+          }
+          const val = sum / step;
+          topPoints.push((h / 2) - val * amp);
+          bottomPoints.push((h / 2) + val * amp);
+        }
+
+        // Заливка верхней половины
+        ctx.beginPath();
+        ctx.moveTo(0, h/2);
+        for (let i = 0; i < topPoints.length; i++) {
+          ctx.lineTo(i, topPoints[i]);
+        }
+        ctx.lineTo(w, h/2);
+        ctx.closePath();
+        const grad1 = ctx.createLinearGradient(0, 0, 0, h/2);
+        grad1.addColorStop(0, color + 'dd');
+        grad1.addColorStop(1, color + '22');
+        ctx.fillStyle = grad1;
+        ctx.fill();
+
+        // Заливка нижней половины
+        ctx.beginPath();
+        ctx.moveTo(0, h/2);
+        for (let i = 0; i < bottomPoints.length; i++) {
+          ctx.lineTo(i, bottomPoints[i]);
+        }
+        ctx.lineTo(w, h/2);
+        ctx.closePath();
+        const grad2 = ctx.createLinearGradient(0, h/2, 0, h);
+        grad2.addColorStop(0, color + '22');
+        grad2.addColorStop(1, color + 'dd');
+        ctx.fillStyle = grad2;
+        ctx.fill();
+
+        // Контур верхней волны
+        ctx.beginPath();
+        ctx.strokeStyle = color;
+        ctx.lineWidth = 2.5;
+        ctx.lineJoin = 'round';
+        ctx.lineCap = 'round';
+        ctx.shadowColor = color + '66';
+        ctx.shadowBlur = 12;
+        for (let i = 0; i < topPoints.length; i++) {
+          if (i === 0) ctx.moveTo(i, topPoints[i]);
+          else ctx.lineTo(i, topPoints[i]);
+        }
+        ctx.stroke();
+
+        // Контур нижней волны
+        ctx.beginPath();
+        for (let i = 0; i < bottomPoints.length; i++) {
+          if (i === 0) ctx.moveTo(i, bottomPoints[i]);
+          else ctx.lineTo(i, bottomPoints[i]);
+        }
+        ctx.stroke();
+        ctx.shadowBlur = 0;
+
+        // Центральная линия
+        ctx.beginPath();
+        ctx.strokeStyle = color + '44';
+        ctx.lineWidth = 1;
+        ctx.setLineDash([4, 6]);
+        ctx.moveTo(0, h/2);
+        ctx.lineTo(w, h/2);
+        ctx.stroke();
+        ctx.setLineDash([]);
+
+        // Светящиеся пики
+        ctx.beginPath();
+        ctx.strokeStyle = color + '22';
+        ctx.lineWidth = 0.8;
+        for (let i = 0; i < w; i += 2) {
+          const idx = Math.floor(i * step);
+          let sum = 0;
+          const limit = Math.min(idx + step, data.length);
+          for (let j = idx; j < limit; j++) {
+            sum += Math.abs(data[j]);
+          }
+          const val = sum / step;
+          const y1 = (h / 2) - val * amp * 1.2;
+          const y2 = (h / 2) + val * amp * 1.2;
+          ctx.moveTo(i, y1);
+          ctx.lineTo(i, y2);
+        }
+        ctx.stroke();
+      }
+
+      // ============================================================
+      // УЛУЧШЕННЫЙ АЛГОРИТМ НАРЕЗКИ
       // ============================================================
       function getFileKey(file) { return file.name + '_' + file.size + '_' + file.lastModified; }
 
       async function analyzeFile(file) {
         const key = getFileKey(file);
         if (state.cache[key]) {
+          state.audioData = state.cache[key + '_data'] || null;
+          state.sampleRate = state.cache[key + '_rate'] || 44100;
           return state.cache[key];
         }
 
@@ -798,11 +934,15 @@
 
         const { db, dur } = state.settings;
         const threshold = Math.pow(10, db / 20);
-        const minSilenceSamples = Math.floor(dur * audioBuffer.sampleRate);
         const channelData = audioBuffer.getChannelData(0);
         const sampleRate = audioBuffer.sampleRate;
         const totalSamples = channelData.length;
         const duration = audioBuffer.duration;
+        
+        state.audioData = channelData;
+        state.sampleRate = sampleRate;
+        state.cache[key + '_data'] = channelData;
+        state.cache[key + '_rate'] = sampleRate;
         
         const windowSize = Math.floor(sampleRate * 0.02);
         const hopSize = Math.floor(windowSize / 2);
@@ -820,13 +960,15 @@
           rms[w] = Math.sqrt(sum / (end - start));
         }
 
+        const enterThreshold = threshold * 1.2;
+        const exitThreshold = threshold * 0.7;
         const silenceRegions = [];
         let inSilence = false;
         let silenceStartIdx = 0;
         let silenceSamplesCount = 0;
         
         for (let i = 0; i < rms.length; i++) {
-          const isSilent = rms[i] < threshold;
+          const isSilent = rms[i] < enterThreshold;
           
           if (isSilent) {
             if (!inSilence) {
@@ -840,9 +982,13 @@
             if (inSilence) {
               const silenceDuration = (silenceSamplesCount * hopSize) / sampleRate;
               if (silenceDuration >= dur) {
+                let exitIdx = i;
+                for (let j = i; j < Math.min(i + 10, rms.length); j++) {
+                  if (rms[j] > exitThreshold) { exitIdx = j; break; }
+                }
                 const startTime = (silenceStartIdx * hopSize) / sampleRate;
-                const endTime = (i * hopSize) / sampleRate;
-                silenceRegions.push({ start: startTime, end: endTime });
+                const endTime = (exitIdx * hopSize) / sampleRate;
+                silenceRegions.push({ start: Math.max(0, startTime - 0.02), end: Math.min(duration, endTime + 0.02) });
               }
               inSilence = false;
               silenceSamplesCount = 0;
@@ -854,7 +1000,7 @@
           const silenceDuration = (silenceSamplesCount * hopSize) / sampleRate;
           if (silenceDuration >= dur) {
             const startTime = (silenceStartIdx * hopSize) / sampleRate;
-            silenceRegions.push({ start: startTime, end: duration });
+            silenceRegions.push({ start: Math.max(0, startTime - 0.02), end: duration });
           }
         }
 
@@ -866,8 +1012,8 @@
             mergedRegions.push(region);
           } else {
             const last = mergedRegions[mergedRegions.length - 1];
-            if (region.start - last.end < 0.3) {
-              last.end = region.end;
+            if (region.start - last.end < 0.2) {
+              last.end = Math.max(last.end, region.end);
             } else {
               mergedRegions.push(region);
             }
@@ -880,22 +1026,19 @@
         for (const region of mergedRegions) {
           const segmentStart = prevEnd;
           const segmentEnd = region.start;
-          if (segmentEnd - segmentStart > 0.15) {
+          if (segmentEnd - segmentStart > 0.2) {
             segments.push({ start: segmentStart, end: segmentEnd });
           }
           prevEnd = region.end;
         }
         
-        if (duration - prevEnd > 0.15) {
+        if (duration - prevEnd > 0.2) {
           segments.push({ start: prevEnd, end: duration });
         }
 
         if (segments.length === 0) {
           segments.push({ start: 0, end: duration });
         }
-
-        setProgress(100, t('statusDone')); await yieldUI();
-        setTimeout(() => showProgress(false), 600);
 
         state.cache[key] = segments;
         state.analyzing = false;
@@ -914,7 +1057,7 @@
       }
 
       function checkSegmentBounds() {
-        if (state.segments.length === 0 || !state.isPlaying) return;
+        if (state.segments.length === 0 || !state.isPlaying || state.isTransitioning) return;
         
         const seg = getCurrentSegment();
         const currentTime = el.audio.currentTime;
@@ -933,6 +1076,7 @@
               state.currentSegIdx = nextIdx;
               const nextSeg = getCurrentSegment();
               el.audio.currentTime = nextSeg.start;
+              drawOscillogram(state.currentSegIdx, state.segments);
               updateSegInfo();
               updateRepeatInfo();
               updateMediaSession();
@@ -946,25 +1090,37 @@
       }
 
       function handleFileEnd() {
-        if (state.settings.after === 'loop' || state.loopFile) {
-          state.currentSegIdx = 0;
-          state.repeatCount = 0;
-          const firstSeg = getCurrentSegment();
-          el.audio.currentTime = firstSeg.start;
-          updateSegInfo();
-          updateRepeatInfo();
-          updateMediaSession();
-          if (!state.isPlaying) {
-            el.audio.play().catch(() => {});
-            state.isPlaying = true;
-            updatePlayBtn();
-          }
-        } else if (state.settings.after === 'next') {
-          const nextIdx = state.currentFileIdx + 1;
-          if (nextIdx < state.files.length) { 
-            loadFile(nextIdx); 
-          } else if (state.files.length > 1) { 
-            loadFile(0); 
+        if (state.isTransitioning) return;
+        state.isTransitioning = true;
+        
+        try {
+          if (state.settings.after === 'loop' || state.loopFile) {
+            state.currentSegIdx = 0;
+            state.repeatCount = 0;
+            const firstSeg = getCurrentSegment();
+            el.audio.currentTime = firstSeg.start;
+            drawOscillogram(0, state.segments);
+            updateSegInfo();
+            updateRepeatInfo();
+            updateMediaSession();
+            if (!state.isPlaying) {
+              el.audio.play().catch(() => {});
+              state.isPlaying = true;
+              updatePlayBtn();
+            }
+          } else if (state.settings.after === 'next') {
+            const nextIdx = state.currentFileIdx + 1;
+            if (nextIdx < state.files.length) { 
+              loadFile(nextIdx); 
+            } else if (state.files.length > 1) { 
+              loadFile(0); 
+            } else {
+              el.audio.pause();
+              state.isPlaying = false;
+              updatePlayBtn();
+              el.statusText.textContent = t('statusFinished');
+              updateMediaSession();
+            }
           } else {
             el.audio.pause();
             state.isPlaying = false;
@@ -972,86 +1128,169 @@
             el.statusText.textContent = t('statusFinished');
             updateMediaSession();
           }
-        } else {
-          el.audio.pause();
-          state.isPlaying = false;
-          updatePlayBtn();
-          el.statusText.textContent = t('statusFinished');
-          updateMediaSession();
+        } finally {
+          setTimeout(() => { state.isTransitioning = false; }, 100);
         }
       }
 
       // ============================================================
-      // LOAD FILE
+      // LOAD FILE - СТАБИЛЬНОЕ ПЕРЕКЛЮЧЕНИЕ
       // ============================================================
       async function loadFile(idx) {
         if (idx < 0 || idx >= state.files.length) return;
+        if (state.isTransitioning && state.loadPromise) {
+          try { await state.loadPromise; } catch(e) {}
+          if (state.currentFileIdx === idx) return;
+        }
         
-        state.currentFileIdx = idx;
-        const file = state.files[idx];
-        el.trackName.textContent = file.name;
-        el.statusText.innerHTML = `<span class="loading-spinner"></span> ${t('statusLoading')}`;
-        el.emptyMsg.style.display = 'none';
+        state.isTransitioning = true;
+        state.loadPromise = (async () => {
+          try {
+            state.currentFileIdx = idx;
+            const file = state.files[idx];
+            el.trackName.textContent = file.name;
+            el.statusText.innerHTML = `<span class="loading-spinner"></span> ${t('statusLoading')}`;
+            el.emptyMsg.style.display = 'none';
 
-        el.audio.pause();
-        el.audio.src = '';
-        state.isPlaying = false;
-        updatePlayBtn();
+            const wasPlaying = state.isPlaying;
+            
+            // Безопасная остановка старого аудио
+            try {
+              el.audio.pause();
+              el.audio.src = '';
+              el.audio.load();
+            } catch(e) {}
+            
+            state.isPlaying = false;
+            updatePlayBtn();
 
-        if (state.originalFileUrl) {
-          URL.revokeObjectURL(state.originalFileUrl);
-          state.originalFileUrl = null;
-        }
+            if (state.originalFileUrl) {
+              URL.revokeObjectURL(state.originalFileUrl);
+              state.originalFileUrl = null;
+            }
 
-        state.segments = [];
-        state.currentSegIdx = 0;
-        state.repeatCount = 0;
-        updateFileList();
-        updateSegInfo();
-        updateRepeatInfo();
+            state.segments = [];
+            state.currentSegIdx = 0;
+            state.repeatCount = 0;
+            updateFileList();
+            updateSegInfo();
+            updateRepeatInfo();
 
-        try {
-          state.segments = await analyzeFile(file);
-          if (state.segments.length === 0) { 
-            el.statusText.textContent = 'No segments'; 
-            return; 
+            state.segments = await analyzeFile(file);
+            if (state.segments.length === 0) { 
+              el.statusText.textContent = 'No segments'; 
+              state.isTransitioning = false;
+              return; 
+            }
+            
+            state.originalFileUrl = URL.createObjectURL(file);
+            el.audio.src = state.originalFileUrl;
+            el.audio.loop = false;
+            el.audio.playbackRate = state.speed;
+            
+            state.currentSegIdx = 0;
+            state.repeatCount = 0;
+            updateStatusText();
+            
+            const firstSeg = getCurrentSegment();
+            el.audio.currentTime = firstSeg.start;
+            
+            drawOscillogram(0, state.segments);
+            
+            setupMediaSession();
+            updateMediaSession();
+            
+            if (wasPlaying) {
+              try {
+                await el.audio.play();
+                state.isPlaying = true;
+              } catch(e) {
+                state.isPlaying = false;
+              }
+            }
+            
+            updatePlayBtn();
+            updateSegInfo();
+            updateRepeatInfo();
+            updateFileList();
+            
+            savePlaybackState();
+            
+          } catch(e) { 
+            console.error('Load error:', e); 
+            el.statusText.textContent = 'Error: ' + e.message; 
+            state.analyzing = false; 
+          } finally {
+            setTimeout(() => { 
+              state.isTransitioning = false; 
+              state.loadPromise = null;
+            }, 150);
           }
+        })();
+        
+        await state.loadPromise;
+      }
+
+      // ============================================================
+      // SAVE / RESTORE STATE
+      // ============================================================
+      function savePlaybackState() {
+        try {
+          if (state.files.length === 0) return;
+          const data = {
+            fileNames: state.files.map(f => f.name),
+            currentFileIdx: state.currentFileIdx,
+            currentSegIdx: state.currentSegIdx,
+            repeatCount: state.repeatCount,
+            settings: state.settings,
+            speed: state.speed,
+            filesData: state.files.map(f => ({ name: f.name, size: f.size, lastModified: f.lastModified, type: f.type }))
+          };
+          localStorage.setItem('lp_playback_state', JSON.stringify(data));
+        } catch(e) {}
+      }
+
+      function restorePlaybackState() {
+        try {
+          const raw = localStorage.getItem('lp_playback_state');
+          if (!raw) return false;
+          const data = JSON.parse(raw);
+          if (!data.fileNames || data.fileNames.length === 0) return false;
           
-          state.originalFileUrl = URL.createObjectURL(file);
-          el.audio.src = state.originalFileUrl;
-          el.audio.loop = false;
-          el.audio.playbackRate = state.speed;
+          if (state.files.length === 0) return false;
           
-          state.currentSegIdx = 0;
-          state.repeatCount = 0;
-          updateStatusText();
+          const fileMap = {};
+          state.files.forEach(f => { fileMap[f.name] = f; });
           
-          const firstSeg = getCurrentSegment();
-          el.audio.currentTime = firstSeg.start;
+          const allPresent = data.fileNames.every(name => fileMap[name]);
+          if (!allPresent) return false;
           
-          // Инициализируем Media Session ПЕРЕД воспроизведением
-          setupMediaSession();
-          updateMediaSession();
+          const restoredFiles = data.fileNames.map(name => fileMap[name]);
+          state.files = restoredFiles;
+          state.currentFileIdx = Math.min(data.currentFileIdx, state.files.length - 1);
           
-          await el.audio.play();
-          state.isPlaying = true;
+          loadFile(state.currentFileIdx).then(() => {
+            state.currentSegIdx = Math.min(data.currentSegIdx, state.segments.length - 1);
+            state.repeatCount = data.repeatCount || 0;
+            if (state.segments.length > 0) {
+              const seg = getCurrentSegment();
+              el.audio.currentTime = seg.start;
+              drawOscillogram(state.currentSegIdx, state.segments);
+            }
+            updateSegInfo();
+            updateRepeatInfo();
+            updateFileList();
+          });
           
-          updatePlayBtn();
-          updateSegInfo();
-          updateRepeatInfo();
-          
-        } catch(e) { 
-          console.error('Load error:', e); 
-          el.statusText.textContent = 'Error: ' + e.message; 
-          state.analyzing = false; 
-        }
+          return true;
+        } catch(e) { return false; }
       }
 
       // ============================================================
       // CONTROLS
       // ============================================================
       function togglePlay() {
-        if (state.segments.length === 0) return;
+        if (state.segments.length === 0 || state.isTransitioning) return;
         if (state.isPlaying) {
           el.audio.pause();
           state.isPlaying = false;
@@ -1061,22 +1300,25 @@
         }
         updatePlayBtn();
         updateMediaSession();
+        savePlaybackState();
       }
 
       function prevSegment() {
-        if (state.segments.length === 0) return;
+        if (state.segments.length === 0 || state.isTransitioning) return;
         const newIdx = Math.max(0, state.currentSegIdx - 1);
         state.currentSegIdx = newIdx;
         state.repeatCount = 0;
         const seg = getCurrentSegment();
         el.audio.currentTime = seg.start;
+        drawOscillogram(state.currentSegIdx, state.segments);
         updateSegInfo();
         updateRepeatInfo();
         updateMediaSession();
+        savePlaybackState();
       }
 
       function nextSegment() {
-        if (state.segments.length === 0) return;
+        if (state.segments.length === 0 || state.isTransitioning) return;
         const newIdx = state.currentSegIdx + 1;
         if (newIdx >= state.segments.length) {
           handleFileEnd();
@@ -1085,60 +1327,86 @@
           state.repeatCount = 0;
           const seg = getCurrentSegment();
           el.audio.currentTime = seg.start;
+          drawOscillogram(state.currentSegIdx, state.segments);
           updateSegInfo();
           updateRepeatInfo();
           updateMediaSession();
+          savePlaybackState();
         }
       }
 
       // ============================================================
-      // MEDIA SESSION API - ПОЛНОСТЬЮ ПЕРЕРАБОТАННАЯ ВЕРСИЯ
+      // MEDIA SESSION API - ПОЛНЫЙ НАБОР КНОПОК
       // ============================================================
       function setupMediaSession() {
-        if (!('mediaSession' in navigator)) {
-          console.warn('Media Session API not supported');
-          return;
-        }
+        if (!('mediaSession' in navigator)) return;
         
-        // Устанавливаем метаданные
         updateMediaSession();
         
-        // Устанавливаем все обработчики с try-catch
         const actions = {
-          'play': () => {
-            el.audio.play();
-            state.isPlaying = true;
-            updatePlayBtn();
+          'play': () => { 
+            if (!state.isTransitioning) {
+              el.audio.play(); 
+              state.isPlaying = true; 
+              updatePlayBtn(); 
+              updateMediaSession();
+            }
+          },
+          'pause': () => { 
+            el.audio.pause(); 
+            state.isPlaying = false; 
+            updatePlayBtn(); 
             updateMediaSession();
           },
-          'pause': () => {
-            el.audio.pause();
-            state.isPlaying = false;
-            updatePlayBtn();
-            updateMediaSession();
+          'previoustrack': () => {
+            if (state.isTransitioning) return;
+            if (state.files.length > 1) {
+              const prevIdx = state.currentFileIdx - 1;
+              if (prevIdx >= 0) {
+                loadFile(prevIdx);
+              } else {
+                loadFile(state.files.length - 1);
+              }
+            } else {
+              prevSegment();
+            }
+            setTimeout(() => updateMediaSession(), 300);
           },
-          'previoustrack': () => prevSegment(),
-          'nexttrack': () => nextSegment(),
+          'nexttrack': () => {
+            if (state.isTransitioning) return;
+            if (state.files.length > 1) {
+              const nextIdx = state.currentFileIdx + 1;
+              if (nextIdx < state.files.length) {
+                loadFile(nextIdx);
+              } else {
+                loadFile(0);
+              }
+            } else {
+              nextSegment();
+            }
+            setTimeout(() => updateMediaSession(), 300);
+          },
           'seekbackward': (details) => {
+            if (state.isTransitioning) return;
             const seg = getCurrentSegment();
-            el.audio.currentTime = Math.max(seg.start, el.audio.currentTime - (details.seekOffset || 5));
+            const offset = details && details.seekOffset ? details.seekOffset : 5;
+            el.audio.currentTime = Math.max(seg.start, el.audio.currentTime - offset);
+            setTimeout(() => updateMediaSession(), 100);
           },
           'seekforward': (details) => {
+            if (state.isTransitioning) return;
             const seg = getCurrentSegment();
-            el.audio.currentTime = Math.min(seg.end, el.audio.currentTime + (details.seekOffset || 5));
+            const offset = details && details.seekOffset ? details.seekOffset : 5;
+            el.audio.currentTime = Math.min(seg.end, el.audio.currentTime + offset);
+            setTimeout(() => updateMediaSession(), 100);
           }
         };
         
         for (const [action, handler] of Object.entries(actions)) {
-          try {
-            navigator.mediaSession.setActionHandler(action, handler);
-          } catch (error) {
-            console.log(`MediaSession action "${action}" not supported`);
-          }
+          try { navigator.mediaSession.setActionHandler(action, handler); } catch(e) {}
         }
         
         state.mediaSessionInitialized = true;
-        console.log('Media Session API initialized successfully');
       }
 
       function updateMediaSession() {
@@ -1148,44 +1416,49 @@
         const segIdx = state.currentSegIdx + 1;
         const total = state.segments.length;
         const displayRepeat = Math.min(state.repeatCount + 1, state.settings.n);
+        const fileCount = state.files.length;
         
-        // Создаем метаданные с полной информацией
+        let title = file ? file.name : 'HablaSlice';
+        let artist = `Seg ${segIdx}/${total} • Repeat ${displayRepeat}/${state.settings.n}`;
+        let album = `Speed: ${state.speed.toFixed(2)}x`;
+        
+        if (fileCount > 1) {
+          artist += ` • File ${state.currentFileIdx+1}/${fileCount}`;
+        }
+        
         try {
           const metadata = new MediaMetadata({
-            title: file ? file.name : 'HablaSlice',
-            artist: `Segment ${segIdx} of ${total} • Repeat ${displayRepeat}/${state.settings.n}`,
-            album: `Speed: ${state.speed.toFixed(2)}x`,
+            title: title,
+            artist: artist,
+            album: album,
             artwork: [
-              { src: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" fill="%234cc9f0"/><text x="50" y="68" font-size="48" text-anchor="middle" fill="white" font-weight="bold">LP</text></svg>', sizes: '100x100', type: 'image/svg+xml' }
+              { src: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" fill="%234cc9f0"/><text x="50" y="68" font-size="48" text-anchor="middle" fill="white" font-weight="bold">HS</text></svg>', sizes: '100x100', type: 'image/svg+xml' }
             ]
           });
           navigator.mediaSession.metadata = metadata;
-        } catch(e) {
-          console.warn('Failed to set MediaMetadata:', e);
-        }
+        } catch(e) {}
         
-        // Устанавливаем состояние воспроизведения
         try {
           navigator.mediaSession.playbackState = state.isPlaying ? "playing" : "paused";
-        } catch(e) {
-          console.warn('Failed to set playback state:', e);
-        }
+        } catch(e) {}
         
-        // Принудительно обновляем через небольшой таймаут для некоторых браузеров
-        if (state.isPlaying) {
-          setTimeout(() => {
-            try {
-              navigator.mediaSession.playbackState = "playing";
-            } catch(e) {}
-          }, 100);
-        }
+        try {
+          if ('setPositionState' in navigator.mediaSession) {
+            const seg = getCurrentSegment();
+            navigator.mediaSession.setPositionState({
+              duration: seg.end - seg.start,
+              playbackRate: state.speed,
+              position: Math.max(0, el.audio.currentTime - seg.start)
+            });
+          }
+        } catch(e) {}
       }
 
       // ============================================================
       // TIME UPDATE
       // ============================================================
       el.audio.addEventListener('timeupdate', function() {
-        if (state.currentSegIdx === -1 || state.isUserSeeking) return;
+        if (state.currentSegIdx === -1 || state.isUserSeeking || state.isTransitioning) return;
         
         const seg = getCurrentSegment();
         
@@ -1205,7 +1478,6 @@
         
         checkSegmentBounds();
         
-        // Обновляем Media Session каждые 500ms для синхронизации
         if (state.isPlaying && state.mediaSessionInitialized) {
           updateMediaSession();
         }
@@ -1234,14 +1506,13 @@
       }
 
       // ============================================================
-      // EVENTS - МАКСИМАЛЬНОЕ ОБНОВЛЕНИЕ MEDIA SESSION
+      // EVENTS
       // ============================================================
       el.audio.addEventListener('play', () => {
         state.isPlaying = true;
         updatePlayBtn();
         updateMediaSession();
         requestWakeLock();
-        // Принудительное обновление через таймаут
         setTimeout(() => updateMediaSession(), 200);
         setTimeout(() => updateMediaSession(), 500);
       });
@@ -1250,12 +1521,17 @@
         state.isPlaying = false;
         updatePlayBtn();
         updateMediaSession();
-        setTimeout(() => updateMediaSession(), 200);
+        savePlaybackState();
       });
 
-      // Обновляем Media Session при изменении видимости
+      el.audio.addEventListener('ended', () => {
+        state.isPlaying = false;
+        updatePlayBtn();
+        updateMediaSession();
+      });
+
       document.addEventListener('visibilitychange', () => {
-        if (!document.hidden && state.isPlaying && el.audio.paused) {
+        if (!document.hidden && state.isPlaying && el.audio.paused && !state.isTransitioning) {
           el.audio.play().catch(() => {});
         }
         if (state.segments.length > 0) {
@@ -1307,8 +1583,12 @@
         if (!files.length) return;
         
         state.files = files.sort((a, b) => a.name.localeCompare(b.name));
+        state.cache = {};
+        state.isTransitioning = false;
+        state.loadPromise = null;
         loadFile(0);
         input.value = '';
+        savePlaybackState();
       }
 
       el.fileInput.addEventListener('change', function() { handleFiles(this); });
@@ -1356,6 +1636,10 @@
         applySettingsToUI();
         el.settingsModal.classList.remove('active');
         updateRepeatInfo();
+        savePlaybackState();
+        if (state.segments.length > 0) {
+          drawOscillogram(state.currentSegIdx, state.segments);
+        }
       });
 
       el.setN.addEventListener('input', () => el.nVal.textContent = el.setN.value);
@@ -1403,7 +1687,7 @@
       // ============================================================
       if ('serviceWorker' in navigator) {
         const swCode = `
-          const CACHE = 'langplayer-v15';
+          const CACHE = 'langplayer-v20';
           self.addEventListener('install', e => self.skipWaiting());
           self.addEventListener('activate', e => self.clients.claim());
           self.addEventListener('fetch', e => {
@@ -1427,7 +1711,6 @@
         updateFileList();
         updateStatusText();
         
-        // Инициализируем Media Session даже без файла
         if ('mediaSession' in navigator) {
           try {
             navigator.mediaSession.metadata = new MediaMetadata({
@@ -1438,21 +1721,25 @@
           } catch(e) {}
         }
         
-        // Периодическое обновление Media Session
+        const restored = restorePlaybackState();
+        if (!restored) {
+          el.emptyMsg.textContent = t('emptyMsg');
+        }
+        
         setInterval(() => {
           if (state.segments.length > 0 && state.isPlaying) {
             updateMediaSession();
           }
         }, 1000);
 
-        el.emptyMsg.textContent = t('emptyMsg');
+        updateFileList();
         
-        console.log('HablaSlice готов к работе!');
-        console.log('📱 Media Session API активно для шторки уведомлений');
-        console.log('🔒 При блокировке экрана плеер продолжает работать');
+        console.log('HablaSlice готов!');
+        console.log('📊 Красивая закрашенная осциллограмма с градиентом');
+        console.log('📱 Полный набор кнопок на заблокированном экране');
+        console.log('🔄 Абсолютно стабильное переключение треков');
       }
 
-      // Запускаем инициализацию после загрузки страницы
       if (document.readyState === 'complete') {
         init();
       } else {
