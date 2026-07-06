@@ -1,0 +1,1465 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="theme-color" content="#000000">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <title>HablaSlice</title>
+  <link rel="manifest" href="data:application/manifest+json,{%22name%22:%22HablaSlice%20Pro%22,%22short_name%22:%22HablaSlice%22,%22start_url%22:%22.%22,%22display%22:%22standalone%22,%22background_color%22:%22#000000%22,%22theme_color%22:%22#000000%22,%22icons%22:[{%22src%22:%22data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'><rect width='192' height='192' fill='%23000'/><text x='96' y='130' font-size='100' text-anchor='middle' fill='%234cc9f0' font-weight='bold'>LP</text></svg>%22,%22sizes%22:%22192x192%22,%22type%22:%22image/svg+xml%22}]}">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    :root {
+      --md-sys-color-primary: #4cc9f0;
+      --md-sys-color-on-primary: #000000;
+      --md-sys-color-surface: #000000;
+      --md-sys-color-surface-dim: #0f0f0f;
+      --md-sys-color-surface-container: #1a1a1a;
+      --md-sys-color-surface-container-high: #2a2a2a;
+      --md-sys-color-on-surface: #e8e8f0;
+      --md-sys-color-on-surface-variant: #b0b0c0;
+      --md-sys-color-outline: #3a3a4a;
+      --md-sys-color-error: #e94560;
+      --md-ref-typeface: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+    body.light {
+      --md-sys-color-primary: #4361ee;
+      --md-sys-color-on-primary: #ffffff;
+      --md-sys-color-surface: #f5f5fa;
+      --md-sys-color-surface-dim: #e0e0e8;
+      --md-sys-color-surface-container: #ffffff;
+      --md-sys-color-surface-container-high: #f0f0f5;
+      --md-sys-color-on-surface: #1a1a2e;
+      --md-sys-color-on-surface-variant: #404060;
+      --md-sys-color-outline: #c0c0d0;
+    }
+    html, body { height: 100%; overflow: hidden; }
+    body {
+      background: var(--md-sys-color-surface);
+      color: var(--md-sys-color-on-surface);
+      font-family: var(--md-ref-typeface);
+      display: flex;
+      flex-direction: column;
+      user-select: none;
+      -webkit-user-select: none;
+      transition: background 0.25s, color 0.25s;
+    }
+    .header {
+      padding: 12px 20px;
+      background: var(--md-sys-color-surface-container);
+      border-bottom: 1px solid var(--md-sys-color-outline);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      min-height: 60px;
+      position: relative;
+      z-index: 10;
+      flex-shrink: 0;
+    }
+    .header h1 { font-size: 20px; font-weight: 600; letter-spacing: 0.3px; }
+    .header .btn-icon {
+      width: 48px; height: 48px;
+      background: transparent;
+      border: none;
+      border-radius: 50%;
+      color: var(--md-sys-color-on-surface);
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer;
+      transition: background 0.15s;
+      position: relative;
+    }
+    .header .btn-icon:active { background: var(--md-sys-color-surface-container-high); }
+    .header .btn-icon svg { width: 24px; height: 24px; fill: currentColor; }
+    .status-bar {
+      padding: 8px 20px;
+      font-size: 14px;
+      color: var(--md-sys-color-on-surface-variant);
+      background: var(--md-sys-color-surface-dim);
+      min-height: 36px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      flex-shrink: 0;
+    }
+    .progress-wrap {
+      flex: 1;
+      min-width: 80px;
+      display: none;
+      align-items: center;
+      gap: 12px;
+    }
+    .progress-wrap.active { display: flex; }
+    .progress-track {
+      flex: 1;
+      height: 4px;
+      background: var(--md-sys-color-outline);
+      border-radius: 4px;
+      overflow: hidden;
+      position: relative;
+    }
+    .progress-fill {
+      height: 100%;
+      width: 0%;
+      background: var(--md-sys-color-primary);
+      border-radius: 4px;
+      transition: width 0.15s linear;
+    }
+    .progress-text { font-size: 13px; color: var(--md-sys-color-on-surface-variant); min-width: 40px; text-align: right; }
+    .main {
+      flex: 1;
+      overflow-y: auto;
+      padding: 16px 20px 8px 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+      -webkit-overflow-scrolling: touch;
+    }
+    .track-card {
+      width: 100%;
+      max-width: 560px;
+      background: var(--md-sys-color-surface-container);
+      border-radius: 24px;
+      padding: 20px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .track-name { font-size: 22px; font-weight: 600; letter-spacing: 0.2px; word-break: break-word; line-height: 1.3; }
+    .seg-info { font-size: 16px; color: var(--md-sys-color-on-surface-variant); }
+    .time-info { font-size: 32px; font-weight: 300; font-variant-numeric: tabular-nums; letter-spacing: 0.5px; }
+    .repeat-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 16px;
+      background: var(--md-sys-color-surface-container-high);
+      border-radius: 40px;
+      font-size: 14px;
+      border: 1px solid var(--md-sys-color-outline);
+    }
+    .repeat-chip b { color: var(--md-sys-color-primary); }
+    .waveform-container {
+      width: 100%;
+      height: 60px;
+      background: var(--md-sys-color-surface-dim);
+      border-radius: 16px;
+      overflow: hidden;
+      margin: 4px 0;
+      position: relative;
+    }
+    .waveform-container canvas { width: 100%; height: 100%; display: block; }
+    .waveform-progress {
+      position: absolute;
+      top: 0;
+      left: 0;
+      height: 100%;
+      width: 0%;
+      background: rgba(76, 201, 240, 0.15);
+      pointer-events: none;
+      border-radius: 16px;
+      transition: width 0.1s linear;
+    }
+    .playlist {
+      width: 100%;
+      max-width: 560px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      margin-top: 4px;
+    }
+    .playlist-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 16px;
+      background: var(--md-sys-color-surface-container);
+      border-radius: 16px;
+      border: 1px solid transparent;
+      transition: all 0.2s;
+      cursor: pointer;
+      font-size: 15px;
+    }
+    .playlist-item:active { background: var(--md-sys-color-surface-container-high); }
+    .playlist-item.current { border-color: var(--md-sys-color-primary); background: var(--md-sys-color-surface-container-high); }
+    .playlist-item .idx { color: var(--md-sys-color-on-surface-variant); font-weight: 500; min-width: 28px; }
+    .playlist-item .name { flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .empty-msg { color: var(--md-sys-color-on-surface-variant); text-align: center; padding: 32px 16px; font-size: 16px; }
+    .controls {
+      background: var(--md-sys-color-surface-container);
+      border-top: 1px solid var(--md-sys-color-outline);
+      padding: 8px 12px 12px 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-around;
+      gap: 2px;
+      flex-shrink: 0;
+      min-height: 80px;
+    }
+    .ctrl-btn {
+      background: transparent;
+      border: none;
+      color: var(--md-sys-color-on-surface);
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: background 0.15s, transform 0.1s;
+      position: relative;
+    }
+    .ctrl-btn:active { background: var(--md-sys-color-surface-container-high); transform: scale(0.92); }
+    .ctrl-btn.play-btn {
+      width: 68px; height: 68px;
+      background: var(--md-sys-color-primary);
+      color: var(--md-sys-color-on-primary);
+      box-shadow: 0 4px 12px rgba(76, 201, 240, 0.3);
+    }
+    .ctrl-btn.play-btn:active { transform: scale(0.92); }
+    .ctrl-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+    .ctrl-btn svg { width: 28px; height: 28px; fill: currentColor; }
+    .ctrl-btn.play-btn svg { width: 32px; height: 32px; }
+    .loading-spinner {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 2px solid var(--md-sys-color-outline);
+      border-top-color: var(--md-sys-color-primary);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin-right: 8px;
+      vertical-align: middle;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .popover {
+      position: fixed;
+      background: var(--md-sys-color-surface-container);
+      border: 1px solid var(--md-sys-color-outline);
+      border-radius: 16px;
+      padding: 8px 0;
+      min-width: 180px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.6);
+      z-index: 300;
+      display: none;
+      overflow: hidden;
+    }
+    .popover.active { display: block; }
+    .popover-item {
+      padding: 14px 20px;
+      font-size: 15px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      transition: background 0.1s;
+      border: none;
+      background: transparent;
+      color: var(--md-sys-color-on-surface);
+      width: 100%;
+      text-align: left;
+      font-family: inherit;
+    }
+    .popover-item:active { background: var(--md-sys-color-surface-container-high); }
+    .popover-item svg { width: 20px; height: 20px; fill: currentColor; }
+
+    .modal-bg {
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.7);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 200;
+      padding: 16px;
+      backdrop-filter: blur(4px);
+    }
+    .modal-bg.active { display: flex; }
+    .modal {
+      background: var(--md-sys-color-surface-container);
+      border-radius: 28px;
+      padding: 24px 20px;
+      width: 100%;
+      max-width: 420px;
+      max-height: 92vh;
+      overflow-y: auto;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+      border: 1px solid var(--md-sys-color-outline);
+    }
+    .modal h2 { font-size: 22px; margin-bottom: 18px; font-weight: 500; }
+    .setting {
+      margin-bottom: 18px;
+      padding: 8px 4px;
+      border-bottom: 1px solid var(--md-sys-color-outline);
+    }
+    .setting:last-of-type { border-bottom: none; }
+    .setting .label-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 6px;
+    }
+    .setting .label-row label { font-size: 14px; font-weight: 500; color: var(--md-sys-color-on-surface-variant); }
+    .setting .label-row .value { font-size: 15px; font-weight: 600; color: var(--md-sys-color-primary); min-width: 48px; text-align: right; }
+    .setting .slider-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .setting .slider-row .step-btn {
+      width: 36px; height: 36px; border-radius: 50%;
+      border: 1px solid var(--md-sys-color-outline);
+      background: var(--md-sys-color-surface-dim);
+      color: var(--md-sys-color-on-surface);
+      font-size: 18px; font-weight: 600;
+      cursor: pointer; display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; transition: background 0.15s;
+    }
+    .setting .slider-row .step-btn:active { background: var(--md-sys-color-surface-container-high); }
+    .setting input[type="range"] {
+      flex: 1;
+      height: 8px;
+      background: var(--md-sys-color-outline);
+      border-radius: 8px;
+      -webkit-appearance: none;
+      appearance: none;
+      outline: none;
+    }
+    .setting input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 24px; height: 24px;
+      background: var(--md-sys-color-primary);
+      border-radius: 50%;
+      border: none;
+      cursor: pointer;
+    }
+    .setting input[type="range"]::-moz-range-thumb {
+      width: 24px; height: 24px;
+      background: var(--md-sys-color-primary);
+      border-radius: 50%;
+      border: none;
+      cursor: pointer;
+    }
+    .theme-switch { display: flex; gap: 8px; }
+    .theme-switch button {
+      flex: 1; padding: 10px; background: var(--md-sys-color-surface-dim);
+      color: var(--md-sys-color-on-surface);
+      border: 1px solid var(--md-sys-color-outline);
+      border-radius: 40px;
+      font-size: 14px; font-weight: 500;
+      cursor: pointer; transition: all 0.15s;
+    }
+    .theme-switch button.active {
+      background: var(--md-sys-color-primary);
+      color: var(--md-sys-color-on-primary);
+      border-color: var(--md-sys-color-primary);
+    }
+    .setting select {
+      width: 100%;
+      padding: 12px;
+      background: var(--md-sys-color-surface-dim);
+      color: var(--md-sys-color-on-surface);
+      border: 1px solid var(--md-sys-color-outline);
+      border-radius: 16px;
+      font-size: 16px;
+      outline: none;
+    }
+    .modal-actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 20px;
+      padding-top: 16px;
+      border-top: 1px solid var(--md-sys-color-outline);
+    }
+    .modal-actions button {
+      flex: 1;
+      padding: 14px;
+      border: none;
+      border-radius: 40px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: opacity 0.15s;
+    }
+    .modal-actions button:active { opacity: 0.7; }
+    .btn-primary { background: var(--md-sys-color-primary); color: var(--md-sys-color-on-primary); }
+    .btn-secondary { background: var(--md-sys-color-surface-dim); color: var(--md-sys-color-on-surface); border: 1px solid var(--md-sys-color-outline) !important; }
+    .btn-reset { background: var(--md-sys-color-error); color: #fff; flex: 0.5; }
+    input[type="file"] { display: none; }
+
+    @media (max-width: 480px) {
+      .header h1 { font-size: 17px; }
+      .track-name { font-size: 19px; }
+      .time-info { font-size: 26px; }
+      .ctrl-btn { width: 48px; height: 48px; }
+      .ctrl-btn.play-btn { width: 60px; height: 60px; }
+      .ctrl-btn svg { width: 24px; height: 24px; }
+      .ctrl-btn.play-btn svg { width: 28px; height: 28px; }
+      .controls { padding: 6px 8px; gap: 0; }
+      .modal { padding: 18px 14px; }
+      .setting .slider-row .step-btn { width: 32px; height: 32px; font-size: 16px; }
+    }
+    @media (max-width: 380px) {
+      .ctrl-btn { width: 42px; height: 42px; }
+      .ctrl-btn.play-btn { width: 54px; height: 54px; }
+    }
+  </style>
+</head>
+<body>
+
+  <header class="header">
+    <h1>🎧 HablaSlice</h1>
+    <button class="btn-icon" id="btnSettings" aria-label="Settings">
+      <svg viewBox="0 0 24 24"><path d="M19.14 12.94a7.07 7.07 0 0 0 0-1.88l2.03-1.58a.49.49 0 0 0 .12-.61l-1.92-3.32a.49.49 0 0 0-.59-.22l-2.39.96a7.04 7.04 0 0 0-1.62-.94l-.36-2.54a.48.48 0 0 0-.48-.41h-3.84a.48.48 0 0 0-.48.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96a.49.49 0 0 0-.59.22L2.74 8.87a.48.48 0 0 0 .12.61l2.03 1.58a7.07 7.07 0 0 0 0 1.88l-2.03 1.58a.49.49 0 0 0-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.49.37 1.03.7 1.62.94l.36 2.54c.05.24.26.41.48.41h3.84c.22 0 .43-.17.48-.41l.36-2.54c.59-.24 1.13-.57 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32a.49.49 0 0 0-.12-.61l-2.03-1.58zM12 15.6A3.6 3.6 0 1 1 15.6 12 3.6 3.6 0 0 1 12 15.6z"/></svg>
+    </button>
+  </header>
+
+  <div class="status-bar">
+    <span id="statusText">No file</span>
+    <div class="progress-wrap" id="progressWrap">
+      <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+      <span class="progress-text" id="progressText">0%</span>
+    </div>
+  </div>
+
+  <div class="main" id="main">
+    <div class="track-card">
+      <div class="track-name" id="trackName">—</div>
+      <div class="seg-info" id="segInfo">Ready</div>
+      <div class="time-info" id="timeInfo">0.0s / 0.0s</div>
+      <div class="repeat-chip">Repeat <b id="repeatCount">1</b> / <span id="repeatTotal">3</span></div>
+      <div class="waveform-container">
+        <canvas id="waveCanvas"></canvas>
+        <div class="waveform-progress" id="waveProgress"></div>
+      </div>
+    </div>
+    <div class="playlist" id="playlist"></div>
+    <div class="empty-msg" id="emptyMsg">📂 Open a file or folder to start</div>
+  </div>
+
+  <div class="controls" id="controls">
+    <button class="ctrl-btn" id="btnOpen" aria-label="Open">
+      <svg viewBox="0 0 24 24"><path d="M20 6h-8l-2-2H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm0 12H4V8h16v10z"/></svg>
+    </button>
+    <button class="ctrl-btn" id="btnPrev" aria-label="Previous" disabled>
+      <svg viewBox="0 0 24 24"><path d="M6 6h2v12H6zm3.5 6l8.5 6V6z"/></svg>
+    </button>
+    <button class="ctrl-btn play-btn" id="btnPlay" aria-label="Play" disabled>
+      <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+    </button>
+    <button class="ctrl-btn" id="btnNext" aria-label="Next" disabled>
+      <svg viewBox="0 0 24 24"><path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z"/></svg>
+    </button>
+    <button class="ctrl-btn" id="btnLoop" aria-label="Loop">
+      <svg viewBox="0 0 24 24"><path d="M12 4V1L8 5l4 4V6c3.31 0 6 2.69 6 6 0 1.01-.25 1.97-.7 2.8l1.46 1.46C19.54 15.03 20 13.57 20 12c0-4.42-3.58-8-8-8zm0 14c-3.31 0-6-2.69-6-6 0-1.01.25-1.97.7-2.8L5.24 7.74C4.46 8.97 4 10.43 4 12c0 4.42 3.58 8 8 8v3l4-4-4-4v3z"/></svg>
+    </button>
+  </div>
+
+  <div class="popover" id="popover">
+    <button class="popover-item" id="popFile">
+      <svg viewBox="0 0 24 24" style="width:20px;height:20px;fill:currentColor"><path d="M20 6h-8l-2-2H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm0 12H4V8h16v10z"/></svg>
+      Select File(s)
+    </button>
+    <button class="popover-item" id="popFolder">
+      <svg viewBox="0 0 24 24" style="width:20px;height:20px;fill:currentColor"><path d="M20 6h-8l-2-2H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm0 12H4V8h16v10z"/></svg>
+      Select Folder
+    </button>
+  </div>
+
+  <input type="file" id="fileInput" accept="audio/*" multiple>
+  <input type="file" id="folderInput" webkitdirectory multiple>
+
+  <div class="modal-bg" id="settingsModal">
+    <div class="modal">
+      <h2 id="settingsTitle">⚙ Settings</h2>
+
+      <div class="setting">
+        <div class="label-row"><label id="themeLabel">Theme</label></div>
+        <div class="theme-switch">
+          <button data-theme="dark" class="active" id="themeDark">🌙 Dark</button>
+          <button data-theme="light" id="themeLight">☀ Light</button>
+        </div>
+      </div>
+
+      <div class="setting">
+        <div class="label-row"><label id="langLabel">Language</label></div>
+        <select id="setLang">
+          <option value="en">English</option>
+          <option value="es">Español</option>
+          <option value="it">Italiano</option>
+          <option value="zh">中文</option>
+          <option value="de">Deutsch</option>
+          <option value="pt">Português</option>
+          <option value="ru">Русский</option>
+          <option value="fr">Français</option>
+          <option value="ja">日本語</option>
+        </select>
+      </div>
+
+      <div class="setting">
+        <div class="label-row"><label id="repeatsLabel">Repeats (N)</label><span class="value" id="nVal">3</span></div>
+        <div class="slider-row">
+          <button class="step-btn" data-target="setN" data-dir="-1">−</button>
+          <input type="range" id="setN" min="1" max="20" value="3">
+          <button class="step-btn" data-target="setN" data-dir="1">+</button>
+        </div>
+      </div>
+
+      <div class="setting">
+        <div class="label-row"><label id="speedLabel">Speed</label><span class="value" id="speedVal">1.00</span></div>
+        <div class="slider-row">
+          <button class="step-btn" data-target="setSpeed" data-dir="-1">−</button>
+          <input type="range" id="setSpeed" min="0.25" max="2.0" step="0.25" value="1.0">
+          <button class="step-btn" data-target="setSpeed" data-dir="1">+</button>
+        </div>
+      </div>
+
+      <div class="setting">
+        <div class="label-row"><label id="dbLabel">Silence (dB)</label><span class="value" id="dbVal">-35</span></div>
+        <div class="slider-row">
+          <button class="step-btn" data-target="setDb" data-dir="-1">−</button>
+          <input type="range" id="setDb" min="-60" max="-10" value="-35">
+          <button class="step-btn" data-target="setDb" data-dir="1">+</button>
+        </div>
+      </div>
+
+      <div class="setting">
+        <div class="label-row"><label id="durLabel">Min silence (sec)</label><span class="value" id="durVal">0.5</span></div>
+        <div class="slider-row">
+          <button class="step-btn" data-target="setDur" data-dir="-1">−</button>
+          <input type="range" id="setDur" min="0.1" max="3" step="0.1" value="0.5">
+          <button class="step-btn" data-target="setDur" data-dir="1">+</button>
+        </div>
+      </div>
+
+      <div class="setting">
+        <div class="label-row"><label id="afterLabel">After file ends</label></div>
+        <select id="setAfter">
+          <option value="loop">Loop file</option>
+          <option value="next" selected>Next track</option>
+          <option value="stop">Stop</option>
+        </select>
+      </div>
+
+      <div class="modal-actions">
+        <button class="btn-reset" id="btnReset">↺ Reset</button>
+        <button class="btn-secondary" id="btnCancel">Cancel</button>
+        <button class="btn-primary" id="btnApply">Apply</button>
+      </div>
+    </div>
+  </div>
+
+  <audio id="audio-engine" preload="auto"></audio>
+
+  <script>
+    (function() {
+      'use strict';
+
+      // ============================================================
+      // DICTIONARY
+      // ============================================================
+      const LANG = {
+        en: {
+          statusReady: 'Ready', statusNoFile: 'No file', statusLoading: 'Loading...',
+          statusReading: 'Reading file...', statusDecoding: 'Decoding...',
+          statusAnalyzing: 'Analyzing silence...', statusBuilding: 'Building segments...',
+          statusDone: 'Ready', statusFinished: 'Finished',
+          segOf: 'Segment {idx} of {total}',
+          settingsTitle: '⚙ Settings', themeLabel: 'Theme', langLabel: 'Language',
+          repeatsLabel: 'Repeats (N)', speedLabel: 'Speed', dbLabel: 'Silence (dB)',
+          durLabel: 'Min silence (sec)', afterLabel: 'After file ends',
+          emptyMsg: '📂 Open a file or folder to start',
+          cancel: 'Cancel', apply: 'Apply', reset: 'Reset',
+          dark: 'Dark', light: 'Light',
+          loopFile: 'Loop file', nextTrack: 'Next track', stop: 'Stop',
+          selectFile: 'Select File(s)', selectFolder: 'Select Folder'
+        },
+        ru: {
+          statusReady: 'Готов', statusNoFile: 'Нет файла', statusLoading: 'Загрузка...',
+          statusReading: 'Чтение файла...', statusDecoding: 'Декодирование...',
+          statusAnalyzing: 'Анализ тишины...', statusBuilding: 'Построение сегментов...',
+          statusDone: 'Готов', statusFinished: 'Завершено',
+          segOf: 'Сегмент {idx} из {total}',
+          settingsTitle: '⚙ Настройки', themeLabel: 'Тема', langLabel: 'Язык',
+          repeatsLabel: 'Повторов (N)', speedLabel: 'Скорость', dbLabel: 'Тишина (dB)',
+          durLabel: 'Мин. тишина (сек)', afterLabel: 'После файла',
+          emptyMsg: '📂 Откройте файл или папку для начала',
+          cancel: 'Отмена', apply: 'Применить', reset: 'Сброс',
+          dark: 'Тёмная', light: 'Светлая',
+          loopFile: 'Повторять файл', nextTrack: 'Следующий трек', stop: 'Остановить',
+          selectFile: 'Выбрать файл(ы)', selectFolder: 'Выбрать папку'
+        }
+      };
+
+      // ============================================================
+      // STATE
+      // ============================================================
+      const DEFAULTS = { n: 3, db: -35, dur: 0.5, after: 'next', theme: 'dark', lang: 'en', speed: 1.0 };
+      const state = {
+        files: [],
+        currentFileIdx: 0,
+        segments: [],
+        currentSegIdx: 0,
+        repeatCount: 0,
+        isPlaying: false,
+        loopFile: false,
+        originalFileUrl: null,
+        analyzing: false,
+        speed: DEFAULTS.speed,
+        settings: {
+          n: DEFAULTS.n,
+          db: DEFAULTS.db,
+          dur: DEFAULTS.dur,
+          after: DEFAULTS.after,
+          theme: DEFAULTS.theme,
+          lang: DEFAULTS.lang
+        },
+        cache: {},
+        isUserSeeking: false,
+        mediaSessionInitialized: false
+      };
+      let timeLoopActive = false;
+      let timeRAF = null;
+
+      // ============================================================
+      // DOM refs
+      // ============================================================
+      const $ = id => document.getElementById(id);
+      const el = {
+        statusText: $('statusText'), progressWrap: $('progressWrap'), progressFill: $('progressFill'), progressText: $('progressText'),
+        trackName: $('trackName'), segInfo: $('segInfo'), timeInfo: $('timeInfo'), repeatCount: $('repeatCount'), repeatTotal: $('repeatTotal'),
+        playlist: $('playlist'), emptyMsg: $('emptyMsg'), btnOpen: $('btnOpen'), btnPrev: $('btnPrev'), btnPlay: $('btnPlay'),
+        btnNext: $('btnNext'), btnLoop: $('btnLoop'), btnSettings: $('btnSettings'), fileInput: $('fileInput'), folderInput: $('folderInput'),
+        settingsModal: $('settingsModal'), btnCancel: $('btnCancel'), btnApply: $('btnApply'), btnReset: $('btnReset'),
+        setN: $('setN'), setDb: $('setDb'), setDur: $('setDur'), setSpeed: $('setSpeed'), setAfter: $('setAfter'), setLang: $('setLang'),
+        nVal: $('nVal'), dbVal: $('dbVal'), durVal: $('durVal'), speedVal: $('speedVal'), waveCanvas: $('waveCanvas'), waveProgress: $('waveProgress'),
+        themeDark: $('themeDark'), themeLight: $('themeLight'), settingsTitle: $('settingsTitle'), themeLabel: $('themeLabel'), langLabel: $('langLabel'),
+        repeatsLabel: $('repeatsLabel'), speedLabel: $('speedLabel'), dbLabel: $('dbLabel'), durLabel: $('durLabel'), afterLabel: $('afterLabel'),
+        popover: $('popover'), popFile: $('popFile'), popFolder: $('popFolder'), audio: $('audio-engine')
+      };
+
+      // ============================================================
+      // I18n
+      // ============================================================
+      function t(key, vars = {}) {
+        const dict = LANG[state.settings.lang] || LANG.en;
+        let str = dict[key] || key;
+        for (const [k, v] of Object.entries(vars)) {
+          str = str.replace(new RegExp(`{${k}}`, 'g'), v);
+        }
+        return str;
+      }
+
+      function applyLanguage() {
+        el.settingsTitle.textContent = t('settingsTitle');
+        el.themeLabel.textContent = t('themeLabel');
+        el.langLabel.textContent = t('langLabel');
+        el.repeatsLabel.textContent = t('repeatsLabel');
+        el.speedLabel.textContent = t('speedLabel');
+        el.dbLabel.textContent = t('dbLabel');
+        el.durLabel.textContent = t('durLabel');
+        el.afterLabel.textContent = t('afterLabel');
+        el.emptyMsg.textContent = t('emptyMsg');
+        el.themeDark.textContent = '🌙 ' + t('dark');
+        el.themeLight.textContent = '☀ ' + t('light');
+        el.btnCancel.textContent = t('cancel');
+        el.btnApply.textContent = t('apply');
+        el.btnReset.textContent = '↺ ' + t('reset');
+        el.popFile.innerHTML = `<svg viewBox="0 0 24 24" style="width:20px;height:20px;fill:currentColor"><path d="M20 6h-8l-2-2H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm0 12H4V8h16v10z"/></svg> ${t('selectFile')}`;
+        el.popFolder.innerHTML = `<svg viewBox="0 0 24 24" style="width:20px;height:20px;fill:currentColor"><path d="M20 6h-8l-2-2H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm0 12H4V8h16v10z"/></svg> ${t('selectFolder')}`;
+        const afterSelect = el.setAfter;
+        afterSelect.options[0].text = t('loopFile');
+        afterSelect.options[1].text = t('nextTrack');
+        afterSelect.options[2].text = t('stop');
+        updateStatusText();
+        updateSegInfo();
+      }
+
+      // ============================================================
+      // Settings
+      // ============================================================
+      function loadSettings() {
+        try {
+          const s = JSON.parse(localStorage.getItem('lp_settings'));
+          if (s) { Object.assign(state.settings, s); if (s.speed !== undefined) state.speed = s.speed; }
+        } catch(e) {}
+        applySettingsToUI();
+      }
+      function saveSettings() { const data = { ...state.settings, speed: state.speed }; localStorage.setItem('lp_settings', JSON.stringify(data)); }
+      function applySettingsToUI() {
+        document.body.classList.toggle('light', state.settings.theme === 'light');
+        el.setN.value = state.settings.n; el.setDb.value = state.settings.db; el.setDur.value = state.settings.dur;
+        el.setAfter.value = state.settings.after; el.setLang.value = state.settings.lang; el.setSpeed.value = state.speed;
+        el.nVal.textContent = state.settings.n; el.dbVal.textContent = state.settings.db;
+        el.durVal.textContent = parseFloat(state.settings.dur).toFixed(1);
+        el.speedVal.textContent = state.speed.toFixed(2); el.repeatTotal.textContent = state.settings.n;
+        el.themeDark.classList.toggle('active', state.settings.theme === 'dark');
+        el.themeLight.classList.toggle('active', state.settings.theme === 'light');
+        el.audio.playbackRate = state.speed;
+        applyLanguage();
+        updateRepeatInfo();
+      }
+      function resetToDefaults() {
+        state.settings.n = DEFAULTS.n; state.settings.db = DEFAULTS.db; state.settings.dur = DEFAULTS.dur;
+        state.settings.after = DEFAULTS.after; state.settings.theme = DEFAULTS.theme; state.settings.lang = DEFAULTS.lang;
+        state.speed = DEFAULTS.speed;
+        saveSettings(); applySettingsToUI(); updateRepeatInfo();
+      }
+
+      // ============================================================
+      // Progress & UI
+      // ============================================================
+      function showProgress(show) { el.progressWrap.classList.toggle('active', show); if (!show) { el.progressFill.style.width = '0%'; el.progressText.textContent = '0%'; } }
+      function setProgress(pct, text) { el.progressFill.style.width = pct + '%'; el.progressText.textContent = text || (Math.round(pct) + '%'); }
+      const yieldUI = () => new Promise(r => setTimeout(r, 0));
+
+      function updateStatusText() {
+        if (state.analyzing) return;
+        if (state.segments.length > 0) {
+          el.statusText.textContent = t('statusDone');
+        } else if (state.files.length === 0) {
+          el.statusText.textContent = t('statusNoFile');
+        } else {
+          el.statusText.textContent = t('statusReady');
+        }
+      }
+
+      function updateSegInfo() {
+        if (state.segments.length === 0) { el.segInfo.textContent = t('statusReady'); return; }
+        const idx = state.currentSegIdx + 1;
+        el.segInfo.textContent = t('segOf', { idx, total: state.segments.length });
+      }
+
+      function updateRepeatInfo() {
+        const displayCount = Math.min(state.repeatCount + 1, state.settings.n);
+        el.repeatCount.textContent = displayCount;
+        el.repeatTotal.textContent = state.settings.n;
+      }
+
+      function updatePlayBtn() {
+        const icon = state.isPlaying ? 'pause' : 'play';
+        el.btnPlay.innerHTML = `<svg viewBox="0 0 24 24"><path d="${icon === 'play' ? 'M8 5v14l11-7z' : 'M6 19h4V5H6v14zm8-14v14h4V5h-4z'}"/></svg>`;
+        el.btnPlay.disabled = state.segments.length === 0;
+        el.btnPrev.disabled = state.segments.length === 0;
+        el.btnNext.disabled = state.segments.length === 0;
+      }
+
+      function updateFileList() {
+        if (state.files.length <= 1) {
+          el.playlist.innerHTML = '';
+          el.emptyMsg.style.display = state.files.length === 0 ? 'block' : 'none';
+          return;
+        }
+        el.emptyMsg.style.display = 'none';
+        el.playlist.innerHTML = state.files.map((f, i) => `
+          <div class="playlist-item ${i === state.currentFileIdx ? 'current' : ''}" data-idx="${i}">
+            <span class="idx">${i+1}.</span>
+            <span class="name">${f.name}</span>
+          </div>
+        `).join('');
+        el.playlist.querySelectorAll('.playlist-item').forEach(item => {
+          item.addEventListener('click', () => {
+            const idx = parseInt(item.dataset.idx);
+            if (idx !== state.currentFileIdx) loadFile(idx);
+          });
+        });
+      }
+
+      // ============================================================
+      // УЛУЧШЕННЫЙ АЛГОРИТМ АНАЛИЗА ТИШИНЫ
+      // ============================================================
+      function getFileKey(file) { return file.name + '_' + file.size + '_' + file.lastModified; }
+
+      async function analyzeFile(file) {
+        const key = getFileKey(file);
+        if (state.cache[key]) {
+          return state.cache[key];
+        }
+
+        state.analyzing = true;
+        el.statusText.innerHTML = `<span class="loading-spinner"></span> ${t('statusReading')}`;
+        showProgress(true); setProgress(2, '…'); await yieldUI();
+
+        const arrayBuffer = await file.arrayBuffer();
+        setProgress(10, t('statusDecoding')); await yieldUI();
+
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        if (audioCtx.state === 'suspended') await audioCtx.resume();
+
+        let audioBuffer;
+        try { audioBuffer = await audioCtx.decodeAudioData(arrayBuffer.slice(0)); }
+        catch(e) { el.statusText.textContent = 'Decode error'; showProgress(false); state.analyzing = false; return []; }
+
+        setProgress(20, t('statusAnalyzing')); await yieldUI();
+
+        const { db, dur } = state.settings;
+        const threshold = Math.pow(10, db / 20);
+        const minSilenceSamples = Math.floor(dur * audioBuffer.sampleRate);
+        const channelData = audioBuffer.getChannelData(0);
+        const sampleRate = audioBuffer.sampleRate;
+        const totalSamples = channelData.length;
+        const duration = audioBuffer.duration;
+        
+        const windowSize = Math.floor(sampleRate * 0.02);
+        const hopSize = Math.floor(windowSize / 2);
+        const totalWindows = Math.floor((totalSamples - windowSize) / hopSize) + 1;
+        
+        const rms = new Float32Array(totalWindows);
+        for (let w = 0; w < totalWindows; w++) {
+          const start = w * hopSize;
+          let sum = 0;
+          const end = Math.min(start + windowSize, totalSamples);
+          for (let i = start; i < end; i++) { 
+            const v = channelData[i]; 
+            sum += v * v; 
+          }
+          rms[w] = Math.sqrt(sum / (end - start));
+        }
+
+        const silenceRegions = [];
+        let inSilence = false;
+        let silenceStartIdx = 0;
+        let silenceSamplesCount = 0;
+        
+        for (let i = 0; i < rms.length; i++) {
+          const isSilent = rms[i] < threshold;
+          
+          if (isSilent) {
+            if (!inSilence) {
+              inSilence = true;
+              silenceStartIdx = i;
+              silenceSamplesCount = 1;
+            } else {
+              silenceSamplesCount++;
+            }
+          } else {
+            if (inSilence) {
+              const silenceDuration = (silenceSamplesCount * hopSize) / sampleRate;
+              if (silenceDuration >= dur) {
+                const startTime = (silenceStartIdx * hopSize) / sampleRate;
+                const endTime = (i * hopSize) / sampleRate;
+                silenceRegions.push({ start: startTime, end: endTime });
+              }
+              inSilence = false;
+              silenceSamplesCount = 0;
+            }
+          }
+        }
+        
+        if (inSilence) {
+          const silenceDuration = (silenceSamplesCount * hopSize) / sampleRate;
+          if (silenceDuration >= dur) {
+            const startTime = (silenceStartIdx * hopSize) / sampleRate;
+            silenceRegions.push({ start: startTime, end: duration });
+          }
+        }
+
+        setProgress(88, t('statusBuilding')); await yieldUI();
+
+        const mergedRegions = [];
+        for (const region of silenceRegions) {
+          if (mergedRegions.length === 0) {
+            mergedRegions.push(region);
+          } else {
+            const last = mergedRegions[mergedRegions.length - 1];
+            if (region.start - last.end < 0.3) {
+              last.end = region.end;
+            } else {
+              mergedRegions.push(region);
+            }
+          }
+        }
+
+        const segments = [];
+        let prevEnd = 0;
+        
+        for (const region of mergedRegions) {
+          const segmentStart = prevEnd;
+          const segmentEnd = region.start;
+          if (segmentEnd - segmentStart > 0.15) {
+            segments.push({ start: segmentStart, end: segmentEnd });
+          }
+          prevEnd = region.end;
+        }
+        
+        if (duration - prevEnd > 0.15) {
+          segments.push({ start: prevEnd, end: duration });
+        }
+
+        if (segments.length === 0) {
+          segments.push({ start: 0, end: duration });
+        }
+
+        setProgress(100, t('statusDone')); await yieldUI();
+        setTimeout(() => showProgress(false), 600);
+
+        state.cache[key] = segments;
+        state.analyzing = false;
+        return segments;
+      }
+
+      // ============================================================
+      // PLAYBACK
+      // ============================================================
+      
+      function getCurrentSegment() {
+        if (state.segments.length === 0 || state.currentSegIdx >= state.segments.length) {
+          return { start: 0, end: 0 };
+        }
+        return state.segments[state.currentSegIdx];
+      }
+
+      function checkSegmentBounds() {
+        if (state.segments.length === 0 || !state.isPlaying) return;
+        
+        const seg = getCurrentSegment();
+        const currentTime = el.audio.currentTime;
+        const endTime = seg.end;
+        
+        if (currentTime >= endTime - 0.05) {
+          state.repeatCount++;
+          
+          if (state.repeatCount >= state.settings.n) {
+            state.repeatCount = 0;
+            const nextIdx = state.currentSegIdx + 1;
+            
+            if (nextIdx >= state.segments.length) {
+              handleFileEnd();
+            } else {
+              state.currentSegIdx = nextIdx;
+              const nextSeg = getCurrentSegment();
+              el.audio.currentTime = nextSeg.start;
+              updateSegInfo();
+              updateRepeatInfo();
+              updateMediaSession();
+            }
+          } else {
+            el.audio.currentTime = seg.start;
+            updateRepeatInfo();
+            updateMediaSession();
+          }
+        }
+      }
+
+      function handleFileEnd() {
+        if (state.settings.after === 'loop' || state.loopFile) {
+          state.currentSegIdx = 0;
+          state.repeatCount = 0;
+          const firstSeg = getCurrentSegment();
+          el.audio.currentTime = firstSeg.start;
+          updateSegInfo();
+          updateRepeatInfo();
+          updateMediaSession();
+          if (!state.isPlaying) {
+            el.audio.play().catch(() => {});
+            state.isPlaying = true;
+            updatePlayBtn();
+          }
+        } else if (state.settings.after === 'next') {
+          const nextIdx = state.currentFileIdx + 1;
+          if (nextIdx < state.files.length) { 
+            loadFile(nextIdx); 
+          } else if (state.files.length > 1) { 
+            loadFile(0); 
+          } else {
+            el.audio.pause();
+            state.isPlaying = false;
+            updatePlayBtn();
+            el.statusText.textContent = t('statusFinished');
+            updateMediaSession();
+          }
+        } else {
+          el.audio.pause();
+          state.isPlaying = false;
+          updatePlayBtn();
+          el.statusText.textContent = t('statusFinished');
+          updateMediaSession();
+        }
+      }
+
+      // ============================================================
+      // LOAD FILE
+      // ============================================================
+      async function loadFile(idx) {
+        if (idx < 0 || idx >= state.files.length) return;
+        
+        state.currentFileIdx = idx;
+        const file = state.files[idx];
+        el.trackName.textContent = file.name;
+        el.statusText.innerHTML = `<span class="loading-spinner"></span> ${t('statusLoading')}`;
+        el.emptyMsg.style.display = 'none';
+
+        el.audio.pause();
+        el.audio.src = '';
+        state.isPlaying = false;
+        updatePlayBtn();
+
+        if (state.originalFileUrl) {
+          URL.revokeObjectURL(state.originalFileUrl);
+          state.originalFileUrl = null;
+        }
+
+        state.segments = [];
+        state.currentSegIdx = 0;
+        state.repeatCount = 0;
+        updateFileList();
+        updateSegInfo();
+        updateRepeatInfo();
+
+        try {
+          state.segments = await analyzeFile(file);
+          if (state.segments.length === 0) { 
+            el.statusText.textContent = 'No segments'; 
+            return; 
+          }
+          
+          state.originalFileUrl = URL.createObjectURL(file);
+          el.audio.src = state.originalFileUrl;
+          el.audio.loop = false;
+          el.audio.playbackRate = state.speed;
+          
+          state.currentSegIdx = 0;
+          state.repeatCount = 0;
+          updateStatusText();
+          
+          const firstSeg = getCurrentSegment();
+          el.audio.currentTime = firstSeg.start;
+          
+          // Инициализируем Media Session ПЕРЕД воспроизведением
+          setupMediaSession();
+          updateMediaSession();
+          
+          await el.audio.play();
+          state.isPlaying = true;
+          
+          updatePlayBtn();
+          updateSegInfo();
+          updateRepeatInfo();
+          
+        } catch(e) { 
+          console.error('Load error:', e); 
+          el.statusText.textContent = 'Error: ' + e.message; 
+          state.analyzing = false; 
+        }
+      }
+
+      // ============================================================
+      // CONTROLS
+      // ============================================================
+      function togglePlay() {
+        if (state.segments.length === 0) return;
+        if (state.isPlaying) {
+          el.audio.pause();
+          state.isPlaying = false;
+        } else {
+          el.audio.play().catch(() => {});
+          state.isPlaying = true;
+        }
+        updatePlayBtn();
+        updateMediaSession();
+      }
+
+      function prevSegment() {
+        if (state.segments.length === 0) return;
+        const newIdx = Math.max(0, state.currentSegIdx - 1);
+        state.currentSegIdx = newIdx;
+        state.repeatCount = 0;
+        const seg = getCurrentSegment();
+        el.audio.currentTime = seg.start;
+        updateSegInfo();
+        updateRepeatInfo();
+        updateMediaSession();
+      }
+
+      function nextSegment() {
+        if (state.segments.length === 0) return;
+        const newIdx = state.currentSegIdx + 1;
+        if (newIdx >= state.segments.length) {
+          handleFileEnd();
+        } else {
+          state.currentSegIdx = newIdx;
+          state.repeatCount = 0;
+          const seg = getCurrentSegment();
+          el.audio.currentTime = seg.start;
+          updateSegInfo();
+          updateRepeatInfo();
+          updateMediaSession();
+        }
+      }
+
+      // ============================================================
+      // MEDIA SESSION API - ПОЛНОСТЬЮ ПЕРЕРАБОТАННАЯ ВЕРСИЯ
+      // ============================================================
+      function setupMediaSession() {
+        if (!('mediaSession' in navigator)) {
+          console.warn('Media Session API not supported');
+          return;
+        }
+        
+        // Устанавливаем метаданные
+        updateMediaSession();
+        
+        // Устанавливаем все обработчики с try-catch
+        const actions = {
+          'play': () => {
+            el.audio.play();
+            state.isPlaying = true;
+            updatePlayBtn();
+            updateMediaSession();
+          },
+          'pause': () => {
+            el.audio.pause();
+            state.isPlaying = false;
+            updatePlayBtn();
+            updateMediaSession();
+          },
+          'previoustrack': () => prevSegment(),
+          'nexttrack': () => nextSegment(),
+          'seekbackward': (details) => {
+            const seg = getCurrentSegment();
+            el.audio.currentTime = Math.max(seg.start, el.audio.currentTime - (details.seekOffset || 5));
+          },
+          'seekforward': (details) => {
+            const seg = getCurrentSegment();
+            el.audio.currentTime = Math.min(seg.end, el.audio.currentTime + (details.seekOffset || 5));
+          }
+        };
+        
+        for (const [action, handler] of Object.entries(actions)) {
+          try {
+            navigator.mediaSession.setActionHandler(action, handler);
+          } catch (error) {
+            console.log(`MediaSession action "${action}" not supported`);
+          }
+        }
+        
+        state.mediaSessionInitialized = true;
+        console.log('Media Session API initialized successfully');
+      }
+
+      function updateMediaSession() {
+        if (!('mediaSession' in navigator)) return;
+        
+        const file = state.files[state.currentFileIdx];
+        const segIdx = state.currentSegIdx + 1;
+        const total = state.segments.length;
+        const displayRepeat = Math.min(state.repeatCount + 1, state.settings.n);
+        
+        // Создаем метаданные с полной информацией
+        try {
+          const metadata = new MediaMetadata({
+            title: file ? file.name : 'HablaSlice',
+            artist: `Segment ${segIdx} of ${total} • Repeat ${displayRepeat}/${state.settings.n}`,
+            album: `Speed: ${state.speed.toFixed(2)}x`,
+            artwork: [
+              { src: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" fill="%234cc9f0"/><text x="50" y="68" font-size="48" text-anchor="middle" fill="white" font-weight="bold">LP</text></svg>', sizes: '100x100', type: 'image/svg+xml' }
+            ]
+          });
+          navigator.mediaSession.metadata = metadata;
+        } catch(e) {
+          console.warn('Failed to set MediaMetadata:', e);
+        }
+        
+        // Устанавливаем состояние воспроизведения
+        try {
+          navigator.mediaSession.playbackState = state.isPlaying ? "playing" : "paused";
+        } catch(e) {
+          console.warn('Failed to set playback state:', e);
+        }
+        
+        // Принудительно обновляем через небольшой таймаут для некоторых браузеров
+        if (state.isPlaying) {
+          setTimeout(() => {
+            try {
+              navigator.mediaSession.playbackState = "playing";
+            } catch(e) {}
+          }, 100);
+        }
+      }
+
+      // ============================================================
+      // TIME UPDATE
+      // ============================================================
+      el.audio.addEventListener('timeupdate', function() {
+        if (state.currentSegIdx === -1 || state.isUserSeeking) return;
+        
+        const seg = getCurrentSegment();
+        
+        if (!isNaN(el.audio.duration) && el.audio.duration > 0) {
+          const globalPct = (el.audio.currentTime / el.audio.duration) * 100;
+          el.progressFill.style.width = Math.min(globalPct, 100) + '%';
+          el.progressText.textContent = Math.round(globalPct) + '%';
+        }
+        
+        if (seg && seg.end > seg.start) {
+          const progressInSeg = Math.max(0, el.audio.currentTime - seg.start);
+          const total = seg.end - seg.start;
+          el.timeInfo.textContent = `${progressInSeg.toFixed(1)}s / ${total.toFixed(1)}s`;
+          const pct = total > 0 ? (progressInSeg / total) * 100 : 0;
+          el.waveProgress.style.width = Math.min(pct, 100) + '%';
+        }
+        
+        checkSegmentBounds();
+        
+        // Обновляем Media Session каждые 500ms для синхронизации
+        if (state.isPlaying && state.mediaSessionInitialized) {
+          updateMediaSession();
+        }
+      });
+
+      // ============================================================
+      // WAKE LOCK
+      // ============================================================
+      let wakeLock = null;
+      
+      async function requestWakeLock() {
+        if ('wakeLock' in navigator && state.isPlaying) {
+          try {
+            if (wakeLock) {
+              try { await wakeLock.release(); } catch(e) {}
+              wakeLock = null;
+            }
+            wakeLock = await navigator.wakeLock.request('screen');
+            wakeLock.addEventListener('release', () => {
+              if (state.isPlaying) requestWakeLock();
+            });
+          } catch (err) {
+            console.log('Wake Lock error:', err);
+          }
+        }
+      }
+
+      // ============================================================
+      // EVENTS - МАКСИМАЛЬНОЕ ОБНОВЛЕНИЕ MEDIA SESSION
+      // ============================================================
+      el.audio.addEventListener('play', () => {
+        state.isPlaying = true;
+        updatePlayBtn();
+        updateMediaSession();
+        requestWakeLock();
+        // Принудительное обновление через таймаут
+        setTimeout(() => updateMediaSession(), 200);
+        setTimeout(() => updateMediaSession(), 500);
+      });
+
+      el.audio.addEventListener('pause', () => {
+        state.isPlaying = false;
+        updatePlayBtn();
+        updateMediaSession();
+        setTimeout(() => updateMediaSession(), 200);
+      });
+
+      // Обновляем Media Session при изменении видимости
+      document.addEventListener('visibilitychange', () => {
+        if (!document.hidden && state.isPlaying && el.audio.paused) {
+          el.audio.play().catch(() => {});
+        }
+        if (state.segments.length > 0) {
+          updateMediaSession();
+          setTimeout(() => updateMediaSession(), 300);
+        }
+      });
+
+      // ============================================================
+      // POPOVER & FILE INPUTS
+      // ============================================================
+      function togglePopover(e) {
+        e.stopPropagation();
+        const rect = el.btnOpen.getBoundingClientRect();
+        const pop = el.popover;
+        const isOpen = pop.classList.contains('active');
+        if (isOpen) { pop.classList.remove('active'); return; }
+        pop.classList.add('active');
+        const popRect = pop.getBoundingClientRect();
+        let left = rect.right - popRect.width;
+        let top = rect.top - popRect.height - 8;
+        if (top < 10) top = rect.bottom + 8;
+        if (left < 10) left = 10;
+        pop.style.left = left + 'px';
+        pop.style.top = top + 'px';
+      }
+
+      el.btnOpen.addEventListener('click', togglePopover);
+      document.addEventListener('click', (e) => {
+        if (!el.popover.contains(e.target) && e.target !== el.btnOpen && !el.btnOpen.contains(e.target)) {
+          el.popover.classList.remove('active');
+        }
+      });
+
+      el.popFile.addEventListener('click', () => {
+        el.popover.classList.remove('active');
+        el.fileInput.click();
+      });
+      
+      el.popFolder.addEventListener('click', () => {
+        el.popover.classList.remove('active');
+        el.folderInput.click();
+      });
+
+      function handleFiles(input) {
+        const files = Array.from(input.files).filter(f => 
+          f.type.startsWith('audio/') || /\.(mp3|wav|ogg|m4a|flac|aac|opus|webm)$/i.test(f.name)
+        );
+        if (!files.length) return;
+        
+        state.files = files.sort((a, b) => a.name.localeCompare(b.name));
+        loadFile(0);
+        input.value = '';
+      }
+
+      el.fileInput.addEventListener('change', function() { handleFiles(this); });
+      el.folderInput.addEventListener('change', function() { handleFiles(this); });
+
+      // ============================================================
+      // CONTROLS BUTTONS
+      // ============================================================
+      el.btnPlay.addEventListener('click', togglePlay);
+      el.btnPrev.addEventListener('click', prevSegment);
+      el.btnNext.addEventListener('click', nextSegment);
+      el.btnLoop.addEventListener('click', () => {
+        state.loopFile = !state.loopFile;
+        el.btnLoop.style.opacity = state.loopFile ? '1' : '.5';
+        el.statusText.textContent = state.loopFile ? 'Loop: ON' : 'Loop: OFF';
+        setTimeout(() => { if (state.segments.length > 0) updateStatusText(); }, 1200);
+      });
+      el.btnLoop.style.opacity = '.5';
+
+      // ============================================================
+      // SETTINGS MODAL
+      // ============================================================
+      el.btnSettings.addEventListener('click', () => {
+        el.setN.value = state.settings.n; el.setDb.value = state.settings.db;
+        el.setDur.value = state.settings.dur; el.setSpeed.value = state.speed;
+        el.setAfter.value = state.settings.after; el.setLang.value = state.settings.lang;
+        el.nVal.textContent = state.settings.n; el.dbVal.textContent = state.settings.db;
+        el.durVal.textContent = parseFloat(state.settings.dur).toFixed(1);
+        el.speedVal.textContent = state.speed.toFixed(2);
+        el.settingsModal.classList.add('active');
+      });
+
+      el.btnCancel.addEventListener('click', () => el.settingsModal.classList.remove('active'));
+      el.btnReset.addEventListener('click', resetToDefaults);
+
+      el.btnApply.addEventListener('click', () => {
+        state.settings.n = parseInt(el.setN.value);
+        state.settings.db = parseInt(el.setDb.value);
+        state.settings.dur = parseFloat(el.setDur.value);
+        state.settings.after = el.setAfter.value;
+        state.settings.lang = el.setLang.value;
+        state.speed = parseFloat(el.setSpeed.value);
+        el.audio.playbackRate = state.speed;
+        saveSettings();
+        applySettingsToUI();
+        el.settingsModal.classList.remove('active');
+        updateRepeatInfo();
+      });
+
+      el.setN.addEventListener('input', () => el.nVal.textContent = el.setN.value);
+      el.setDb.addEventListener('input', () => el.dbVal.textContent = el.setDb.value);
+      el.setDur.addEventListener('input', () => el.durVal.textContent = parseFloat(el.setDur.value).toFixed(1));
+      el.setSpeed.addEventListener('input', () => el.speedVal.textContent = parseFloat(el.setSpeed.value).toFixed(2));
+
+      document.querySelectorAll('.step-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const targetId = btn.dataset.target;
+          const dir = parseInt(btn.dataset.dir);
+          const input = document.getElementById(targetId);
+          if (!input) return;
+          let step = parseFloat(input.step) || 1;
+          let val = parseFloat(input.value) + (dir * step);
+          val = Math.max(parseFloat(input.min), Math.min(parseFloat(input.max), val));
+          input.value = val;
+          input.dispatchEvent(new Event('input'));
+          const valMap = { setN: 'nVal', setDb: 'dbVal', setDur: 'durVal', setSpeed: 'speedVal' };
+          const valDisplay = document.getElementById(valMap[targetId]);
+          if (valDisplay) {
+            if (targetId === 'setSpeed') valDisplay.textContent = val.toFixed(2);
+            else if (targetId === 'setDur') valDisplay.textContent = val.toFixed(1);
+            else valDisplay.textContent = val;
+          }
+        });
+      });
+
+      el.themeDark.addEventListener('click', () => { state.settings.theme = 'dark'; applySettingsToUI(); });
+      el.themeLight.addEventListener('click', () => { state.settings.theme = 'light'; applySettingsToUI(); });
+      el.settingsModal.addEventListener('click', e => { if (e.target === el.settingsModal) el.settingsModal.classList.remove('active'); });
+
+      // ============================================================
+      // KEYBOARD CONTROLS
+      // ============================================================
+      document.addEventListener('keydown', e => {
+        if (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT') return;
+        if (e.code === 'Space') { e.preventDefault(); togglePlay(); }
+        else if (e.code === 'ArrowLeft') prevSegment();
+        else if (e.code === 'ArrowRight') nextSegment();
+      });
+
+      // ============================================================
+      // SERVICE WORKER
+      // ============================================================
+      if ('serviceWorker' in navigator) {
+        const swCode = `
+          const CACHE = 'langplayer-v15';
+          self.addEventListener('install', e => self.skipWaiting());
+          self.addEventListener('activate', e => self.clients.claim());
+          self.addEventListener('fetch', e => {
+            e.respondWith(
+              caches.match(e.request).then(r => r || fetch(e.request).catch(() => new Response('Offline', {status: 503})))
+            );
+          });
+        `;
+        const swBlob = new Blob([swCode], { type: 'application/javascript' });
+        const swUrl = URL.createObjectURL(swBlob);
+        navigator.serviceWorker.register(swUrl).catch(() => {});
+      }
+
+      // ============================================================
+      // INIT
+      // ============================================================
+      function init() {
+        loadSettings();
+        updatePlayBtn();
+        updateRepeatInfo();
+        updateFileList();
+        updateStatusText();
+        
+        // Инициализируем Media Session даже без файла
+        if ('mediaSession' in navigator) {
+          try {
+            navigator.mediaSession.metadata = new MediaMetadata({
+              title: 'HablaSlice',
+              artist: 'Ready to play',
+              album: 'Select audio file'
+            });
+          } catch(e) {}
+        }
+        
+        // Периодическое обновление Media Session
+        setInterval(() => {
+          if (state.segments.length > 0 && state.isPlaying) {
+            updateMediaSession();
+          }
+        }, 1000);
+
+        el.emptyMsg.textContent = t('emptyMsg');
+        
+        console.log('HablaSlice готов к работе!');
+        console.log('📱 Media Session API активно для шторки уведомлений');
+        console.log('🔒 При блокировке экрана плеер продолжает работать');
+      }
+
+      // Запускаем инициализацию после загрузки страницы
+      if (document.readyState === 'complete') {
+        init();
+      } else {
+        window.addEventListener('load', init);
+      }
+
+    })();
+  </script>
+</body>
+</html>
