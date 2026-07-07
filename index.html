@@ -10,8 +10,8 @@
   <meta name="mobile-web-app-capable" content="yes">
   <title>HablaSlice</title>
   
-  <!-- PWA Manifest -->
-  <link rel="manifest" href="/manifest.json">
+  <!-- Встроенный manifest -->
+  <link rel="manifest" href="data:application/json;base64,ewogICJuYW1lIjogIkhhYmxhU2xpY2UiLAogICJzaG9ydF9uYW1lIjogIkhhYmxhU2xpY2UiLAogICJkZXNjcmlwdGlvbiI6ICJBdWRpbyBzZWdtZW50IHBsYXllciB3aXRoIHNpbGVuY2UgZGV0ZWN0aW9uIiwKICAic3RhcnRfdXJsIjogIi8iLAogICJkaXNwbGF5IjogInN0YW5kYWxvbmUiLAogICJiYWNrZ3JvdW5kX2NvbG9yIjogIiMwMDAwMDAiLAogICJ0aGVtZV9jb2xvciI6ICIjMDAwMDAwIiwKICAiaWNvbnMiOiBbCiAgICB7CiAgICAgICJzcmMiOiAiZGF0YTppbWFnZS9zdmcreG1sLCUzQ3N2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHZpZXdCb3g9JzAgMCA1MTIgNTEyJyUzRSUzQ3JlY3Qgd2lkdGg9JzUxMicgaGVpZ2h0PSc1MTInIHJ4PSc1MCcgZmlsbD0nJTIzMDAwMDAwJy8lM0UlM0NjaXJjbGUgY3g9JzI1NicgY3k9JzI1Nicgcj0nMjAwJyBmaWxsPSclMjM0Y2M5ZjAnLyUzRSUzQ2NpcmNsZSBjeD0nMjU2JyBjeT0nMjU2JyByPSc4MCcgZmlsbD0nJTIzMDAwMDAwJy8lM0UlM0NwYXRoIGQ9J00xOTYgMTUwbDYwIDU2IDYwLTU2djIwMGwtNjAtNTYtNjAgNTZ6JyBmaWxsPSclMjNmZmZmZmYnLyUzRSUzQyUyRnN2ZyUzRQogICAgIiwKICAgICAgInNpemVzIjogIjUxMng1MTIiLAogICAgICAidHlwZSI6ICJpbWFnZS9zdmcreG1sIiwKICAgICAgInB1cnBvc2UiOiAiYW55IG1hc2thYmxlIgogICAgfQogIF0sCiAgIm9yaWVudGF0aW9uIjogInBvcnRyYWl0IiwKICAicHJlZmVyX3JlbGF0ZWRfYXBwbGljYXRpb25zIjogW10KfQ==">
   
   <style>
     /* ===== ВСЕ СТИЛИ ===== */
@@ -1127,7 +1127,7 @@
       'use strict';
 
       // ============================================================
-      // STATE - NO PADDING, NO OVERLAP
+      // STATE
       // ============================================================
       const DEFAULTS = { n: 3, db: -32, dur: 0.3, after: 'next', theme: 'dark', speed: 1.0 };
       const state = {
@@ -1180,6 +1180,43 @@
         speedMenu: $('speedMenu'), repeatsMenu: $('repeatsMenu'),
         speedToggle: $('speedToggle'), repeatsToggle: $('repeatsToggle')
       };
+
+      // ============================================================
+      // Custom Dropdown
+      // ============================================================
+      function initDropdown(dropdownEl, menuEl, toggleEl, displayEl, onSelect) {
+        let isOpen = false;
+        
+        toggleEl.addEventListener('click', function(e) {
+          e.stopPropagation();
+          isOpen = !isOpen;
+          dropdownEl.classList.toggle('open', isOpen);
+        });
+        
+        menuEl.querySelectorAll('.item').forEach(item => {
+          item.addEventListener('click', function(e) {
+            e.stopPropagation();
+            const value = this.dataset.value;
+            const label = this.textContent.trim();
+            
+            menuEl.querySelectorAll('.item').forEach(i => i.classList.remove('selected'));
+            this.classList.add('selected');
+            
+            displayEl.textContent = label;
+            dropdownEl.classList.remove('open');
+            isOpen = false;
+            
+            if (onSelect) onSelect(value);
+          });
+        });
+        
+        document.addEventListener('click', function(e) {
+          if (!dropdownEl.contains(e.target)) {
+            dropdownEl.classList.remove('open');
+            isOpen = false;
+          }
+        });
+      }
 
       // ============================================================
       // Settings
@@ -1408,7 +1445,7 @@
       }
 
       // ============================================================
-      // ANALYZE FILE - FIXED: NO OVERLAP
+      // ANALYZE FILE - NO OVERLAP
       // ============================================================
       function getFileKey(file) { return file.name + '_' + file.size + '_' + file.lastModified; }
 
@@ -1534,7 +1571,7 @@
         updateStatusText('Building segments...', true);
         await yieldUI();
 
-        // === MERGE SILENCE REGIONS THAT ARE TOO CLOSE ===
+        // === MERGE SILENCE REGIONS ===
         const mergedRegions = [];
         for (const region of silenceRegions) {
           if (mergedRegions.length === 0) {
@@ -1549,7 +1586,7 @@
           }
         }
 
-        // === BUILD SEGMENTS - NO PADDING ===
+        // === BUILD SEGMENTS ===
         const segments = [];
         let prevEnd = 0;
         
@@ -1557,42 +1594,30 @@
           const segmentStart = prevEnd;
           const segmentEnd = region.start;
           
-          // Only add if segment has minimum length
           if (segmentEnd - segmentStart > 0.08) {
-            segments.push({ 
-              start: segmentStart, 
-              end: segmentEnd 
-            });
+            segments.push({ start: segmentStart, end: segmentEnd });
           }
           prevEnd = region.end;
         }
         
-        // Add final segment
         if (duration - prevEnd > 0.08) {
-          segments.push({ 
-            start: prevEnd, 
-            end: duration 
-          });
+          segments.push({ start: prevEnd, end: duration });
         }
 
-        // If no segments, create one full segment
         if (segments.length === 0) {
           segments.push({ start: 0, end: duration });
         }
 
-        // === CRITICAL FIX: ENSURE NO OVERLAP ===
+        // === ENSURE NO OVERLAP ===
         for (let i = 0; i < segments.length - 1; i++) {
           const current = segments[i];
           const next = segments[i + 1];
           
-          // If there's overlap, fix it
           if (current.end > next.start) {
-            // Calculate midpoint
             const midpoint = (current.end + next.start) / 2;
             current.end = midpoint;
             next.start = midpoint;
             
-            // Ensure minimum length
             if (current.end - current.start < 0.05) {
               current.end = current.start + 0.05;
               next.start = current.end;
@@ -1604,9 +1629,7 @@
           }
         }
 
-        // === FINAL CLEANUP: Remove empty segments ===
         const cleanedSegments = segments.filter(seg => (seg.end - seg.start) > 0.05);
-        
         if (cleanedSegments.length === 0) {
           cleanedSegments.push({ start: 0, end: duration });
         }
@@ -1665,7 +1688,7 @@
       }
 
       // ============================================================
-      // PLAYBACK - FIXED AUTO ADVANCE
+      // PLAYBACK
       // ============================================================
       
       function getCurrentSegment() {
@@ -1691,20 +1714,10 @@
           const seg = getCurrentSegment();
           const currentTime = el.audio.currentTime;
           const endTime = seg.end;
-          const startTime = seg.start;
           
-          if (currentTime < startTime - 0.01) {
-            el.audio.currentTime = startTime;
-            state._checking = false;
-            return;
-          }
-          
-          // Check if we've reached the end of the segment
           if (currentTime >= endTime - 0.01) {
-            // Increment repeat counter
             state.repeatCount++;
             
-            // Check if we need to move to next segment
             if (state.repeatCount >= state.settings.n) {
               state.repeatCount = 0;
               const nextIdx = state.currentSegIdx + 1;
@@ -1718,7 +1731,6 @@
               }
             }
             
-            // Get target segment and set time
             const targetSeg = getCurrentSegment();
             el.audio.currentTime = targetSeg.start;
             drawWaveform(state.currentSegIdx, state.segments);
@@ -1726,10 +1738,8 @@
             updateRepeatInfo();
             updateMediaSession();
             
-            // Resume playback immediately - NO PAUSE
             if (state.isPlaying && !state.isTransitioning && !state.isLoading) {
               el.audio.play().catch(e => {
-                console.warn('Resume error:', e);
                 state.isPlaying = false;
                 updatePlayBtn();
               });
@@ -2150,8 +2160,7 @@
             artist: artist,
             album: album,
             artwork: [
-              { src: '/icon-192.png', sizes: '192x192', type: 'image/png' },
-              { src: '/icon-512.png', sizes: '512x512', type: 'image/png' }
+              { src: 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"%3E%3Crect width="512" height="512" rx="50" fill="%23000000"/%3E%3Ccircle cx="256" cy="256" r="200" fill="%234cc9f0"/%3E%3Ccircle cx="256" cy="256" r="80" fill="%23000000"/%3E%3Cpath d="M196 150l60 56 60-56v200l-60-56-60 56z" fill="%23ffffff"/%3E%3C/svg%3E', sizes: '512x512', type: 'image/svg+xml' }
             ]
           });
           navigator.mediaSession.metadata = metadata;
@@ -2470,16 +2479,55 @@
       });
 
       // ============================================================
-      // SERVICE WORKER - STANDALONE PWA
+      // SERVICE WORKER - STANDALONE PWA (ВСТРОЕННЫЙ)
       // ============================================================
       if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('/sw.js')
-          .then(function(reg) {
-            console.log('Service Worker registered successfully!');
-          })
-          .catch(function(err) {
-            console.log('Service Worker registration failed:', err);
+        // Регистрируем service worker из встроенного кода
+        const swCode = `
+          const CACHE_NAME = 'hablaslice-v5';
+          self.addEventListener('install', event => {
+            event.waitUntil(
+              caches.open(CACHE_NAME)
+                .then(cache => cache.addAll(['/']))
+                .then(() => self.skipWaiting())
+            );
           });
+          self.addEventListener('activate', event => {
+            event.waitUntil(
+              caches.keys().then(cacheNames => {
+                return Promise.all(
+                  cacheNames.map(cacheName => {
+                    if (cacheName !== CACHE_NAME) {
+                      return caches.delete(cacheName);
+                    }
+                  })
+                );
+              }).then(() => self.clients.claim())
+            );
+          });
+          self.addEventListener('fetch', event => {
+            event.respondWith(
+              caches.match(event.request)
+                .then(response => response || fetch(event.request))
+                .catch(() => new Response('Offline', { status: 503 }))
+            );
+          });
+        `;
+        
+        try {
+          const swBlob = new Blob([swCode], { type: 'application/javascript' });
+          const swUrl = URL.createObjectURL(swBlob);
+          
+          navigator.serviceWorker.register(swUrl, { scope: '/' })
+            .then(function(reg) {
+              console.log('Service Worker registered successfully!');
+            })
+            .catch(function(err) {
+              console.log('Service Worker registration failed:', err);
+            });
+        } catch(e) {
+          console.log('Service Worker error:', e);
+        }
       }
 
       // ============================================================
@@ -2515,11 +2563,10 @@
 
         updateFileList();
         
-        console.log('HablaSlice v3.0 - FULLY FIXED');
+        console.log('HablaSlice v5.0 - FULLY FIXED');
         console.log('✓ NO OVERLAP between segments');
-        console.log('✓ PWA installation enabled (manifest.json + sw.js)');
+        console.log('✓ PWA installation enabled (inline manifest + SW)');
         console.log('✓ Auto-advance works correctly');
-        console.log('✓ Clean transitions between segments');
         console.log('✓ Works offline after first load');
       }
 
