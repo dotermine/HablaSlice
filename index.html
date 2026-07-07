@@ -7,8 +7,9 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <title>HablaSlice</title>
-  <link rel="icon" href="/favicon.png" type="image/png">
-  <link rel="manifest" href="data:application/manifest+json,{%22name%22:%22HablaSlice%20Pro%22,%22short_name%22:%22HablaSlice%22,%22start_url%22:%22.%22,%22display%22:%22standalone%22,%22background_color%22:%22#000000%22,%22theme_color%22:%22#000000%22,%22icons%22:[{%22src%22:%22data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'><rect width='192' height='192' fill='%23000'/><text x='96' y='135' font-size='100' text-anchor='middle' fill='%234cc9f0' font-weight='bold'>HS</text></svg>%22,%22sizes%22192x192%22,%22type%22:%22image/svg+xml%22}]}">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%234cc9f0'/><text x='50' y='72' font-size='60' text-anchor='middle' fill='%23000' font-weight='bold'>HS</text></svg>">
+  <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%234cc9f0'/><text x='50' y='72' font-size='60' text-anchor='middle' fill='%23000' font-weight='bold'>HS</text></svg>">
+  <link rel="manifest" href="data:application/manifest+json,{%22name%22:%22HablaSlice%22,%22short_name%22:%22HablaSlice%22,%22start_url%22:%22.%22,%22display%22:%22standalone%22,%22background_color%22:%22#000000%22,%22theme_color%22:%22#4cc9f0%22,%22icons%22:[{%22src%22:%22data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'><rect width='192' height='192' rx='30' fill='%234cc9f0'/><text x='96' y='132' font-size='100' text-anchor='middle' fill='%23000' font-weight='bold'>HS</text></svg>%22,%22sizes%22192x192%22,%22type%22:%22image/svg+xml%22}]}">
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
     :root {
@@ -146,25 +147,33 @@
     .repeat-chip b { color: var(--md-sys-color-primary); }
     .waveform-container {
       width: 100%;
-      height: 110px;
+      height: 120px;
       background: var(--md-sys-color-surface-dim);
       border-radius: 16px;
       overflow: hidden;
       margin: 4px 0;
       position: relative;
     }
-    .waveform-container canvas { width: 100%; height: 100%; display: block; }
+    .waveform-container canvas { 
+      width: 100%; 
+      height: 100%; 
+      display: block;
+      position: absolute;
+      top: 0;
+      left: 0;
+    }
     .waveform-progress {
       position: absolute;
       top: 0;
       left: 0;
       height: 100%;
       width: 0%;
-      background: rgba(76, 201, 240, 0.10);
+      background: rgba(76, 201, 240, 0.08);
       pointer-events: none;
       border-radius: 16px;
       transition: width 0.1s linear;
-      border-right: 2px solid rgba(76, 201, 240, 0.5);
+      border-right: 2px solid rgba(76, 201, 240, 0.3);
+      z-index: 2;
     }
     .playlist {
       width: 100%;
@@ -542,6 +551,15 @@
       </div>
 
       <div class="setting">
+        <div class="label-row"><label id="padLabel">Padding (sec)</label><span class="value" id="padVal">0.50</span></div>
+        <div class="slider-row">
+          <button class="step-btn" data-target="setPad" data-dir="-1">−</button>
+          <input type="range" id="setPad" min="0.1" max="1" step="0.05" value="0.5">
+          <button class="step-btn" data-target="setPad" data-dir="1">+</button>
+        </div>
+      </div>
+
+      <div class="setting">
         <div class="label-row"><label id="afterLabel">After file ends</label></div>
         <select id="setAfter">
           <option value="loop">Loop file</option>
@@ -558,7 +576,7 @@
     </div>
   </div>
 
-  <audio id="audio-engine" preload="auto"></audio>
+  <audio id="audio-engine" preload="none"></audio>
 
   <script>
     (function() {
@@ -576,7 +594,7 @@
           segOf: 'Segment {idx} of {total}',
           settingsTitle: '⚙ Settings', themeLabel: 'Theme', langLabel: 'Language',
           repeatsLabel: 'Repeats (N)', speedLabel: 'Speed', dbLabel: 'Silence (dB)',
-          durLabel: 'Min silence (sec)', afterLabel: 'After file ends',
+          durLabel: 'Min silence (sec)', padLabel: 'Padding (sec)', afterLabel: 'After file ends',
           emptyMsg: '📂 Open a file or folder to start',
           cancel: 'Cancel', apply: 'Apply', reset: 'Reset',
           dark: 'Dark', light: 'Light',
@@ -591,7 +609,7 @@
           segOf: 'Сегмент {idx} из {total}',
           settingsTitle: '⚙ Настройки', themeLabel: 'Тема', langLabel: 'Язык',
           repeatsLabel: 'Повторов (N)', speedLabel: 'Скорость', dbLabel: 'Тишина (dB)',
-          durLabel: 'Мин. тишина (сек)', afterLabel: 'После файла',
+          durLabel: 'Мин. тишина (сек)', padLabel: 'Отступы (сек)', afterLabel: 'После файла',
           emptyMsg: '📂 Откройте файл или папку для начала',
           cancel: 'Отмена', apply: 'Применить', reset: 'Сброс',
           dark: 'Тёмная', light: 'Светлая',
@@ -603,7 +621,7 @@
       // ============================================================
       // STATE
       // ============================================================
-      const DEFAULTS = { n: 3, db: -32, dur: 0.3, after: 'next', theme: 'dark', lang: 'en', speed: 1.0 };
+      const DEFAULTS = { n: 3, db: -32, dur: 0.3, pad: 0.5, after: 'next', theme: 'dark', lang: 'en', speed: 1.0 };
       const state = {
         files: [],
         currentFileIdx: 0,
@@ -619,6 +637,7 @@
           n: DEFAULTS.n,
           db: DEFAULTS.db,
           dur: DEFAULTS.dur,
+          pad: DEFAULTS.pad,
           after: DEFAULTS.after,
           theme: DEFAULTS.theme,
           lang: DEFAULTS.lang
@@ -629,7 +648,9 @@
         audioData: null,
         sampleRate: 44100,
         isTransitioning: false,
-        loadPromise: null
+        loadPromise: null,
+        currentFileKey: null,
+        preloadNext: false
       };
       let timeLoopActive = false;
 
@@ -643,10 +664,10 @@
         playlist: $('playlist'), emptyMsg: $('emptyMsg'), btnOpen: $('btnOpen'), btnPrev: $('btnPrev'), btnPlay: $('btnPlay'),
         btnNext: $('btnNext'), btnLoop: $('btnLoop'), btnSettings: $('btnSettings'), fileInput: $('fileInput'), folderInput: $('folderInput'),
         settingsModal: $('settingsModal'), btnCancel: $('btnCancel'), btnApply: $('btnApply'), btnReset: $('btnReset'),
-        setN: $('setN'), setDb: $('setDb'), setDur: $('setDur'), setSpeed: $('setSpeed'), setAfter: $('setAfter'), setLang: $('setLang'),
-        nVal: $('nVal'), dbVal: $('dbVal'), durVal: $('durVal'), speedVal: $('speedVal'), waveCanvas: $('waveCanvas'), waveProgress: $('waveProgress'),
+        setN: $('setN'), setDb: $('setDb'), setDur: $('setDur'), setPad: $('setPad'), setSpeed: $('setSpeed'), setAfter: $('setAfter'), setLang: $('setLang'),
+        nVal: $('nVal'), dbVal: $('dbVal'), durVal: $('durVal'), padVal: $('padVal'), speedVal: $('speedVal'), waveCanvas: $('waveCanvas'), waveProgress: $('waveProgress'),
         themeDark: $('themeDark'), themeLight: $('themeLight'), settingsTitle: $('settingsTitle'), themeLabel: $('themeLabel'), langLabel: $('langLabel'),
-        repeatsLabel: $('repeatsLabel'), speedLabel: $('speedLabel'), dbLabel: $('dbLabel'), durLabel: $('durLabel'), afterLabel: $('afterLabel'),
+        repeatsLabel: $('repeatsLabel'), speedLabel: $('speedLabel'), dbLabel: $('dbLabel'), durLabel: $('durLabel'), padLabel: $('padLabel'), afterLabel: $('afterLabel'),
         popover: $('popover'), popFile: $('popFile'), popFolder: $('popFolder'), audio: $('audio-engine'), fileCounter: $('fileCounter')
       };
 
@@ -670,6 +691,7 @@
         el.speedLabel.textContent = t('speedLabel');
         el.dbLabel.textContent = t('dbLabel');
         el.durLabel.textContent = t('durLabel');
+        el.padLabel.textContent = t('padLabel');
         el.afterLabel.textContent = t('afterLabel');
         el.emptyMsg.textContent = t('emptyMsg');
         el.themeDark.textContent = '🌙 ' + t('dark');
@@ -701,9 +723,10 @@
       function applySettingsToUI() {
         document.body.classList.toggle('light', state.settings.theme === 'light');
         el.setN.value = state.settings.n; el.setDb.value = state.settings.db; el.setDur.value = state.settings.dur;
-        el.setAfter.value = state.settings.after; el.setLang.value = state.settings.lang; el.setSpeed.value = state.speed;
+        el.setPad.value = state.settings.pad; el.setAfter.value = state.settings.after; el.setLang.value = state.settings.lang; el.setSpeed.value = state.speed;
         el.nVal.textContent = state.settings.n; el.dbVal.textContent = state.settings.db;
         el.durVal.textContent = parseFloat(state.settings.dur).toFixed(1);
+        el.padVal.textContent = parseFloat(state.settings.pad).toFixed(2);
         el.speedVal.textContent = state.speed.toFixed(2); el.repeatTotal.textContent = state.settings.n;
         el.themeDark.classList.toggle('active', state.settings.theme === 'dark');
         el.themeLight.classList.toggle('active', state.settings.theme === 'light');
@@ -713,9 +736,12 @@
       }
       function resetToDefaults() {
         state.settings.n = DEFAULTS.n; state.settings.db = DEFAULTS.db; state.settings.dur = DEFAULTS.dur;
-        state.settings.after = DEFAULTS.after; state.settings.theme = DEFAULTS.theme; state.settings.lang = DEFAULTS.lang;
+        state.settings.pad = DEFAULTS.pad; state.settings.after = DEFAULTS.after; state.settings.theme = DEFAULTS.theme; state.settings.lang = DEFAULTS.lang;
         state.speed = DEFAULTS.speed;
         saveSettings(); applySettingsToUI(); updateRepeatInfo();
+        if (state.files.length > 0 && state.currentFileIdx < state.files.length) {
+          reanalyzeCurrentFile();
+        }
       }
 
       // ============================================================
@@ -780,7 +806,7 @@
       }
 
       // ============================================================
-      // КРАСИВАЯ ЗАКРАШЕННАЯ ОСЦИЛЛОГРАММА
+      // МОНОЛИТНАЯ ЗАЛИТАЯ ОСЦИЛЛОГРАММА
       // ============================================================
       function drawOscillogram(segIdx, segments) {
         if (!state.audioData || segments.length === 0) return;
@@ -802,12 +828,11 @@
         const w = rect.width;
         const h = rect.height;
         const step = Math.max(1, Math.floor(data.length / w));
-        const amp = h / 2.4;
+        const amp = h / 1.8;
         ctx.clearRect(0, 0, w, h);
 
         const color = getComputedStyle(document.documentElement).getPropertyValue('--md-sys-color-primary').trim() || '#4cc9f0';
         
-        // Собираем точки для верхней и нижней половин
         const topPoints = [];
         const bottomPoints = [];
         for (let i = 0; i < w; i++) {
@@ -822,49 +847,39 @@
           bottomPoints.push((h / 2) + val * amp);
         }
 
-        // Заливка верхней половины
         ctx.beginPath();
         ctx.moveTo(0, h/2);
         for (let i = 0; i < topPoints.length; i++) {
           ctx.lineTo(i, topPoints[i]);
         }
-        ctx.lineTo(w, h/2);
-        ctx.closePath();
-        const grad1 = ctx.createLinearGradient(0, 0, 0, h/2);
-        grad1.addColorStop(0, color + 'dd');
-        grad1.addColorStop(1, color + '22');
-        ctx.fillStyle = grad1;
-        ctx.fill();
-
-        // Заливка нижней половины
-        ctx.beginPath();
-        ctx.moveTo(0, h/2);
-        for (let i = 0; i < bottomPoints.length; i++) {
+        for (let i = bottomPoints.length - 1; i >= 0; i--) {
           ctx.lineTo(i, bottomPoints[i]);
         }
-        ctx.lineTo(w, h/2);
         ctx.closePath();
-        const grad2 = ctx.createLinearGradient(0, h/2, 0, h);
-        grad2.addColorStop(0, color + '22');
-        grad2.addColorStop(1, color + 'dd');
-        ctx.fillStyle = grad2;
+        
+        const grad = ctx.createRadialGradient(w/2, h/2, 0, w/2, h/2, Math.max(w, h)/2);
+        grad.addColorStop(0, color + 'ff');
+        grad.addColorStop(0.3, color + 'cc');
+        grad.addColorStop(0.6, color + '88');
+        grad.addColorStop(0.8, color + '55');
+        grad.addColorStop(1, color + '22');
+        ctx.fillStyle = grad;
         ctx.fill();
-
-        // Контур верхней волны
+        
         ctx.beginPath();
         ctx.strokeStyle = color;
-        ctx.lineWidth = 2.5;
+        ctx.lineWidth = 1;
         ctx.lineJoin = 'round';
         ctx.lineCap = 'round';
-        ctx.shadowColor = color + '66';
-        ctx.shadowBlur = 12;
+        ctx.shadowColor = color + '33';
+        ctx.shadowBlur = 4;
+        
         for (let i = 0; i < topPoints.length; i++) {
           if (i === 0) ctx.moveTo(i, topPoints[i]);
           else ctx.lineTo(i, topPoints[i]);
         }
         ctx.stroke();
-
-        // Контур нижней волны
+        
         ctx.beginPath();
         for (let i = 0; i < bottomPoints.length; i++) {
           if (i === 0) ctx.moveTo(i, bottomPoints[i]);
@@ -872,45 +887,25 @@
         }
         ctx.stroke();
         ctx.shadowBlur = 0;
-
-        // Центральная линия
+        
         ctx.beginPath();
-        ctx.strokeStyle = color + '44';
-        ctx.lineWidth = 1;
-        ctx.setLineDash([4, 6]);
+        ctx.strokeStyle = color + '33';
+        ctx.lineWidth = 0.5;
+        ctx.setLineDash([3, 5]);
         ctx.moveTo(0, h/2);
         ctx.lineTo(w, h/2);
         ctx.stroke();
         ctx.setLineDash([]);
-
-        // Светящиеся пики
-        ctx.beginPath();
-        ctx.strokeStyle = color + '22';
-        ctx.lineWidth = 0.8;
-        for (let i = 0; i < w; i += 2) {
-          const idx = Math.floor(i * step);
-          let sum = 0;
-          const limit = Math.min(idx + step, data.length);
-          for (let j = idx; j < limit; j++) {
-            sum += Math.abs(data[j]);
-          }
-          const val = sum / step;
-          const y1 = (h / 2) - val * amp * 1.2;
-          const y2 = (h / 2) + val * amp * 1.2;
-          ctx.moveTo(i, y1);
-          ctx.lineTo(i, y2);
-        }
-        ctx.stroke();
       }
 
       // ============================================================
-      // УЛУЧШЕННЫЙ АЛГОРИТМ НАРЕЗКИ
+      // БЫСТРЫЙ АЛГОРИТМ АНАЛИЗА
       // ============================================================
       function getFileKey(file) { return file.name + '_' + file.size + '_' + file.lastModified; }
 
       async function analyzeFile(file) {
         const key = getFileKey(file);
-        if (state.cache[key]) {
+        if (state.cache[key] && state.cache[key + '_settings'] === JSON.stringify(state.settings)) {
           state.audioData = state.cache[key + '_data'] || null;
           state.sampleRate = state.cache[key + '_rate'] || 44100;
           return state.cache[key];
@@ -932,7 +927,7 @@
 
         setProgress(20, t('statusAnalyzing')); await yieldUI();
 
-        const { db, dur } = state.settings;
+        const { db, dur, pad } = state.settings;
         const threshold = Math.pow(10, db / 20);
         const channelData = audioBuffer.getChannelData(0);
         const sampleRate = audioBuffer.sampleRate;
@@ -943,8 +938,10 @@
         state.sampleRate = sampleRate;
         state.cache[key + '_data'] = channelData;
         state.cache[key + '_rate'] = sampleRate;
+        state.cache[key + '_settings'] = JSON.stringify(state.settings);
         
-        const windowSize = Math.floor(sampleRate * 0.02);
+        // Оптимизированный анализ с увеличенным окном для скорости
+        const windowSize = Math.floor(sampleRate * 0.03);
         const hopSize = Math.floor(windowSize / 2);
         const totalWindows = Math.floor((totalSamples - windowSize) / hopSize) + 1;
         
@@ -988,7 +985,7 @@
                 }
                 const startTime = (silenceStartIdx * hopSize) / sampleRate;
                 const endTime = (exitIdx * hopSize) / sampleRate;
-                silenceRegions.push({ start: Math.max(0, startTime - 0.02), end: Math.min(duration, endTime + 0.02) });
+                silenceRegions.push({ start: Math.max(0, startTime), end: Math.min(duration, endTime) });
               }
               inSilence = false;
               silenceSamplesCount = 0;
@@ -1000,7 +997,7 @@
           const silenceDuration = (silenceSamplesCount * hopSize) / sampleRate;
           if (silenceDuration >= dur) {
             const startTime = (silenceStartIdx * hopSize) / sampleRate;
-            silenceRegions.push({ start: Math.max(0, startTime - 0.02), end: duration });
+            silenceRegions.push({ start: Math.max(0, startTime), end: duration });
           }
         }
 
@@ -1024,16 +1021,21 @@
         let prevEnd = 0;
         
         for (const region of mergedRegions) {
-          const segmentStart = prevEnd;
-          const segmentEnd = region.start;
+          let segmentStart = prevEnd;
+          let segmentEnd = region.start;
           if (segmentEnd - segmentStart > 0.2) {
-            segments.push({ start: segmentStart, end: segmentEnd });
+            // Padding применяется ко ВСЕМ сегментам
+            const paddedStart = Math.max(0, segmentStart - pad);
+            const paddedEnd = Math.min(duration, segmentEnd + pad);
+            segments.push({ start: paddedStart, end: paddedEnd });
           }
           prevEnd = region.end;
         }
         
         if (duration - prevEnd > 0.2) {
-          segments.push({ start: prevEnd, end: duration });
+          const paddedStart = Math.max(0, prevEnd - pad);
+          const paddedEnd = Math.min(duration, duration + pad);
+          segments.push({ start: paddedStart, end: paddedEnd });
         }
 
         if (segments.length === 0) {
@@ -1046,7 +1048,51 @@
       }
 
       // ============================================================
-      // PLAYBACK
+      // ПЕРЕРАЗБИЕНИЕ
+      // ============================================================
+      async function reanalyzeCurrentFile() {
+        if (state.files.length === 0 || state.currentFileIdx >= state.files.length) return;
+        const file = state.files[state.currentFileIdx];
+        const key = getFileKey(file);
+        delete state.cache[key];
+        delete state.cache[key + '_data'];
+        delete state.cache[key + '_rate'];
+        delete state.cache[key + '_settings'];
+        
+        const wasPlaying = state.isPlaying;
+        state.isPlaying = false;
+        updatePlayBtn();
+        
+        state.segments = await analyzeFile(file);
+        state.currentSegIdx = 0;
+        state.repeatCount = 0;
+        
+        if (state.segments.length > 0) {
+          const firstSeg = getCurrentSegment();
+          el.audio.currentTime = firstSeg.start;
+          drawOscillogram(0, state.segments);
+        }
+        
+        updateSegInfo();
+        updateRepeatInfo();
+        updateFileList();
+        updateStatusText();
+        
+        if (wasPlaying && state.segments.length > 0) {
+          try {
+            await el.audio.play();
+            state.isPlaying = true;
+            updatePlayBtn();
+          } catch(e) {
+            state.isPlaying = false;
+          }
+        }
+        updateMediaSession();
+        savePlaybackState();
+      }
+
+      // ============================================================
+      // PLAYBACK С ПЛАВНЫМ СТАРТОМ
       // ============================================================
       
       function getCurrentSegment() {
@@ -1134,7 +1180,7 @@
       }
 
       // ============================================================
-      // LOAD FILE - СТАБИЛЬНОЕ ПЕРЕКЛЮЧЕНИЕ
+      // LOAD FILE - БЫСТРАЯ ЗАГРУЗКА
       // ============================================================
       async function loadFile(idx) {
         if (idx < 0 || idx >= state.files.length) return;
@@ -1154,7 +1200,7 @@
 
             const wasPlaying = state.isPlaying;
             
-            // Безопасная остановка старого аудио
+            // Быстрая остановка
             try {
               el.audio.pause();
               el.audio.src = '';
@@ -1176,6 +1222,7 @@
             updateSegInfo();
             updateRepeatInfo();
 
+            // Анализ с прогрессом
             state.segments = await analyzeFile(file);
             if (state.segments.length === 0) { 
               el.statusText.textContent = 'No segments'; 
@@ -1187,6 +1234,7 @@
             el.audio.src = state.originalFileUrl;
             el.audio.loop = false;
             el.audio.playbackRate = state.speed;
+            el.audio.preload = 'metadata';
             
             state.currentSegIdx = 0;
             state.repeatCount = 0;
@@ -1202,6 +1250,8 @@
             
             if (wasPlaying) {
               try {
+                // Небольшая задержка для стабильности
+                await new Promise(r => setTimeout(r, 50));
                 await el.audio.play();
                 state.isPlaying = true;
               } catch(e) {
@@ -1335,13 +1385,38 @@
         }
       }
 
+      function prevFile() {
+        if (state.isTransitioning || state.files.length <= 1) return;
+        const prevIdx = state.currentFileIdx - 1;
+        if (prevIdx >= 0) {
+          loadFile(prevIdx);
+        }
+      }
+
+      function nextFile() {
+        if (state.isTransitioning || state.files.length <= 1) return;
+        const nextIdx = state.currentFileIdx + 1;
+        if (nextIdx < state.files.length) {
+          loadFile(nextIdx);
+        }
+      }
+
       // ============================================================
-      // MEDIA SESSION API - ПОЛНЫЙ НАБОР КНОПОК
+      // MEDIA SESSION API - 5 КНОПОК
       // ============================================================
       function setupMediaSession() {
         if (!('mediaSession' in navigator)) return;
         
         updateMediaSession();
+        
+        try {
+          navigator.mediaSession.setActionHandler('play', null);
+          navigator.mediaSession.setActionHandler('pause', null);
+          navigator.mediaSession.setActionHandler('previoustrack', null);
+          navigator.mediaSession.setActionHandler('nexttrack', null);
+          navigator.mediaSession.setActionHandler('seekbackward', null);
+          navigator.mediaSession.setActionHandler('seekforward', null);
+        } catch(e) {}
         
         const actions = {
           'play': () => { 
@@ -1364,11 +1439,7 @@
               const prevIdx = state.currentFileIdx - 1;
               if (prevIdx >= 0) {
                 loadFile(prevIdx);
-              } else {
-                loadFile(state.files.length - 1);
               }
-            } else {
-              prevSegment();
             }
             setTimeout(() => updateMediaSession(), 300);
           },
@@ -1378,11 +1449,7 @@
               const nextIdx = state.currentFileIdx + 1;
               if (nextIdx < state.files.length) {
                 loadFile(nextIdx);
-              } else {
-                loadFile(0);
               }
-            } else {
-              nextSegment();
             }
             setTimeout(() => updateMediaSession(), 300);
           },
@@ -1402,11 +1469,15 @@
           }
         };
         
-        for (const [action, handler] of Object.entries(actions)) {
-          try { navigator.mediaSession.setActionHandler(action, handler); } catch(e) {}
-        }
+        try { navigator.mediaSession.setActionHandler('play', actions.play); } catch(e) {}
+        try { navigator.mediaSession.setActionHandler('pause', actions.pause); } catch(e) {}
+        try { navigator.mediaSession.setActionHandler('previoustrack', actions.previoustrack); } catch(e) {}
+        try { navigator.mediaSession.setActionHandler('nexttrack', actions.nexttrack); } catch(e) {}
+        try { navigator.mediaSession.setActionHandler('seekbackward', actions.seekbackward); } catch(e) {}
+        try { navigator.mediaSession.setActionHandler('seekforward', actions.seekforward); } catch(e) {}
         
         state.mediaSessionInitialized = true;
+        console.log('Media Session: 5 кнопок установлено');
       }
 
       function updateMediaSession() {
@@ -1432,7 +1503,7 @@
             artist: artist,
             album: album,
             artwork: [
-              { src: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" fill="%234cc9f0"/><text x="50" y="68" font-size="48" text-anchor="middle" fill="white" font-weight="bold">HS</text></svg>', sizes: '100x100', type: 'image/svg+xml' }
+              { src: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" rx="20" fill="%234cc9f0"/><text x="50" y="72" font-size="60" text-anchor="middle" fill="white" font-weight="bold">HS</text></svg>', sizes: '100x100', type: 'image/svg+xml' }
             ]
           });
           navigator.mediaSession.metadata = metadata;
@@ -1613,10 +1684,11 @@
       // ============================================================
       el.btnSettings.addEventListener('click', () => {
         el.setN.value = state.settings.n; el.setDb.value = state.settings.db;
-        el.setDur.value = state.settings.dur; el.setSpeed.value = state.speed;
-        el.setAfter.value = state.settings.after; el.setLang.value = state.settings.lang;
+        el.setDur.value = state.settings.dur; el.setPad.value = state.settings.pad;
+        el.setSpeed.value = state.speed; el.setAfter.value = state.settings.after; el.setLang.value = state.settings.lang;
         el.nVal.textContent = state.settings.n; el.dbVal.textContent = state.settings.db;
         el.durVal.textContent = parseFloat(state.settings.dur).toFixed(1);
+        el.padVal.textContent = parseFloat(state.settings.pad).toFixed(2);
         el.speedVal.textContent = state.speed.toFixed(2);
         el.settingsModal.classList.add('active');
       });
@@ -1624,27 +1696,41 @@
       el.btnCancel.addEventListener('click', () => el.settingsModal.classList.remove('active'));
       el.btnReset.addEventListener('click', resetToDefaults);
 
-      el.btnApply.addEventListener('click', () => {
+      el.btnApply.addEventListener('click', async () => {
+        const oldPad = state.settings.pad;
+        const oldDb = state.settings.db;
+        const oldDur = state.settings.dur;
+        
         state.settings.n = parseInt(el.setN.value);
         state.settings.db = parseInt(el.setDb.value);
         state.settings.dur = parseFloat(el.setDur.value);
+        state.settings.pad = parseFloat(el.setPad.value);
         state.settings.after = el.setAfter.value;
         state.settings.lang = el.setLang.value;
         state.speed = parseFloat(el.setSpeed.value);
         el.audio.playbackRate = state.speed;
+        
         saveSettings();
         applySettingsToUI();
         el.settingsModal.classList.remove('active');
         updateRepeatInfo();
         savePlaybackState();
-        if (state.segments.length > 0) {
-          drawOscillogram(state.currentSegIdx, state.segments);
+        
+        if (oldPad !== state.settings.pad || oldDb !== state.settings.db || oldDur !== state.settings.dur) {
+          if (state.files.length > 0 && state.currentFileIdx < state.files.length) {
+            await reanalyzeCurrentFile();
+          }
+        } else {
+          if (state.segments.length > 0) {
+            drawOscillogram(state.currentSegIdx, state.segments);
+          }
         }
       });
 
       el.setN.addEventListener('input', () => el.nVal.textContent = el.setN.value);
       el.setDb.addEventListener('input', () => el.dbVal.textContent = el.setDb.value);
       el.setDur.addEventListener('input', () => el.durVal.textContent = parseFloat(el.setDur.value).toFixed(1));
+      el.setPad.addEventListener('input', () => el.padVal.textContent = parseFloat(el.setPad.value).toFixed(2));
       el.setSpeed.addEventListener('input', () => el.speedVal.textContent = parseFloat(el.setSpeed.value).toFixed(2));
 
       document.querySelectorAll('.step-btn').forEach(btn => {
@@ -1658,11 +1744,11 @@
           val = Math.max(parseFloat(input.min), Math.min(parseFloat(input.max), val));
           input.value = val;
           input.dispatchEvent(new Event('input'));
-          const valMap = { setN: 'nVal', setDb: 'dbVal', setDur: 'durVal', setSpeed: 'speedVal' };
+          const valMap = { setN: 'nVal', setDb: 'dbVal', setDur: 'durVal', setPad: 'padVal', setSpeed: 'speedVal' };
           const valDisplay = document.getElementById(valMap[targetId]);
           if (valDisplay) {
             if (targetId === 'setSpeed') valDisplay.textContent = val.toFixed(2);
-            else if (targetId === 'setDur') valDisplay.textContent = val.toFixed(1);
+            else if (targetId === 'setDur' || targetId === 'setPad') valDisplay.textContent = val.toFixed(2);
             else valDisplay.textContent = val;
           }
         });
@@ -1687,7 +1773,7 @@
       // ============================================================
       if ('serviceWorker' in navigator) {
         const swCode = `
-          const CACHE = 'langplayer-v20';
+          const CACHE = 'langplayer-v24';
           self.addEventListener('install', e => self.skipWaiting());
           self.addEventListener('activate', e => self.clients.claim());
           self.addEventListener('fetch', e => {
@@ -1734,10 +1820,13 @@
 
         updateFileList();
         
-        console.log('HablaSlice готов!');
-        console.log('📊 Красивая закрашенная осциллограмма с градиентом');
-        console.log('📱 Полный набор кнопок на заблокированном экране');
-        console.log('🔄 Абсолютно стабильное переключение треков');
+        console.log('HablaSlice v9 готов!');
+        console.log('📊 Монолитная залитая осциллограмма');
+        console.log('📱 5 кнопок на заблокированном экране');
+        console.log('🔇 Padding 0.1-1 сек (по умолчанию 0.5)');
+        console.log('⚡ Ускоренная загрузка и обработка');
+        console.log('🔄 Плавный старт без заиканий');
+        console.log('🎯 Иконка добавлена');
       }
 
       if (document.readyState === 'complete') {
