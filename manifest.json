@@ -1,7 +1,7 @@
 {
   "name": "HablaSlice",
   "short_name": "HablaSlice",
-  "description": "Audio segment player",
+  "description": "Audio segment player with silence detection",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#000000",
