@@ -3,6 +3,7 @@
   "short_name": "HablaSlice",
   "description": "Audio segment player with silence detection for language learning",
   "start_url": "./",
+  "scope": "./",
   "display": "standalone",
   "orientation": "portrait",
   "background_color": "#000000",
