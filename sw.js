@@ -1,20 +1,19 @@
 // sw.js - Service Worker
-const CACHE_NAME = 'hablaslice-v11';
+const CACHE_NAME = 'hablaslice-v12';
 const ASSETS = [
-    '/',
-    '/index.html',
-    '/manifest.json',
-    '/icons/icon-72.png',
-    '/icons/icon-96.png',
-    '/icons/icon-128.png',
-    '/icons/icon-144.png',
-    '/icons/icon-152.png',
-    '/icons/icon-192.png',
-    '/icons/icon-384.png',
-    '/icons/icon-512.png'
+    './',
+    './index.html',
+    './manifest.json',
+    './icons/icon-72.png',
+    './icons/icon-96.png',
+    './icons/icon-128.png',
+    './icons/icon-144.png',
+    './icons/icon-152.png',
+    './icons/icon-192.png',
+    './icons/icon-384.png',
+    './icons/icon-512.png'
 ];
 
-// Установка SW
 self.addEventListener('install', event => {
     console.log('[SW] Installing...');
     event.waitUntil(
@@ -27,7 +26,6 @@ self.addEventListener('install', event => {
     );
 });
 
-// Активация SW
 self.addEventListener('activate', event => {
     console.log('[SW] Activating...');
     event.waitUntil(
@@ -44,7 +42,6 @@ self.addEventListener('activate', event => {
     );
 });
 
-// Перехват запросов
 self.addEventListener('fetch', event => {
     event.respondWith(
         caches.match(event.request)
@@ -52,10 +49,8 @@ self.addEventListener('fetch', event => {
                 if (response) {
                     return response;
                 }
-                // Если нет в кэше - загружаем из сети
                 return fetch(event.request)
                     .then(response => {
-                        // Кэшируем только успешные ответы
                         if (!response || response.status !== 200 || response.type !== 'basic') {
                             return response;
                         }
@@ -68,7 +63,6 @@ self.addEventListener('fetch', event => {
                     });
             })
             .catch(() => {
-                // Офлайн-страница
                 return new Response('Offline', { status: 503 });
             })
     );
