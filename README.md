@@ -6,9 +6,9 @@ HablaSlice is a progressive web application (PWA) for learning foreign languages
 
 
 <img width="270" height="498" alt="p1" src="https://github.com/user-attachments/assets/011e66a8-4278-42ec-a325-60c73b4820e6" />
-<img width="1075" height="2012" alt="p2" src="https://github.com/user-attachments/assets/cc080cc7-cefa-4b7e-847f-742d2e26f940" />
-<img width="1075" height="2015" alt="p3" src="https://github.com/user-attachments/assets/8dfe3cfe-a54b-4362-a429-985ed9ebcbe4" />
-<img width="963" height="435" alt="p5" src="https://github.com/user-attachments/assets/741f81cc-f760-49f3-beb9-4c738501118b" />
+<img width="270" height="498" alt="p2" src="https://github.com/user-attachments/assets/cc080cc7-cefa-4b7e-847f-742d2e26f940" />
+<img width="270" height="498" alt="p3" src="https://github.com/user-attachments/assets/8dfe3cfe-a54b-4362-a429-985ed9ebcbe4" />
+<img width="270" height="498" alt="p5" src="https://github.com/user-attachments/assets/741f81cc-f760-49f3-beb9-4c738501118b" />
 
 ## Features
 
