@@ -4,7 +4,7 @@
   "description": "Audio segment player with silence detection for language learning",
   "start_url": "./",
   "scope": "./",
-  "display": "standalone",
+  "display": "fullscreen",
   "orientation": "portrait",
   "background_color": "#000000",
   "theme_color": "#000000",
