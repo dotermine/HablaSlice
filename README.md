@@ -18,7 +18,9 @@ The application is available at the link: https://dotermine.github.io/HablaSlice
 - **Persistent state** - Remembers your last session
 
 
-<p align="center"><img width="357" height="657" alt="scr2" src="https://github.com" style="vertical-align: top;" /><img width="357" height="657" alt="scr3" src="https://github.com" style="vertical-align: top;" /><img width="357" height="162" alt="scr1" src="https://github.com" style="vertical-align: top;" /></p>
+<img width="357" height="657" alt="scr2" src="https://github.com" style="vertical-align: top;" /><!--
+--><img width="357" height="657" alt="scr3" src="https://github.com" style="vertical-align: top;" /><!--
+--><img width="357" height="162" alt="scr1" src="https://github.com" style="vertical-align: top;" />
 
 
 ## How It Works
