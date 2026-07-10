@@ -17,19 +17,18 @@ The application is available at the link: https://dotermine.github.io/HablaSlice
 - **Offline capable** - PWA with service worker support
 - **Persistent state** - Remembers your last session
 
-<table border="0" cellpadding="0" cellspacing="0" align="center" style="border: none; border-collapse: collapse; width: 100%; max-width: 1071px; table-layout: fixed;">
-  <tr style="border: none; white-space: nowrap;">
-    <td style="border: none; padding: 0; vertical-align: top; width: 33.33%;">
-      <img src="https://github.com/user-attachments/assets/f2d2a46b-b657-4398-93cb-c042ed5d104f" alt="scr3" style="width: 100%; height: auto; display: block;" />
-    </td>
-    <td style="border: none; padding: 0; vertical-align: top; width: 33.33%;">
-      <img src="https://github.com/user-attachments/assets/aba87401-c549-443e-aae8-1709e6a63f1b" alt="scr2" style="width: 100%; height: auto; display: block;" />
-    </td>
-    <td style="border: none; padding: 0; vertical-align: top; width: 33.33%;">
-      <img src="https://github.com/user-attachments/assets/bffb3ec3-5255-48ab-be42-6b2d3d23089a" alt="scr1" style="width: 100%; height: auto; display: block;" />
-    </td>
-  </tr>
-</table>
+<div align="center" style="display: flex; justify-content: center; align-items: flex-start; width: 100%; max-width: 1071px; margin: 0 auto;">
+  <div style="flex: 1; min-width: 0;">
+    <img src="https://github.com/user-attachments/assets/f2d2a46b-b657-4398-93cb-c042ed5d104f" alt="scr3" style="width: 100%; height: auto; display: block; vertical-align: top;" />
+  </div>
+  <div style="flex: 1; min-width: 0;">
+    <img src="https://github.com/user-attachments/assets/aba87401-c549-443e-aae8-1709e6a63f1b" alt="scr2" style="width: 100%; height: auto; display: block; vertical-align: top;" />
+  </div>
+  <div style="flex: 1; min-width: 0;">
+    <img src="https://github.com/user-attachments/assets/bffb3ec3-5255-48ab-be42-6b2d3d23089a" alt="scr1" style="width: 100%; height: auto; display: block; vertical-align: top;" />
+  </div>
+</div>
+
 
 
 
