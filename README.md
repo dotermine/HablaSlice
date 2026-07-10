@@ -2,6 +2,8 @@
 
 A Progressive Web App (PWA) for language learning that slices audio files into segments based on silence detection. Perfect for shadowing practice, pronunciation training, and listening comprehension exercises.
 
+The application is available at the link: https://dotermine.github.io/HablaSlice/
+
 ## Features
 
 - **Silence-based segmentation** - Automatically splits audio files into segments at silence points
