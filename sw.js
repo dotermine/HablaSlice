@@ -1,9 +1,9 @@
-const CACHE_NAME = 'hablaslice-cache-v1';
+const CACHE_NAME = 'hablaslice-cache-v2';
 
-// Указываем пути строго с учетом папки репозитория на GitHub Pages
+// Кешируем ВСЕ возможные варианты обращения к главной странице
 const ASSETS_TO_CACHE = [
-    '/HablaSlice/',
-    '/HablaSlice/index.html',
+    '/HablaSlice/',                  // Запрос к корню папки (как обычно открывает телефон)
+    '/HablaSlice/index.html',         // Явный запрос к файлу
     '/HablaSlice/manifest.json',
     '/HablaSlice/icons/icon-72.png',
     '/HablaSlice/icons/icon-96.png',
@@ -16,20 +16,19 @@ const ASSETS_TO_CACHE = [
     '/HablaSlice/screenshots/screenshot-mobile.png'
 ];
 
-// Установка воркера и кеширование всех ресурсов
+// Установка Service Worker
 self.addEventListener('install', (event) => {
     event.waitUntil(
         caches.open(CACHE_NAME)
             .then((cache) => {
-                console.log('[Service Worker] Кеширование ресурсов...');
-                // catch возвращает пустую строку, предотвращая падение, если какого-то файла нет
-                return cache.addAll(ASSETS_TO_CACHE).catch(err => console.error('Ошибка кеширования файлов:', err));
+                console.log('[Service Worker] Принудительное кеширование всех ресурсов');
+                return cache.addAll(ASSETS_TO_CACHE);
             })
             .then(() => self.skipWaiting())
     );
 });
 
-// Активация и очистка старых версий кеша
+// Активация и удаление старого кеша
 self.addEventListener('activate', (event) => {
     event.waitUntil(
         caches.keys().then((cacheNames) => {
@@ -45,9 +44,9 @@ self.addEventListener('activate', (event) => {
     );
 });
 
-// Перехват запросов (Стратегия Cache First)
+// Перехват запросов (Стратегия: сначала Кеш, если нет — Сеть)
 self.addEventListener('fetch', (event) => {
-    // Игнорируем blob-файлы (локальные аудиозаписи) и не-GET запросы
+    // Полностью игнорируем blob-ссылки (аудиофайлы с телефона) и запросы, отличные от GET
     if (event.request.url.startsWith('blob:') || event.request.method !== 'GET') {
         return;
     }
@@ -55,9 +54,26 @@ self.addEventListener('fetch', (event) => {
     event.respondWith(
         caches.match(event.request).then((cachedResponse) => {
             if (cachedResponse) {
-                return cachedResponse;
+                return cachedResponse; // Найдено точное совпадение в кеше
             }
-            return fetch(event.request);
+
+            // УМНЫЙ ХАК ДЛЯ GITHUB PAGES:
+            // Если пользователь запрашивает подпапку /HablaSlice/ (или с параметрами),
+            // а точного совпадения нет, принудительно отдаем закешированный корень.
+            const url = new URL(event.request.url);
+            if (url.pathname === '/HablaSlice' || url.pathname === '/HablaSlice/') {
+                return caches.match('/HablaSlice/');
+            }
+
+            // Если в кеше ничего не нашлось, делаем обычный запрос в сеть
+            return fetch(event.request).catch((err) => {
+                console.error('[Service Worker] Сеть недоступна, ресурс не закеширован:', event.request.url);
+                
+                // Если сломался запрос к любой странице навигации, аварийно отдаем главную страницу
+                if (event.request.mode === 'navigate') {
+                    return caches.match('/HablaSlice/');
+                }
+            });
         })
     );
 });
