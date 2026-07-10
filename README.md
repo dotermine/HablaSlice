@@ -17,11 +17,21 @@ The application is available at the link: https://dotermine.github.io/HablaSlice
 - **Offline capable** - PWA with service worker support
 - **Persistent state** - Remembers your last session
 
-<p align="center">
-  <span style="white-space: nowrap;">
-    <img src="https://github.com/user-attachments/assets/f2d2a46b-b657-4398-93cb-c042ed5d104f" alt="scr3" width="33%" style="display: inline-block; vertical-align: top; margin: 0; padding: 0;" /><img src="https://github.com/user-attachments/assets/aba87401-c549-443e-aae8-1709e6a63f1b" alt="scr2" width="33%" style="display: inline-block; vertical-align: top; margin: 0; padding: 0;" /><img src="https://github.com/user-attachments/assets/bffb3ec3-5255-48ab-be42-6b2d3d23089a" alt="scr1" width="33%" style="display: inline-block; vertical-align: top; margin: 0; padding: 0;" />
-  </span>
-</p>
+<div align="center">
+  <table style="border-collapse: collapse; border-style: none; border-color: transparent; background-color: transparent; width: 100%; max-width: 1071px;">
+    <tr style="border-style: none; border-color: transparent; background-color: transparent;">
+      <td valign="top" align="center" style="border-style: none; border-color: transparent; padding: 0; width: 33.33%; background-color: transparent;">
+        <img src="https://github.com/user-attachments/assets/f2d2a46b-b657-4398-93cb-c042ed5d104f" alt="scr3" style="width: 100%; height: auto; display: block;" />
+      </td>
+      <td valign="top" align="center" style="border-style: none; border-color: transparent; padding: 0; width: 33.33%; background-color: transparent;">
+        <img src="https://github.com/user-attachments/assets/aba87401-c549-443e-aae8-1709e6a63f1b" alt="scr2" style="width: 100%; height: auto; display: block;" />
+      </td>
+      <td valign="top" align="center" style="border-style: none; border-color: transparent; padding: 0; width: 33.33%; background-color: transparent;">
+        <img src="https://github.com/user-attachments/assets/bffb3ec3-5255-48ab-be42-6b2d3d23089a" alt="scr1" style="width: 100%; height: auto; display: block;" />
+      </td>
+    </tr>
+  </table>
+</div>
 
 
 ## How It Works
