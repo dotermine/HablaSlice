@@ -20,11 +20,12 @@ The application is available at the link: https://dotermine.github.io/HablaSlice
 
 <table border="0" cellpadding="0" cellspacing="0" align="center" style="border: none; border-collapse: collapse;">
   <tr style="border: none;">
-    <td style="border: none; padding: 0 5px; vertical-align: top;"><img width="357" height="678" alt="scr3" src="https://github.com/user-attachments/assets/fc0654b8-d442-49a7-9cbc-9f1a76615892" /></td>
-    <td style="border: none; padding: 0 5px; vertical-align: top;"><img width="357" height="657" alt="scr2" src="https://github.com/user-attachments/assets/fe9bd8d5-d9b5-4b7b-ad74-4669c0ef7190" /></td>
-    <td style="border: none; padding: 0 5px; vertical-align: top;"><img width="357" height="162" alt="scr1" src="https://github.com/user-attachments/assets/fb815613-8515-4986-85a7-1095551793c2" /></td>
+    <td style="border: none; padding: 0; vertical-align: top;"><img width="357" height="678" alt="scr3" src="https://github.com" /></td>
+    <td style="border: none; padding: 0; vertical-align: top;"><img width="357" height="657" alt="scr2" src="https://github.com" /></td>
+    <td style="border: none; padding: 0; vertical-align: top;"><img width="357" height="162" alt="scr1" src="https://github.com" /></td>
   </tr>
 </table>
+
 
 
 ## How It Works
