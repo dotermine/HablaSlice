@@ -18,9 +18,10 @@ The application is available at the link: https://dotermine.github.io/HablaSlice
 - **Persistent state** - Remembers your last session
 
 <p align="center">
-  <nobr><img src="https://github.com/user-attachments/assets/f2d2a46b-b657-4398-93cb-c042ed5d104f" alt="scr3" width="33%" align="top" /><img src="https://github.com/user-attachments/assets/aba87401-c549-443e-aae8-1709e6a63f1b" alt="scr2" width="33%" align="top" /><img src="https://github.com/user-attachments/assets/bffb3ec3-5255-48ab-be42-6b2d3d23089a" alt="scr1" width="33%" align="top" /></nobr>
+  <span style="white-space: nowrap;">
+    <img src="https://github.com/user-attachments/assets/f2d2a46b-b657-4398-93cb-c042ed5d104f" alt="scr3" width="33%" style="display: inline-block; vertical-align: top; margin: 0; padding: 0;" /><img src="https://github.com/user-attachments/assets/aba87401-c549-443e-aae8-1709e6a63f1b" alt="scr2" width="33%" style="display: inline-block; vertical-align: top; margin: 0; padding: 0;" /><img src="https://github.com/user-attachments/assets/bffb3ec3-5255-48ab-be42-6b2d3d23089a" alt="scr1" width="33%" style="display: inline-block; vertical-align: top; margin: 0; padding: 0;" />
+  </span>
 </p>
-
 
 
 ## How It Works
