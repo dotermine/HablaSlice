@@ -17,10 +17,6 @@ The application is available at the link: https://dotermine.github.io/HablaSlice
 - **Offline capable** - PWA with service worker support
 - **Persistent state** - Remembers your last session
 
-<img width="961" height="435" alt="scr1" src="https://github.com/user-attachments/assets/bffb3ec3-5255-48ab-be42-6b2d3d23089a" />
-<img width="1044" height="1983" alt="scr3" src="https://github.com/user-attachments/assets/aba87401-c549-443e-aae8-1709e6a63f1b" />
-<img width="1070" height="1972" alt="scr2" src="https://github.com/user-attachments/assets/f2d2a46b-b657-4398-93cb-c042ed5d104f" />
-
 <table border="0" cellpadding="0" cellspacing="0" align="center" style="border: none; border-collapse: collapse;">
   <tr style="border: none;">
     <td style="border: none; padding: 0; vertical-align: top;"><img width="357" height="678" alt="scr3" src="https://github.com/user-attachments/assets/f2d2a46b-b657-4398-93cb-c042ed5d104f" /></td>
