@@ -17,6 +17,14 @@ The application is available at the link: https://dotermine.github.io/HablaSlice
 - **Offline capable** - PWA with service worker support
 - **Persistent state** - Remembers your last session
 
+
+<img width="1070" height="1972" alt="scr2" src="https://github.com/user-attachments/assets/48111b7e-3448-4ac1-a8da-bd82e5220357" />
+
+<img width="1044" height="1983" alt="scr3" src="https://github.com/user-attachments/assets/5a216cf0-86ef-47a6-9dbd-9fbc395f3d9d" />
+
+<img width="961" height="435" alt="scr1" src="https://github.com/user-attachments/assets/0b21bf33-bf3d-4a5a-840a-11d0bb568476" />
+
+
 ## How It Works
 
 1. **Load audio files** - Select individual files or entire folders
