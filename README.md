@@ -17,11 +17,17 @@ The application is available at the link: https://dotermine.github.io/HablaSlice
 - **Offline capable** - PWA with service worker support
 - **Persistent state** - Remembers your last session
 
-<table border="0" cellpadding="0" cellspacing="0" align="center" style="border: none; border-collapse: collapse;">
-  <tr style="border: none;">
-    <td style="border: none; padding: 0; vertical-align: top;"><img width="357" height="678" alt="scr3" src="https://github.com/user-attachments/assets/f2d2a46b-b657-4398-93cb-c042ed5d104f" /></td>
-    <td style="border: none; padding: 0; vertical-align: top;"><img width="357" height="657" alt="scr2" src="https://github.com/user-attachments/assets/aba87401-c549-443e-aae8-1709e6a63f1b"/></td>
-    <td style="border: none; padding: 0; vertical-align: top;"><img width="357" height="162" alt="scr1" src="https://github.com/user-attachments/assets/bffb3ec3-5255-48ab-be42-6b2d3d23089a" /></td>
+<table border="0" cellpadding="0" cellspacing="0" align="center" style="border: none; border-collapse: collapse; width: 100%; max-width: 1071px; table-layout: fixed;">
+  <tr style="border: none; white-space: nowrap;">
+    <td style="border: none; padding: 0; vertical-align: top; width: 33.33%;">
+      <img src="https://github.com/user-attachments/assets/f2d2a46b-b657-4398-93cb-c042ed5d104f" alt="scr3" style="width: 100%; height: auto; display: block;" />
+    </td>
+    <td style="border: none; padding: 0; vertical-align: top; width: 33.33%;">
+      <img src="https://github.com/user-attachments/assets/aba87401-c549-443e-aae8-1709e6a63f1b" alt="scr2" style="width: 100%; height: auto; display: block;" />
+    </td>
+    <td style="border: none; padding: 0; vertical-align: top; width: 33.33%;">
+      <img src="https://github.com/user-attachments/assets/bffb3ec3-5255-48ab-be42-6b2d3d23089a" alt="scr1" style="width: 100%; height: auto; display: block;" />
+    </td>
   </tr>
 </table>
 
