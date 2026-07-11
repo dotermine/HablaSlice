@@ -7,23 +7,14 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     
-    <!-- Manifest -->
     <link rel="manifest" href="./manifest.json">
-    
-    <!-- Favicon для браузера -->
     <link rel="icon" type="image/png" sizes="32x32" href="icons/icon-32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="icons/icon-16.png">
     <link rel="shortcut icon" href="favicon.ico">
-    
-    <!-- Apple Touch Icon для iOS -->
     <link rel="apple-touch-icon" href="icons/icon-192.png">
-    
-    <!-- Apple Splash Screen (опционально) -->
-    <link rel="apple-touch-startup-image" href="icons/splash-1125x2436.png">
     
     <title>HablaSlice</title>
     <style>
-        /* ===== RESET & VARIABLES ===== */
         * {
             margin: 0;
             padding: 0;
@@ -32,61 +23,63 @@
 
         :root {
             --primary: #4cc9f0;
+            --primary-dark: #3a9fc0;
             --bg: #000000;
-            --surface: #1a1a1a;
-            --surface2: #2a2a2a;
+            --surface: #121212;
+            --surface2: #1e1e1e;
+            --surface3: #2a2a2a;
             --text: #e8e8f0;
-            --text2: #b0b0c0;
-            --outline: #3a3a4a;
+            --text2: #9e9eae;
+            --outline: #2a2a3a;
+            --shadow: rgba(0,0,0,0.5);
         }
 
         body.light {
             --primary: #2962ff;
+            --primary-dark: #1a4fcc;
             --bg: #f5f7ff;
             --surface: #ffffff;
             --surface2: #f0f3ff;
+            --surface3: #e8ebf5;
             --text: #1a1a2e;
             --text2: #4a4a6a;
             --outline: #c8c9d4;
+            --shadow: rgba(0,0,0,0.1);
         }
 
-        html,
-        body {
+        html, body {
             height: 100%;
             overflow: hidden;
             position: fixed;
             width: 100%;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
         }
 
         body {
             background: var(--bg);
             color: var(--text);
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
             display: flex;
             flex-direction: column;
             user-select: none;
-            font-size: 18px;
+            font-size: 16px;
+            -webkit-tap-highlight-color: transparent;
         }
 
-        ::-webkit-scrollbar {
-            width: 0;
-            height: 0;
-        }
+        ::-webkit-scrollbar { width: 0; height: 0; }
 
-        /* ===== HEADER ===== */
         .header {
-            padding: 16px 20px;
+            padding: 12px 16px;
             background: var(--surface);
             border-bottom: 1px solid var(--outline);
             display: flex;
             align-items: center;
             justify-content: space-between;
             flex-shrink: 0;
-            min-height: 60px;
+            min-height: 56px;
         }
 
         .header h1 {
-            font-size: 22px;
+            font-size: 20px;
             font-weight: 600;
             display: flex;
             align-items: center;
@@ -94,27 +87,20 @@
         }
 
         .header h1 svg {
-            width: 28px;
-            height: 28px;
+            width: 24px;
+            height: 24px;
             fill: var(--primary);
         }
 
-        .header h1 span {
-            font-size: 14px;
-            font-weight: 400;
-            color: var(--text2);
-        }
-
-        /* ===== STATUS BAR ===== */
         .status-bar {
-            padding: 8px 20px;
-            font-size: 14px;
+            padding: 6px 16px;
+            font-size: 13px;
             color: var(--text2);
             background: var(--surface);
-            min-height: 36px;
+            min-height: 32px;
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 10px;
             flex-shrink: 0;
             border-bottom: 1px solid var(--outline);
         }
@@ -124,36 +110,31 @@
             align-items: center;
             gap: 8px;
             flex: 1;
+            overflow: hidden;
         }
 
         .spinner {
             display: inline-block;
-            width: 18px;
-            height: 18px;
-            border: 2.5px solid var(--outline);
+            width: 16px;
+            height: 16px;
+            border: 2px solid var(--outline);
             border-top-color: var(--primary);
             border-radius: 50%;
             animation: spin 0.7s linear infinite;
             flex-shrink: 0;
         }
 
-        @keyframes spin {
-            to {
-                transform: rotate(360deg);
-            }
-        }
+        @keyframes spin { to { transform: rotate(360deg); } }
 
         .progress-wrap {
             display: none;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
             flex: 1;
-            max-width: 200px;
+            max-width: 160px;
         }
 
-        .progress-wrap.active {
-            display: flex;
-        }
+        .progress-wrap.active { display: flex; }
 
         .progress-track {
             flex: 1;
@@ -171,84 +152,76 @@
             transition: width 0.15s linear;
         }
 
-        .progress-text {
-            font-size: 12px;
-            min-width: 32px;
-            text-align: right;
-        }
+        .progress-text { font-size: 11px; min-width: 28px; text-align: right; }
 
-        /* ===== MAIN CONTENT ===== */
         .main {
             flex: 1;
             overflow-y: auto;
-            padding: 12px 16px;
+            padding: 10px 14px;
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            gap: 10px;
         }
 
         .track-card {
             width: 100%;
             max-width: 600px;
             background: var(--surface);
-            border-radius: 20px;
-            padding: 16px 18px;
+            border-radius: 16px;
+            padding: 14px 16px;
             display: flex;
             flex-direction: column;
-            gap: 8px;
+            gap: 6px;
             margin: 0 auto;
             border: 1px solid var(--outline);
         }
 
         .track-name {
-            font-size: 20px;
+            font-size: 18px;
             font-weight: 600;
             word-break: break-word;
         }
 
         .track-meta {
             display: flex;
-            gap: 12px;
+            gap: 8px;
             flex-wrap: wrap;
-            font-size: 14px;
+            font-size: 13px;
             color: var(--text2);
         }
 
         .repeat-chip {
             display: inline-flex;
             align-items: center;
-            gap: 6px;
-            padding: 2px 14px;
+            gap: 4px;
+            padding: 2px 12px;
             background: var(--surface2);
-            border-radius: 20px;
-            font-size: 14px;
+            border-radius: 16px;
+            font-size: 13px;
             border: 1px solid var(--outline);
         }
 
-        .repeat-chip b {
-            color: var(--primary);
-        }
+        .repeat-chip b { color: var(--primary); }
 
         .file-info {
-            font-size: 13px;
+            font-size: 12px;
             color: var(--text2);
             background: var(--surface2);
-            padding: 2px 12px;
+            padding: 2px 10px;
             border-radius: 12px;
             border: 1px solid var(--outline);
         }
 
         .time-info {
-            font-size: 32px;
+            font-size: 28px;
             font-weight: 300;
             font-variant-numeric: tabular-nums;
             margin: 2px 0;
         }
 
-        /* ===== WAVEFORM ===== */
         .waveform-container {
             width: 100%;
-            height: 60px;
+            height: 52px;
             background: var(--surface);
             border-radius: 12px;
             overflow: hidden;
@@ -275,7 +248,7 @@
             height: 100%;
             pointer-events: none;
             z-index: 2;
-            background: rgba(76, 201, 240, 0.1);
+            background: rgba(76, 201, 240, 0.12);
             border-right: 2px solid var(--primary);
         }
 
@@ -285,7 +258,7 @@
             right: 0;
             height: 100%;
             background: var(--surface2);
-            opacity: 0.3;
+            opacity: 0.25;
             pointer-events: none;
             z-index: 1;
         }
@@ -306,15 +279,14 @@
             font-size: 11px;
             color: var(--text2);
             opacity: 0.5;
-            padding: 0 4px;
+            padding: 0 2px;
         }
 
-        /* ===== SEGMENT JUMP ===== */
         .segment-jump {
             display: flex;
             align-items: center;
-            gap: 10px;
-            padding: 6px 14px;
+            gap: 8px;
+            padding: 4px 12px;
             background: var(--surface);
             border-radius: 12px;
             border: 1px solid var(--outline);
@@ -323,34 +295,32 @@
         }
 
         .segment-jump label {
-            font-size: 14px;
+            font-size: 13px;
             color: var(--text2);
         }
 
         .segment-jump input {
-            width: 56px;
-            padding: 4px 8px;
+            width: 48px;
+            padding: 3px 6px;
             background: var(--surface);
             color: var(--text);
             border: 1px solid var(--outline);
             border-radius: 8px;
-            font-size: 16px;
+            font-size: 15px;
             font-weight: 600;
             text-align: center;
             outline: none;
         }
 
-        .segment-jump input:focus {
-            border-color: var(--primary);
-        }
+        .segment-jump input:focus { border-color: var(--primary); }
 
         .segment-jump .jump-btn {
-            padding: 6px 18px;
+            padding: 4px 14px;
             background: var(--primary);
             color: #000;
             border: none;
             border-radius: 8px;
-            font-size: 14px;
+            font-size: 13px;
             font-weight: 600;
             cursor: pointer;
         }
@@ -361,11 +331,10 @@
         }
 
         .segment-jump .seg-total {
-            font-size: 14px;
+            font-size: 13px;
             color: var(--text2);
         }
 
-        /* ===== PLAYLIST ===== */
         .playlist {
             width: 100%;
             max-width: 600px;
@@ -378,21 +347,18 @@
         .playlist-item {
             display: flex;
             align-items: center;
-            gap: 10px;
-            padding: 6px 14px;
+            gap: 8px;
+            padding: 5px 12px;
             background: var(--surface);
             border-radius: 12px;
             border: 1px solid transparent;
             cursor: pointer;
-            font-size: 14px;
-            min-height: 36px;
+            font-size: 13px;
+            min-height: 32px;
             transition: all 0.2s;
         }
 
-        .playlist-item:active {
-            background: var(--surface2);
-        }
-
+        .playlist-item:active { background: var(--surface2); }
         .playlist-item.current {
             border-color: var(--primary);
             background: var(--surface2);
@@ -400,8 +366,8 @@
 
         .playlist-item .idx {
             color: var(--text2);
-            min-width: 28px;
-            font-size: 13px;
+            min-width: 24px;
+            font-size: 12px;
         }
 
         .playlist-item .name {
@@ -416,16 +382,14 @@
             height: 6px;
             border-radius: 50%;
             background: var(--primary);
-            opacity: 0.3;
+            opacity: 0.2;
             flex-shrink: 0;
         }
 
-        .playlist-item.current .status-dot {
-            opacity: 1;
-        }
+        .playlist-item.current .status-dot { opacity: 1; }
 
         .playlist-item .file-status {
-            font-size: 11px;
+            font-size: 10px;
             color: var(--text2);
             opacity: 0.6;
             flex-shrink: 0;
@@ -434,27 +398,26 @@
         .empty-msg {
             color: var(--text2);
             text-align: center;
-            padding: 30px 16px;
-            font-size: 16px;
+            padding: 24px 16px;
+            font-size: 15px;
         }
 
-        /* ===== CONTROLS ===== */
         .controls-wrapper {
             flex-shrink: 0;
             background: var(--surface);
             border-top: 1px solid var(--outline);
-            padding: 8px 12px 12px 12px;
+            padding: 6px 10px 10px 10px;
             display: flex;
             flex-direction: column;
-            gap: 8px;
+            gap: 6px;
         }
 
         .quick-controls {
             display: flex;
-            gap: 10px;
-            padding: 6px 12px;
+            gap: 8px;
+            padding: 4px 10px;
             background: var(--surface);
-            border-radius: 14px;
+            border-radius: 12px;
             border: 1px solid var(--outline);
             flex-wrap: wrap;
         }
@@ -462,31 +425,31 @@
         .quick-controls .qc-group {
             display: flex;
             align-items: center;
-            gap: 6px;
+            gap: 4px;
             flex: 1;
-            min-width: 100px;
+            min-width: 80px;
         }
 
         .quick-controls .qc-label {
-            font-size: 13px;
+            font-size: 12px;
             color: var(--text2);
-            min-width: 44px;
+            min-width: 36px;
         }
 
         .controls {
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 24px;
-            padding: 8px 0;
+            gap: 18px;
+            padding: 4px 0;
         }
 
         .ctrl-btn {
             background: transparent;
             border: none;
             color: var(--text);
-            width: 64px;
-            height: 64px;
+            width: 56px;
+            height: 56px;
             border-radius: 50%;
             display: flex;
             align-items: center;
@@ -495,148 +458,128 @@
             transition: transform 0.15s;
         }
 
-        .ctrl-btn:active {
-            transform: scale(0.88);
-        }
+        .ctrl-btn:active { transform: scale(0.88); }
 
         .ctrl-btn svg {
-            width: 34px;
-            height: 34px;
+            width: 30px;
+            height: 30px;
             fill: currentColor;
         }
 
         .ctrl-btn.play-btn {
-            width: 76px;
-            height: 76px;
+            width: 68px;
+            height: 68px;
             background: var(--primary);
             color: #000;
-            box-shadow: 0 4px 28px rgba(76, 201, 240, 0.35);
+            box-shadow: 0 4px 20px rgba(76, 201, 240, 0.3);
         }
 
         .ctrl-btn.play-btn svg {
-            width: 40px;
-            height: 40px;
+            width: 36px;
+            height: 36px;
         }
 
         .ctrl-btn-small {
-            width: 56px;
-            height: 56px;
+            width: 48px;
+            height: 48px;
         }
 
         .ctrl-btn-small svg {
-            width: 30px;
-            height: 30px;
+            width: 26px;
+            height: 26px;
         }
 
         .ctrl-btn-settings {
-            width: 56px;
-            height: 56px;
+            width: 48px;
+            height: 48px;
             background: transparent;
             border-radius: 50%;
             border: none;
         }
 
         .ctrl-btn-settings svg {
-            width: 30px;
-            height: 30px;
+            width: 26px;
+            height: 26px;
         }
 
-        /* ===== DROPDOWN ===== */
         .dropdown {
             position: relative;
             flex: 1;
-            min-width: 60px;
+            min-width: 50px;
         }
 
         .dropdown .toggle {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 4px 12px;
+            padding: 2px 10px;
             background: var(--surface);
             color: var(--text);
             border: 1px solid var(--outline);
-            border-radius: 10px;
-            font-size: 14px;
+            border-radius: 8px;
+            font-size: 13px;
             cursor: pointer;
-            min-height: 32px;
-            gap: 4px;
+            min-height: 28px;
+            gap: 2px;
         }
 
-        .dropdown .toggle .arrow {
-            transition: transform 0.2s;
-        }
-
-        .dropdown.open .toggle .arrow {
-            transform: rotate(180deg);
-        }
+        .dropdown .toggle .arrow { transition: transform 0.2s; }
+        .dropdown.open .toggle .arrow { transform: rotate(180deg); }
 
         .dropdown .menu {
             position: absolute;
-            bottom: calc(100% + 4px);
+            bottom: calc(100% + 2px);
             left: 0;
             right: 0;
             background: var(--surface);
             border: 1px solid var(--outline);
-            border-radius: 10px;
-            padding: 4px 0;
-            max-height: 150px;
+            border-radius: 8px;
+            padding: 2px 0;
+            max-height: 120px;
             overflow-y: auto;
             z-index: 50;
             display: none;
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+            box-shadow: 0 8px 24px var(--shadow);
         }
 
-        .dropdown.open .menu {
-            display: block;
-        }
+        .dropdown.open .menu { display: block; }
 
         .dropdown .menu .item {
-            padding: 8px 14px;
-            font-size: 14px;
+            padding: 6px 12px;
+            font-size: 13px;
             cursor: pointer;
             color: var(--text);
         }
 
-        .dropdown .menu .item:active {
-            background: var(--surface2);
-        }
-
-        .dropdown .menu .item.selected {
-            color: var(--primary);
-            font-weight: 600;
-        }
-
+        .dropdown .menu .item:active { background: var(--surface2); }
+        .dropdown .menu .item.selected { color: var(--primary); font-weight: 600; }
         .dropdown .menu .item.selected::after {
             content: "✓";
             float: right;
             color: var(--primary);
         }
 
-        /* ===== POPOVER ===== */
         .popover {
             position: fixed;
             background: var(--surface);
             border: 1px solid var(--outline);
-            border-radius: 14px;
-            padding: 6px 0;
-            min-width: 180px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
+            border-radius: 12px;
+            padding: 4px 0;
+            min-width: 160px;
+            box-shadow: 0 8px 32px var(--shadow);
             z-index: 300;
             display: none;
         }
 
-        .popover.active {
-            display: block;
-        }
+        .popover.active { display: block; }
 
         .popover-item {
-            padding: 12px 20px;
-            font-size: 15px;
+            padding: 10px 16px;
+            font-size: 14px;
             cursor: pointer;
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 10px;
             border: none;
             background: transparent;
             color: var(--text);
@@ -645,17 +588,14 @@
             font-family: inherit;
         }
 
-        .popover-item:active {
-            background: var(--surface2);
-        }
+        .popover-item:active { background: var(--surface2); }
 
         .popover-item svg {
-            width: 20px;
-            height: 20px;
+            width: 18px;
+            height: 18px;
             fill: currentColor;
         }
 
-        /* ===== MODAL ===== */
         .modal-bg {
             position: fixed;
             inset: 0;
@@ -665,81 +605,79 @@
             justify-content: center;
             z-index: 200;
             padding: 16px;
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
         }
 
-        .modal-bg.active {
-            display: flex;
-        }
+        .modal-bg.active { display: flex; }
 
         .modal {
             background: var(--surface);
-            border-radius: 20px;
-            padding: 18px 16px;
+            border-radius: 16px;
+            padding: 16px;
             width: 100%;
-            max-width: 400px;
-            max-height: 90vh;
+            max-width: 380px;
+            max-height: 85vh;
             overflow-y: auto;
             border: 1px solid var(--outline);
         }
 
         .modal h2 {
-            font-size: 20px;
-            margin-bottom: 14px;
+            font-size: 18px;
+            margin-bottom: 12px;
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
         }
 
         .modal h2 svg {
-            width: 24px;
-            height: 24px;
+            width: 22px;
+            height: 22px;
             fill: var(--primary);
         }
 
         .setting {
-            margin-bottom: 10px;
-            padding: 4px 2px;
+            margin-bottom: 8px;
+            padding: 2px 2px;
             border-bottom: 1px solid var(--outline);
         }
 
-        .setting:last-of-type {
-            border-bottom: none;
-        }
+        .setting:last-of-type { border-bottom: none; }
 
         .setting .label-row {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 4px;
+            margin-bottom: 2px;
         }
 
         .setting .label-row label {
-            font-size: 14px;
+            font-size: 13px;
             color: var(--text2);
         }
 
         .setting .label-row .value {
-            font-size: 14px;
+            font-size: 13px;
             font-weight: 600;
             color: var(--primary);
-            min-width: 32px;
+            min-width: 28px;
             text-align: right;
         }
 
         .setting .slider-row {
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
         }
 
         .setting .slider-row .step-btn {
-            width: 28px;
-            height: 28px;
+            width: 24px;
+            height: 24px;
             border-radius: 50%;
             border: 1px solid var(--outline);
             background: var(--surface);
             color: var(--text);
-            font-size: 14px;
+            font-size: 13px;
             font-weight: 600;
             cursor: pointer;
         }
@@ -756,16 +694,16 @@
 
         .setting input[type="range"]::-webkit-slider-thumb {
             -webkit-appearance: none;
-            width: 18px;
-            height: 18px;
+            width: 16px;
+            height: 16px;
             background: var(--primary);
             border-radius: 50%;
             cursor: pointer;
         }
 
         .setting input[type="range"]::-moz-range-thumb {
-            width: 18px;
-            height: 18px;
+            width: 16px;
+            height: 16px;
             background: var(--primary);
             border-radius: 50%;
             border: none;
@@ -774,18 +712,18 @@
 
         .theme-switch {
             display: flex;
-            gap: 6px;
-            margin-top: 4px;
+            gap: 4px;
+            margin-top: 2px;
         }
 
         .theme-switch button {
             flex: 1;
-            padding: 6px 12px;
+            padding: 4px 10px;
             background: var(--surface);
             color: var(--text);
             border: 1px solid var(--outline);
-            border-radius: 20px;
-            font-size: 14px;
+            border-radius: 16px;
+            font-size: 13px;
             cursor: pointer;
         }
 
@@ -797,18 +735,18 @@
 
         .modal-actions {
             display: flex;
-            gap: 6px;
-            margin-top: 12px;
-            padding-top: 10px;
+            gap: 4px;
+            margin-top: 10px;
+            padding-top: 8px;
             border-top: 1px solid var(--outline);
         }
 
         .modal-actions button {
             flex: 1;
-            padding: 8px 12px;
+            padding: 6px 10px;
             border: none;
-            border-radius: 20px;
-            font-size: 14px;
+            border-radius: 16px;
+            font-size: 13px;
             font-weight: 600;
             cursor: pointer;
         }
@@ -831,25 +769,23 @@
         }
 
         .setting .hint {
-            font-size: 11px;
+            font-size: 10px;
             color: var(--text2);
             opacity: 0.5;
             margin-top: 2px;
         }
 
-        input[type="file"] {
-            display: none;
-        }
+        input[type="file"] { display: none; }
 
         .section-divider {
             display: flex;
             align-items: center;
-            gap: 10px;
-            margin: 4px 0 8px 0;
+            gap: 8px;
+            margin: 2px 0 6px 0;
         }
 
         .section-divider span {
-            font-size: 11px;
+            font-size: 10px;
             font-weight: 500;
             color: var(--primary);
             text-transform: uppercase;
@@ -863,169 +799,80 @@
 
         .apply-section {
             background: var(--surface);
-            border-radius: 10px;
-            padding: 8px 10px;
+            border-radius: 8px;
+            padding: 6px 8px;
             border-left: 3px solid #f0a030;
         }
 
         .apply-section .warning-header {
             display: flex;
-            gap: 6px;
-            margin-bottom: 4px;
+            gap: 4px;
+            margin-bottom: 2px;
         }
 
         .apply-section .warning-header span:first-child {
             font-weight: 600;
-            font-size: 12px;
-            color: #f0a030;
-        }
-
-        .apply-section .warning-header span:last-child {
             font-size: 11px;
             color: #f0a030;
         }
 
-        .no-scroll {
-            overflow: hidden;
+        .apply-section .warning-header span:last-child {
+            font-size: 10px;
+            color: #f0a030;
         }
 
-        /* ===== SAFE AREA ===== */
+        .no-scroll { overflow: hidden; }
+
         .controls-wrapper {
-            padding-bottom: max(clamp(12px, 2vw, 20px), env(safe-area-inset-bottom));
+            padding-bottom: max(clamp(8px, 2vw, 16px), env(safe-area-inset-bottom));
         }
 
-        /* ===== RESPONSIVE ===== */
         @media (max-width: 480px) {
-            .header h1 {
-                font-size: 18px;
-            }
-
-            .track-name {
-                font-size: 17px;
-            }
-
-            .time-info {
-                font-size: 26px;
-            }
-
-            .waveform-container {
-                height: 48px;
-            }
-
-            .controls {
-                gap: 18px;
-            }
-
-            .ctrl-btn {
-                width: 54px;
-                height: 54px;
-            }
-
-            .ctrl-btn svg {
-                width: 28px;
-                height: 28px;
-            }
-
-            .ctrl-btn.play-btn {
-                width: 66px;
-                height: 66px;
-            }
-
-            .ctrl-btn.play-btn svg {
-                width: 34px;
-                height: 34px;
-            }
-
-            .ctrl-btn-small {
-                width: 48px;
-                height: 48px;
-            }
-
-            .ctrl-btn-small svg {
-                width: 26px;
-                height: 26px;
-            }
-
-            .ctrl-btn-settings {
-                width: 48px;
-                height: 48px;
-            }
-
-            .ctrl-btn-settings svg {
-                width: 26px;
-                height: 26px;
-            }
+            .header h1 { font-size: 17px; }
+            .track-name { font-size: 16px; }
+            .time-info { font-size: 24px; }
+            .waveform-container { height: 44px; }
+            .controls { gap: 14px; }
+            .ctrl-btn { width: 48px; height: 48px; }
+            .ctrl-btn svg { width: 26px; height: 26px; }
+            .ctrl-btn.play-btn { width: 60px; height: 60px; }
+            .ctrl-btn.play-btn svg { width: 32px; height: 32px; }
+            .ctrl-btn-small { width: 42px; height: 42px; }
+            .ctrl-btn-small svg { width: 22px; height: 22px; }
+            .ctrl-btn-settings { width: 42px; height: 42px; }
+            .ctrl-btn-settings svg { width: 22px; height: 22px; }
         }
 
         @media (max-width: 380px) {
-            .controls {
-                gap: 14px;
-            }
-
-            .ctrl-btn {
-                width: 48px;
-                height: 48px;
-            }
-
-            .ctrl-btn svg {
-                width: 24px;
-                height: 24px;
-            }
-
-            .ctrl-btn.play-btn {
-                width: 58px;
-                height: 58px;
-            }
-
-            .ctrl-btn.play-btn svg {
-                width: 30px;
-                height: 30px;
-            }
-
-            .ctrl-btn-small {
-                width: 42px;
-                height: 42px;
-            }
-
-            .ctrl-btn-small svg {
-                width: 22px;
-                height: 22px;
-            }
-
-            .ctrl-btn-settings {
-                width: 42px;
-                height: 42px;
-            }
-
-            .ctrl-btn-settings svg {
-                width: 22px;
-                height: 22px;
-            }
+            .controls { gap: 10px; }
+            .ctrl-btn { width: 42px; height: 42px; }
+            .ctrl-btn svg { width: 22px; height: 22px; }
+            .ctrl-btn.play-btn { width: 52px; height: 52px; }
+            .ctrl-btn.play-btn svg { width: 28px; height: 28px; }
+            .ctrl-btn-small { width: 36px; height: 36px; }
+            .ctrl-btn-small svg { width: 18px; height: 18px; }
+            .ctrl-btn-settings { width: 36px; height: 36px; }
+            .ctrl-btn-settings svg { width: 18px; height: 18px; }
         }
     </style>
 </head>
 <body>
-    <!-- ===== HEADER ===== -->
     <header class="header">
         <h1>
             <svg viewBox="0 0 24 24"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/></svg>
             HablaSlice <span id="fileCounter"></span>
         </h1>
-        <div style="width:40px;"></div>
+        <div style="width:36px;"></div>
     </header>
 
-    <!-- ===== STATUS BAR ===== -->
     <div class="status-bar">
-        <div class="status-content">
-            <span id="statusText">No file</span>
-        </div>
+        <div class="status-content"><span id="statusText">No file</span></div>
         <div class="progress-wrap" id="progressWrap">
             <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
             <span class="progress-text" id="progressText">0%</span>
         </div>
     </div>
 
-    <!-- ===== MAIN CONTENT ===== -->
     <div class="main" id="main">
         <div class="track-card">
             <div class="track-name" id="trackName">—</div>
@@ -1033,7 +880,7 @@
                 <span id="segInfo">Ready</span>
                 <span class="file-info" id="fileInfo">File 1/1</span>
                 <span class="repeat-chip">
-                    <svg viewBox="0 0 24 24" width="14" height="14"><path d="M12 4V1L8 5l4 4V6c3.31 0 6 2.69 6 6 0 1.01-.25 1.97-.7 2.8l1.46 1.46C19.54 15.03 20 13.57 20 12c0-4.42-3.58-8-8-8zm0 14c-3.31 0-6-2.69-6-6 0-1.01.25-1.97.7-2.8L5.24 7.74C4.46 8.97 4 10.43 4 12c0 4.42 3.58 8 8 8v3l4-4-4-4v3z"/></svg>
+                    <svg viewBox="0 0 24 24" width="13" height="13"><path d="M12 4V1L8 5l4 4V6c3.31 0 6 2.69 6 6 0 1.01-.25 1.97-.7 2.8l1.46 1.46C19.54 15.03 20 13.57 20 12c0-4.42-3.58-8-8-8zm0 14c-3.31 0-6-2.69-6-6 0-1.01.25-1.97.7-2.8L5.24 7.74C4.46 8.97 4 10.43 4 12c0 4.42 3.58 8 8 8v3l4-4-4-4v3z"/></svg>
                     <b id="repeatCount">1</b>/<span id="repeatTotal">3</span>
                 </span>
             </div>
@@ -1060,7 +907,6 @@
         <div class="empty-msg" id="emptyMsg">Open a file or folder to start</div>
     </div>
 
-    <!-- ===== CONTROLS ===== -->
     <div class="controls-wrapper">
         <div class="quick-controls">
             <div class="qc-group">
@@ -1132,7 +978,6 @@
         </div>
     </div>
 
-    <!-- ===== POPOVER ===== -->
     <div class="popover" id="popover">
         <button class="popover-item" id="popFile">
             <svg viewBox="0 0 24 24"><path d="M20 6h-8l-2-2H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm0 12H4V8h16v10z"/></svg>
@@ -1144,11 +989,9 @@
         </button>
     </div>
 
-    <!-- ===== FILE INPUTS ===== -->
     <input type="file" id="fileInput" accept="audio/*" multiple>
     <input type="file" id="folderInput" webkitdirectory multiple>
 
-    <!-- ===== SETTINGS MODAL ===== -->
     <div class="modal-bg" id="settingsModal">
         <div class="modal">
             <h2><svg viewBox="0 0 24 24"><path d="M19.14 12.94a7.07 7.07 0 0 0 0-1.88l2.03-1.58a.49.49 0 0 0 .12-.61l-1.92-3.32a.49.49 0 0 0-.59-.22l-2.39.96a7.04 7.04 0 0 0-1.62-.94l-.36-2.54a.48.48 0 0 0-.48-.41h-3.84a.48.48 0 0 0-.48.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96a.49.49 0 0 0-.59.22L2.74 8.87a.48.48 0 0 0 .12.61l2.03 1.58a7.07 7.07 0 0 0 0 1.88l-2.03 1.58a.49.49 0 0 0-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.49.37 1.03.7 1.62.94l.36 2.54c.05.24.26.41.48.41h3.84c.22 0 .43-.17.48-.41l.36-2.54c.59-.24 1.13-.57 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32a.49.49 0 0 0-.12-.61l-2.03-1.58zM12 15.6A3.6 3.6 0 1 1 15.6 12 3.6 3.6 0 0 1 12 15.6z"/></svg> Settings</h2>
@@ -1170,7 +1013,7 @@
                     <input type="range" id="setSil" min="0" max="3" step="0.05" value="0.3">
                     <button class="step-btn" data-target="setSil" data-dir="1">+</button>
                 </div>
-                <div class="hint">Comfort noise gap between repeats</div>
+                <div class="hint">Gap between repeats</div>
             </div>
 
             <div class="setting">
@@ -1193,16 +1036,16 @@
             <div class="apply-section">
                 <div class="warning-header">
                     <span>⚠️</span>
-                    <span>Changes require re-processing the audio file</span>
+                    <span>Changes require re-processing</span>
                 </div>
-                <div class="setting" style="border-bottom:none;margin-bottom:4px;padding-bottom:2px;">
+                <div class="setting" style="border-bottom:none;margin-bottom:2px;padding-bottom:0;">
                     <div class="label-row"><label>Silence threshold</label><span class="value" id="dbVal">-40</span></div>
                     <div class="slider-row">
                         <button class="step-btn" data-target="setDb" data-dir="-1">−</button>
                         <input type="range" id="setDb" min="-60" max="-10" value="-40">
                         <button class="step-btn" data-target="setDb" data-dir="1">+</button>
                     </div>
-                    <div class="hint">Lower = more sensitive to silence</div>
+                    <div class="hint">Lower = more sensitive</div>
                 </div>
                 <div class="setting" style="border-bottom:none;margin-bottom:0;padding-bottom:0;">
                     <div class="label-row"><label>Min silence duration</label><span class="value" id="durVal">0.5</span></div>
@@ -1211,7 +1054,7 @@
                         <input type="range" id="setDur" min="0.1" max="3" step="0.1" value="0.5">
                         <button class="step-btn" data-target="setDur" data-dir="1">+</button>
                     </div>
-                    <div class="hint">Minimum silence (seconds) to create a split</div>
+                    <div class="hint">Minimum silence to split</div>
                 </div>
             </div>
 
@@ -1223,15 +1066,12 @@
         </div>
     </div>
 
-    <!-- ===== AUDIO ELEMENT ===== -->
     <audio id="audio-engine" preload="auto"></audio>
 
-    <!-- ===== APPLICATION SCRIPT ===== -->
     <script>
         (function() {
             'use strict';
 
-            // ===== DOM REFS =====
             const $ = id => document.getElementById(id);
             const el = {
                 statusText: $('statusText'),
@@ -1293,7 +1133,6 @@
                 totalSegments: $('totalSegments')
             };
 
-            // ===== APPLICATION STATE =====
             const state = {
                 files: [],
                 currentFileIdx: 0,
@@ -1310,23 +1149,20 @@
                     theme: 'dark',
                     silence: 0.3
                 },
-                audioData: null,
-                sampleRate: 44100,
                 isLoading: false,
                 isReady: false,
-                mergedBuffer: null,
-                fileOffsets: [],
-                fileDurations: [],
                 fileSegments: [],
-                currentFileStartTime: 0,
-                originalFileUrl: null,
-                gainNode: null,
-                audioCtx: null,
-                isAudioInitialized: false,
-                savedSettings: null
+                savedSettings: null,
+                _waveformData: null,
+                _audioData: null,
+                sampleRate: 44100,
+                isSwitching: false,
+                fileBlobUrls: [],
+                fileBuffers: [],
+                audioReady: false,
+                playPending: false
             };
 
-            // ===== DROPDOWN =====
             function initDropdown(dropdownEl, menuEl, toggleEl, displayEl, onSelect) {
                 if (!dropdownEl || !menuEl || !toggleEl || !displayEl) return;
                 toggleEl.addEventListener('click', function(e) {
@@ -1350,7 +1186,6 @@
                 });
             }
 
-            // ===== SETTINGS =====
             function loadSettings() {
                 try {
                     var s = JSON.parse(localStorage.getItem('hs_settings'));
@@ -1402,9 +1237,8 @@
                 updateUI();
             }
 
-            // ===== UI UPDATES =====
             function updateUI() {
-                var isReady = state.segments.length > 0 && !state.isLoading && state.isReady;
+                var isReady = state.segments.length > 0 && !state.isLoading && state.isReady && state.audioReady;
                 var totalFiles = state.files.length;
                 var currentFile = state.currentFileIdx + 1;
 
@@ -1510,9 +1344,8 @@
                 if (el.timeInfo) el.timeInfo.textContent = current.toFixed(1) + 's / ' + total.toFixed(1) + 's';
             }
 
-            // ===== WAVEFORM =====
             function drawWaveform(segIdx) {
-                if (!state.audioData || state.segments.length === 0) return;
+                if (!state.segments.length) return;
                 if (segIdx >= state.segments.length) segIdx = state.segments.length - 1;
                 if (segIdx < 0) segIdx = 0;
                 var seg = state.segments[segIdx];
@@ -1523,7 +1356,7 @@
                 var ctx = canvas.getContext('2d');
                 var rect = canvas.parentElement.getBoundingClientRect();
                 var w = rect.width || 400;
-                var h = rect.height || 60;
+                var h = rect.height || 52;
 
                 canvas.width = w * 2;
                 canvas.height = h * 2;
@@ -1543,82 +1376,111 @@
                     el.waveSilence.style.display = (silence > 0.01 && silenceWidth > 2) ? 'block' : 'none';
                 }
 
-                var startSample = Math.floor(seg.start * state.sampleRate);
-                var endSample = Math.floor(seg.end * state.sampleRate);
-                if (startSample >= state.audioData.length || endSample > state.audioData.length) return;
-                var data = state.audioData.slice(startSample, endSample);
-                if (data.length === 0) return;
+                var waveformData = state._waveformData;
+                if (!waveformData || waveformData.segIdx !== segIdx || waveformData.fileIdx !== state.currentFileIdx) {
+                    waveformData = generateWaveformData(seg, w);
+                    state._waveformData = waveformData;
+                }
 
-                var step = Math.max(1, Math.floor(data.length / (audioWidth * 2)));
-                var amp = h / 2.4;
                 var color = getComputedStyle(document.documentElement).getPropertyValue('--primary').trim() || '#4cc9f0';
+                var points = waveformData.points || [];
 
-                var points = [];
-                var drawWidth = Math.max(1, Math.floor(audioWidth));
-                for (var i = 0; i < drawWidth; i++) {
-                    var idx = Math.floor(i * step);
-                    var sum = 0;
-                    var limit = Math.min(idx + step, data.length);
-                    for (var j = idx; j < limit; j++) sum += Math.abs(data[j]);
-                    var val = sum / step;
-                    points.push({
-                        top: Math.max(0, (h / 2) - val * amp),
-                        bottom: Math.min(h, (h / 2) + val * amp)
-                    });
-                }
+                if (points.length > 0) {
+                    ctx.beginPath();
+                    ctx.moveTo(0, h / 2);
+                    for (var k = 0; k < points.length; k++) {
+                        ctx.lineTo(k, points[k].top);
+                    }
+                    for (var l = points.length - 1; l >= 0; l--) {
+                        ctx.lineTo(l, points[l].bottom);
+                    }
+                    ctx.closePath();
+                    ctx.fillStyle = color + '44';
+                    ctx.fill();
 
-                ctx.beginPath();
-                ctx.moveTo(0, h / 2);
-                for (var k = 0; k < points.length; k++) {
-                    ctx.lineTo(k, points[k].top);
+                    ctx.beginPath();
+                    ctx.strokeStyle = color;
+                    ctx.lineWidth = 1.2;
+                    ctx.globalAlpha = 0.6;
+                    for (var m = 0; m < points.length; m++) {
+                        if (m === 0) ctx.moveTo(m, points[m].top);
+                        else ctx.lineTo(m, points[m].top);
+                    }
+                    ctx.stroke();
+                    ctx.beginPath();
+                    for (var n = 0; n < points.length; n++) {
+                        if (n === 0) ctx.moveTo(n, points[n].bottom);
+                        else ctx.lineTo(n, points[n].bottom);
+                    }
+                    ctx.stroke();
+                    ctx.globalAlpha = 1;
                 }
-                for (var l = points.length - 1; l >= 0; l--) {
-                    ctx.lineTo(l, points[l].bottom);
-                }
-                ctx.closePath();
-                ctx.fillStyle = color + '44';
-                ctx.fill();
-
-                ctx.beginPath();
-                ctx.strokeStyle = color;
-                ctx.lineWidth = 1.2;
-                ctx.globalAlpha = 0.6;
-                for (var m = 0; m < points.length; m++) {
-                    if (m === 0) ctx.moveTo(m, points[m].top);
-                    else ctx.lineTo(m, points[m].top);
-                }
-                ctx.stroke();
-                ctx.beginPath();
-                for (var n = 0; n < points.length; n++) {
-                    if (n === 0) ctx.moveTo(n, points[n].bottom);
-                    else ctx.lineTo(n, points[n].bottom);
-                }
-                ctx.stroke();
-                ctx.globalAlpha = 1;
 
                 if (el.waveProgress) el.waveProgress.style.width = '0%';
             }
 
-            // ===== AUDIO PROCESSING =====
+            function generateWaveformData(seg, width) {
+                var data = state._audioData;
+                if (!data) return { points: [] };
+
+                var startSample = Math.floor(seg.start * state.sampleRate);
+                var endSample = Math.floor(seg.end * state.sampleRate);
+                if (startSample >= data.length || endSample > data.length) return { points: [] };
+
+                var chunk = data.slice(startSample, endSample);
+                if (chunk.length === 0) return { points: [] };
+
+                var step = Math.max(1, Math.floor(chunk.length / (width * 2)));
+                var amp = 52 / 2.4;
+                var points = [];
+                var drawWidth = Math.max(1, Math.floor(width));
+
+                for (var i = 0; i < drawWidth; i++) {
+                    var idx = Math.floor(i * step);
+                    var sum = 0;
+                    var limit = Math.min(idx + step, chunk.length);
+                    for (var j = idx; j < limit; j++) sum += Math.abs(chunk[j]);
+                    var val = sum / step;
+                    points.push({
+                        top: Math.max(0, (52 / 2) - val * amp),
+                        bottom: Math.min(52, (52 / 2) + val * amp)
+                    });
+                }
+
+                return { points: points, segIdx: state.currentSegIdx, fileIdx: state.currentFileIdx };
+            }
+
             function sliceAudioBySilence(audioBuffer, thresholdDb, minSilenceSec) {
                 if (!audioBuffer) return [];
                 var data = audioBuffer.getChannelData(0);
                 if (!data || data.length === 0) return [];
                 var sampleRate = audioBuffer.sampleRate;
                 var thresholdLinear = Math.pow(10, thresholdDb / 20);
+
+                var step = Math.max(1, Math.floor(sampleRate / 2000));
+                var downsampled = [];
+                for (var i = 0; i < data.length; i += step) {
+                    downsampled.push(Math.abs(data[i]));
+                }
+
                 var silenceRegions = [];
                 var inSilence = false;
                 var silenceStart = 0;
 
-                for (var i = 0; i < data.length; i++) {
-                    if (Math.abs(data[i]) < thresholdLinear) {
-                        if (!inSilence) { silenceStart = i;
-                            inSilence = true; }
+                for (var j = 0; j < downsampled.length; j++) {
+                    if (downsampled[j] < thresholdLinear) {
+                        if (!inSilence) {
+                            silenceStart = j * step;
+                            inSilence = true;
+                        }
                     } else {
                         if (inSilence) {
-                            var duration = (i - silenceStart) / sampleRate;
+                            var duration = ((j * step) - silenceStart) / sampleRate;
                             if (duration >= minSilenceSec) {
-                                silenceRegions.push({ start: silenceStart / sampleRate, end: i / sampleRate });
+                                silenceRegions.push({
+                                    start: silenceStart / sampleRate,
+                                    end: (j * step) / sampleRate
+                                });
                             }
                             inSilence = false;
                         }
@@ -1627,142 +1489,76 @@
                 if (inSilence) {
                     var dur = (data.length - silenceStart) / sampleRate;
                     if (dur >= minSilenceSec) {
-                        silenceRegions.push({ start: silenceStart / sampleRate, end: data.length / sampleRate });
+                        silenceRegions.push({
+                            start: silenceStart / sampleRate,
+                            end: data.length / sampleRate
+                        });
                     }
                 }
 
                 var segments = [];
                 var prevEnd = 0;
                 var duration = audioBuffer.duration;
-                for (var j = 0; j < silenceRegions.length; j++) {
-                    var region = silenceRegions[j];
+                for (var k = 0; k < silenceRegions.length; k++) {
+                    var region = silenceRegions[k];
                     var segStart = prevEnd;
                     var segEnd = region.start;
-                    if (segEnd - segStart > 0.2) {
+                    if (segEnd - segStart > 0.15) {
                         segments.push({ start: segStart, end: segEnd });
                     }
                     prevEnd = region.end;
                 }
-                if (duration - prevEnd > 0.2) {
+                if (duration - prevEnd > 0.15) {
                     segments.push({ start: prevEnd, end: duration });
                 }
                 if (segments.length === 0) segments.push({ start: 0, end: duration });
                 return segments;
             }
 
-            function getFileKey(file) {
-                return file.name + '_' + file.size + '_' + file.lastModified;
-            }
+            // ===== ИНИЦИАЛИЗАЦИЯ АУДИО-ЭЛЕМЕНТА =====
+            function initAudioFile(index) {
+                if (!state.files[index]) {
+                    console.error('File not found at index:', index);
+                    return false;
+                }
 
-            // ===== MERGE FILES =====
-            async function mergeAllFiles(files) {
-                if (!files || files.length === 0) return null;
-
-                updateStatus('Merging audio files...', true);
-                updateProgress(5, 'Loading...');
-
-                var ctx = new(window.AudioContext || window.webkitAudioContext)();
-                if (ctx.state === 'suspended') await ctx.resume();
-
-                var buffers = [];
-                state.fileOffsets = [];
-                state.fileDurations = [];
-                var totalSamples = 0;
-
-                for (var i = 0; i < files.length; i++) {
-                    var progress = 5 + (i / files.length) * 80;
-                    updateProgress(progress, (i + 1) + '/' + files.length);
-                    updateStatus('Loading ' + (i + 1) + '/' + files.length + '...', true);
-
-                    try {
-                        var arrayBuffer = await files[i].arrayBuffer();
-                        var audioBuffer = await ctx.decodeAudioData(arrayBuffer);
-                        buffers.push(audioBuffer);
-                        state.fileOffsets.push(totalSamples);
-                        state.fileDurations.push(audioBuffer.duration);
-                        totalSamples += audioBuffer.length;
-                    } catch (e) {
-                        console.warn('Error decoding:', files[i].name, e);
+                try {
+                    // Освобождаем старую Blob-ссылку
+                    if (state.fileBlobUrls[index]) {
+                        URL.revokeObjectURL(state.fileBlobUrls[index]);
                     }
-                }
 
-                if (buffers.length === 0) {
-                    await ctx.close();
-                    updateStatus('No valid audio files');
-                    return null;
-                }
+                    // Создаем Blob-ссылку из оригинального файла для HTML5 Audio
+                    const file = state.files[index];
+                    const blobUrl = URL.createObjectURL(file);
+                    state.fileBlobUrls[index] = blobUrl;
 
-                updateProgress(90, 'Creating merged buffer...');
-                updateStatus('Creating merged audio...', true);
+                    // Привязываем к аудио-элементу
+                    el.audio.src = blobUrl;
+                    el.audio.load();
+                    el.audio.playbackRate = state.speed;
 
-                var sampleRate = buffers[0].sampleRate;
-                var channels = buffers[0].numberOfChannels;
-                var mergedBuffer = ctx.createBuffer(channels, totalSamples, sampleRate);
+                    // Устанавливаем флаги готовности
+                    state.isReady = true;
+                    state.audioReady = true;
+                    state.isLoading = false;
 
-                var writePos = 0;
-                for (var k = 0; k < buffers.length; k++) {
-                    var buf = buffers[k];
-                    for (var ch = 0; ch < channels; ch++) {
-                        var channelData = buf.getChannelData(ch);
-                        mergedBuffer.copyToChannel(channelData, ch, writePos);
+                    updateStatus('Файл готов к воспроизведению');
+                    updateProgress(100, '100%');
+
+                    // Отрисовываем первый сегмент на холсте
+                    if (state.segments.length > 0) {
+                        el.audio.currentTime = state.segments[0].start;
                     }
-                    writePos += buf.length;
-                    if (k % 5 === 0 || k === buffers.length - 1) {
-                        updateProgress(90 + (k / buffers.length) * 10, 'Building ' + (k + 1) + '/' + buffers.length);
-                    }
+                    drawWaveform(state.currentSegIdx);
+                    updateUI();
+
+                    return true;
+                } catch (e) {
+                    console.error('Ошибка инициализации аудио-источника:', e);
+                    updateStatus('Ошибка загрузки аудио в плеер');
+                    return false;
                 }
-
-                updateProgress(100, 'Done');
-                await ctx.close();
-                updateStatus('Ready');
-
-                return mergedBuffer;
-            }
-
-            // ===== BUFFER TO WAV =====
-            function writeString(view, offset, string) {
-                for (var i = 0; i < string.length; i++) {
-                    view.setUint8(offset + i, string.charCodeAt(i));
-                }
-            }
-
-            async function bufferToWav(buffer) {
-                var numChannels = buffer.numberOfChannels;
-                var sampleRate = buffer.sampleRate;
-                var bitDepth = 16;
-                var bytesPerSample = bitDepth / 8;
-                var blockAlign = numChannels * bytesPerSample;
-                var byteRate = sampleRate * blockAlign;
-                var dataSize = buffer.length * blockAlign;
-                var headerSize = 44;
-                var totalSize = headerSize + dataSize;
-
-                var arrayBuffer = new ArrayBuffer(totalSize);
-                var view = new DataView(arrayBuffer);
-
-                writeString(view, 0, 'RIFF');
-                view.setUint32(4, totalSize - 8, true);
-                writeString(view, 8, 'WAVE');
-                writeString(view, 12, 'fmt ');
-                view.setUint32(16, 16, true);
-                view.setUint16(20, 1, true);
-                view.setUint16(22, numChannels, true);
-                view.setUint32(24, sampleRate, true);
-                view.setUint32(28, byteRate, true);
-                view.setUint16(32, blockAlign, true);
-                view.setUint16(34, bitDepth, true);
-                writeString(view, 36, 'data');
-                view.setUint32(40, dataSize, true);
-
-                var offset = 44;
-                var samples = buffer.getChannelData(0);
-                var scale = Math.pow(2, bitDepth - 1);
-                for (var i = 0; i < buffer.length; i++) {
-                    var val = Math.max(-1, Math.min(1, samples[i]));
-                    view.setInt16(offset + i * 2, Math.round(val * (scale - 1)), true);
-                }
-
-                return arrayBuffer;
             }
 
             // ===== LOAD FILES =====
@@ -1770,95 +1566,67 @@
                 if (state.isLoading) return;
                 state.isLoading = true;
                 state.isReady = false;
+                state.audioReady = false;
                 updateUI();
 
                 try {
                     state.files = files;
                     state.fileSegments = [];
+                    state._audioData = null;
+                    state._waveformData = null;
+                    state.fileBlobUrls = [];
+                    state.fileBuffers = [];
 
-                    var merged = await mergeAllFiles(files);
-                    if (!merged) {
-                        state.isLoading = false;
-                        updateStatus('No valid audio files');
-                        return;
+                    var ctx = new(window.AudioContext || window.webkitAudioContext)();
+                    if (ctx.state === 'suspended') await ctx.resume();
+
+                    var totalFiles = files.length;
+
+                    for (var i = 0; i < totalFiles; i++) {
+                        updateStatus('Processing ' + (i + 1) + '/' + totalFiles + ': ' + files[i].name, true);
+                        updateProgress((i / totalFiles) * 80, (i + 1) + '/' + totalFiles);
+
+                        try {
+                            var arrayBuffer = await files[i].arrayBuffer();
+                            var audioBuffer = await ctx.decodeAudioData(arrayBuffer);
+
+                            state.fileBuffers[i] = arrayBuffer;
+
+                            var segments = sliceAudioBySilence(audioBuffer, state.settings.db, state.settings.dur);
+                            state.fileSegments[i] = segments;
+
+                            if (i === 0) {
+                                state._audioData = audioBuffer.getChannelData(0);
+                                state.sampleRate = audioBuffer.sampleRate;
+                            }
+
+                        } catch (e) {
+                            console.warn('Error decoding:', files[i].name, e);
+                            state.fileSegments[i] = [];
+                        }
                     }
 
-                    state.mergedBuffer = merged;
-                    state.audioData = merged.getChannelData(0);
-                    state.sampleRate = merged.sampleRate;
-
-                    updateStatus('Analyzing segments...', true);
-                    updateProgress(50, 'Analyzing...');
-
-                    for (var i = 0; i < files.length; i++) {
-                        updateProgress(50 + (i / files.length) * 40, 'Analyzing ' + (i + 1) + '/' + files.length);
-                        updateStatus('Analyzing ' + files[i].name + '...', true);
-
-                        var startSample = state.fileOffsets[i] || 0;
-                        var endSample = startSample + (state.fileDurations[i] * state.sampleRate);
-
-                        var fileData = state.audioData.slice(
-                            Math.floor(startSample),
-                            Math.floor(endSample)
-                        );
-
-                        var tempBuffer = new AudioBuffer({
-                            length: fileData.length,
-                            numberOfChannels: 1,
-                            sampleRate: state.sampleRate
-                        });
-                        tempBuffer.copyToChannel(fileData, 0);
-
-                        var segments = sliceAudioBySilence(tempBuffer, state.settings.db, state.settings.dur);
-                        state.fileSegments[i] = segments;
-                    }
+                    await ctx.close();
 
                     state.currentFileIdx = 0;
                     state.segments = state.fileSegments[0] || [];
                     state.currentSegIdx = 0;
                     state.repeatCount = 0;
-                    state.currentFileStartTime = 0;
 
-                    updateStatus('Converting to WAV...', true);
-                    updateProgress(90, 'Converting...');
+                    updateStatus('Инициализация плеера...', true);
+                    updateProgress(95, 'Инициализация...');
 
-                    var wavData = await bufferToWav(merged);
-                    var blob = new Blob([wavData], { type: 'audio/wav' });
-                    var url = URL.createObjectURL(blob);
+                    // ВАЖНО: Инициализируем аудио-элемент с первым файлом
+                    const initResult = initAudioFile(0);
 
-                    if (state.originalFileUrl) URL.revokeObjectURL(state.originalFileUrl);
-                    state.originalFileUrl = url;
-
-                    updateStatus('Loading audio...', true);
-                    updateProgress(95, 'Loading audio...');
-
-                    el.audio.src = url;
-                    el.audio.load();
-                    el.audio.playbackRate = state.speed;
-
-                    await new Promise(function(resolve) {
-                        var onCanPlay = function() {
-                            el.audio.removeEventListener('canplaythrough', onCanPlay);
-                            clearTimeout(timeout);
-                            resolve();
-                        };
-                        el.audio.addEventListener('canplaythrough', onCanPlay);
-                        var timeout = setTimeout(resolve, 5000);
-                    });
-
-                    if (state.segments.length > 0) {
-                        var firstSeg = state.segments[0];
-                        el.audio.currentTime = firstSeg.start;
+                    if (initResult) {
+                        updateStatus('Готов к воспроизведению');
+                        updateProgress(100, 'Готов');
+                    } else {
+                        updateStatus('Ошибка инициализации аудио');
                     }
 
-                    state.isLoading = false;
-                    state.isReady = true;
-                    state.isPlaying = false;
-
-                    updateStatus('Ready');
-                    updateProgress(0);
                     updateUI();
-                    drawWaveform(0);
                     updateMediaSession();
                     savePlaybackState();
 
@@ -1869,98 +1637,87 @@
                     updateStatus('Error: ' + e.message);
                     state.isLoading = false;
                     state.isReady = true;
+                    state.audioReady = true;
                     updateUI();
                 }
             }
 
-            // ===== SWITCH TO FILE =====
+            // ===== ПЕРЕКЛЮЧЕНИЕ ФАЙЛОВ =====
             function switchToFile(fileIdx) {
                 if (fileIdx < 0 || fileIdx >= state.files.length) return;
                 if (fileIdx === state.currentFileIdx && state.isPlaying) return;
+                if (state.isSwitching) return;
 
+                state.isSwitching = true;
                 var wasPlaying = state.isPlaying;
+
+                if (state.isPlaying) {
+                    el.audio.pause();
+                    state.isPlaying = false;
+                }
+
                 state.currentFileIdx = fileIdx;
                 state.currentSegIdx = 0;
                 state.repeatCount = 0;
-
+                state._waveformData = null;
                 state.segments = state.fileSegments[fileIdx] || [];
-                state.currentFileStartTime = (state.fileOffsets[fileIdx] || 0) / state.sampleRate;
+                state.audioReady = false;
 
                 updateUI();
-                drawWaveform(0);
-                updateMediaSession();
-                savePlaybackState();
 
-                if (state.segments.length > 0) {
-                    var firstSeg = state.segments[0];
-                    el.audio.currentTime = firstSeg.start + state.currentFileStartTime;
+                // Инициализируем новый файл
+                const initResult = initAudioFile(fileIdx);
+
+                state.isSwitching = false;
+
+                if (initResult) {
+                    if (state.segments.length > 0) {
+                        var firstSeg = state.segments[0];
+                        el.audio.currentTime = firstSeg.start;
+                    }
+
+                    updateUI();
+                    drawWaveform(0);
+                    updateMediaSession();
+                    savePlaybackState();
+
+                    if (wasPlaying && state.segments.length > 0) {
+                        playAudio();
+                    }
+                } else {
+                    updateUI();
                 }
-
-                if (wasPlaying && state.segments.length > 0) {
-                    setTimeout(function() {
-                        el.audio.play().catch(function() {});
-                    }, 50);
-                }
-
-                console.log('Switched to file', fileIdx + 1, 'segments:', state.segments.length);
             }
 
             // ===== PLAYBACK =====
-            function setupAudio() {
-                try {
-                    if (!state.audioCtx) {
-                        state.audioCtx = new(window.AudioContext || window.webkitAudioContext)();
-                    }
-                    if (state.audioCtx.state === 'suspended') {
-                        state.audioCtx.resume();
-                    }
-
-                    if (!state.gainNode) {
-                        state.gainNode = state.audioCtx.createGain();
-                        state.gainNode.gain.value = 1.0;
-                        state.gainNode.connect(state.audioCtx.destination);
-                    }
-
-                    if (!window._sourceNode) {
-                        window._sourceNode = state.audioCtx.createMediaElementSource(el.audio);
-                    }
-                    try { window._sourceNode.disconnect(); } catch (e) {}
-                    window._sourceNode.connect(state.gainNode);
-                    state.isAudioInitialized = true;
-                    return true;
-                } catch (e) {
-                    console.warn('Audio setup error:', e);
-                    return false;
-                }
-            }
-
             function playAudio() {
-                if (state.segments.length === 0 || state.isLoading) return;
+                if (state.segments.length === 0 || state.isLoading || state.isSwitching) return;
+                if (!state.audioReady || !state.isReady) {
+                    state.playPending = true;
+                    return;
+                }
 
                 var seg = getCurrentSegment();
                 if (!seg || seg.end - seg.start < 0.01) return;
 
                 try {
-                    if (!state.isAudioInitialized) {
-                        if (!setupAudio()) {
-                            updateStatus('Audio setup failed');
-                            return;
-                        }
-                    }
-
-                    var startTime = state.currentFileStartTime || 0;
-                    el.audio.currentTime = seg.start + startTime;
+                    el.audio.currentTime = seg.start;
                     el.audio.playbackRate = state.speed;
 
-                    el.audio.play().then(function() {
-                        state.isPlaying = true;
-                        updateUI();
-                        updateMediaSession();
-                    }).catch(function(e) {
-                        console.warn('Play error:', e);
-                        state.isPlaying = false;
-                        updateUI();
-                    });
+                    var playPromise = el.audio.play();
+                    if (playPromise) {
+                        playPromise.then(function() {
+                            state.isPlaying = true;
+                            state.playPending = false;
+                            updateUI();
+                            updateMediaSession();
+                        }).catch(function(e) {
+                            console.warn('Play error:', e);
+                            state.isPlaying = false;
+                            state.playPending = false;
+                            updateUI();
+                        });
+                    }
                 } catch (e) {
                     console.error('Play error:', e);
                     state.isPlaying = false;
@@ -1971,12 +1728,17 @@
             function pauseAudio() {
                 el.audio.pause();
                 state.isPlaying = false;
+                state.playPending = false;
                 updateUI();
                 updateMediaSession();
             }
 
             function togglePlay() {
-                if (state.isLoading || state.segments.length === 0) return;
+                if (state.isLoading || state.segments.length === 0 || state.isSwitching) return;
+                if (!state.audioReady || !state.isReady) {
+                    state.playPending = true;
+                    return;
+                }
                 if (state.isPlaying) {
                     pauseAudio();
                 } else {
@@ -1992,44 +1754,45 @@
             }
 
             function prevSegment() {
-                if (state.segments.length === 0 || state.isLoading) return;
+                if (state.segments.length === 0 || state.isLoading || state.isSwitching) return;
                 if (state.currentSegIdx > 0) {
                     state.currentSegIdx--;
                     state.repeatCount = 0;
                     var seg = getCurrentSegment();
-                    var startTime = state.currentFileStartTime || 0;
-                    el.audio.currentTime = seg.start + startTime;
+                    el.audio.currentTime = seg.start;
                     drawWaveform(state.currentSegIdx);
                     updateUI();
                     updateMediaSession();
-                    if (state.isPlaying) {
-                        el.audio.play().catch(function() {});
-                    }
                 }
             }
 
             function nextSegment() {
-                if (state.segments.length === 0 || state.isLoading) return;
+                if (state.segments.length === 0 || state.isLoading || state.isSwitching) return;
 
                 var nextIdx = state.currentSegIdx + 1;
                 if (nextIdx >= state.segments.length) {
                     var nextFile = state.currentFileIdx + 1;
                     if (nextFile < state.files.length) {
+                        state.isPlaying = false;
                         switchToFile(nextFile);
-                        if (state.isPlaying) {
-                            setTimeout(function() { el.audio.play().catch(function() {}); }, 100);
-                        }
+                        setTimeout(function() {
+                            if (state.segments.length > 0) {
+                                playAudio();
+                            }
+                        }, 100);
                     } else if (state.files.length > 1) {
+                        state.isPlaying = false;
                         switchToFile(0);
-                        if (state.isPlaying) {
-                            setTimeout(function() { el.audio.play().catch(function() {}); }, 100);
-                        }
+                        setTimeout(function() {
+                            if (state.segments.length > 0) {
+                                playAudio();
+                            }
+                        }, 100);
                     } else {
                         state.currentSegIdx = 0;
                         state.repeatCount = 0;
                         var seg = getCurrentSegment();
-                        var startTime = state.currentFileStartTime || 0;
-                        el.audio.currentTime = seg.start + startTime;
+                        el.audio.currentTime = seg.start;
                         drawWaveform(0);
                         updateUI();
                         updateMediaSession();
@@ -2041,8 +1804,7 @@
                     state.currentSegIdx = nextIdx;
                     state.repeatCount = 0;
                     var seg = getCurrentSegment();
-                    var startTime = state.currentFileStartTime || 0;
-                    el.audio.currentTime = seg.start + startTime;
+                    el.audio.currentTime = seg.start;
                     drawWaveform(state.currentSegIdx);
                     updateUI();
                     updateMediaSession();
@@ -2053,7 +1815,7 @@
             }
 
             function jumpToSegment() {
-                if (state.segments.length === 0 || state.isLoading) return;
+                if (state.segments.length === 0 || state.isLoading || state.isSwitching) return;
                 var val = parseInt(el.jumpInput.value);
                 if (isNaN(val) || val < 1) val = 1;
                 if (val > state.segments.length) val = state.segments.length;
@@ -2061,8 +1823,7 @@
                 state.currentSegIdx = val - 1;
                 state.repeatCount = 0;
                 var seg = getCurrentSegment();
-                var startTime = state.currentFileStartTime || 0;
-                el.audio.currentTime = seg.start + startTime;
+                el.audio.currentTime = seg.start;
                 drawWaveform(state.currentSegIdx);
                 updateUI();
                 updateMediaSession();
@@ -2128,6 +1889,13 @@
                     updateStatus('No audio files selected');
                     return;
                 }
+
+                state.fileBlobUrls.forEach(function(url) {
+                    if (url) URL.revokeObjectURL(url);
+                });
+                state.fileBlobUrls = [];
+                state.fileBuffers = [];
+
                 loadMergedFiles(files.sort(function(a, b) { return a.name.localeCompare(b.name); }));
                 input.value = '';
             }
@@ -2181,17 +1949,17 @@
             // ===== AUDIO EVENTS =====
             function setupAudioEvents() {
                 var lastUpdateTime = 0;
+                var isProcessingEnd = false;
 
                 el.audio.addEventListener('timeupdate', function() {
-                    if (state.isLoading || state.segments.length === 0) return;
+                    if (state.isLoading || state.segments.length === 0 || state.isSwitching) return;
 
                     var now = Date.now();
-                    if (now - lastUpdateTime < 50) return;
+                    if (now - lastUpdateTime < 80) return;
                     lastUpdateTime = now;
 
                     var seg = getCurrentSegment();
-                    var startTime = state.currentFileStartTime || 0;
-                    var currentTime = el.audio.currentTime - startTime;
+                    var currentTime = el.audio.currentTime;
                     var segEnd = seg.end;
                     var segStart = seg.start;
                     var silence = state.settings.silence || 0;
@@ -2201,41 +1969,45 @@
                         var totalDuration = virtualEnd - segStart;
                         var progressInSeg = Math.max(0, currentTime - segStart);
                         updateTimeInfo(Math.min(progressInSeg, totalDuration), totalDuration);
+
                         var pct = (Math.min(progressInSeg, segEnd - segStart) / (segEnd - segStart)) * 100;
                         if (el.waveProgress) el.waveProgress.style.width = Math.min(pct, 100) + '%';
                     }
 
-                    if (state.isPlaying && !state.isLoading) {
+                    if (state.isPlaying && !state.isLoading && !isProcessingEnd) {
                         if (currentTime >= virtualEnd) {
+                            isProcessingEnd = true;
                             state.repeatCount++;
+
                             if (state.repeatCount >= state.settings.n) {
                                 state.repeatCount = 0;
                                 var nextSegIdx = state.currentSegIdx + 1;
                                 if (nextSegIdx >= state.segments.length) {
                                     handleFileEnd();
+                                    isProcessingEnd = false;
                                     return;
                                 } else {
                                     state.currentSegIdx = nextSegIdx;
                                 }
                             }
+
                             var newSeg = getCurrentSegment();
                             if (newSeg && newSeg.end > newSeg.start) {
-                                el.audio.currentTime = newSeg.start + startTime;
+                                el.audio.currentTime = newSeg.start;
                                 drawWaveform(state.currentSegIdx);
                                 updateUI();
                                 updateMediaSession();
                             }
+                            isProcessingEnd = false;
                         }
                     }
                 });
 
                 el.audio.addEventListener('play', function() {
                     state.isPlaying = true;
+                    state.playPending = false;
                     updateUI();
                     updateMediaSession();
-                    if (state.audioCtx && state.audioCtx.state === 'suspended') {
-                        state.audioCtx.resume();
-                    }
                 });
 
                 el.audio.addEventListener('pause', function() {
@@ -2244,23 +2016,39 @@
                     updateMediaSession();
                 });
 
+                el.audio.addEventListener('ended', function() {
+                    if (state.isPlaying) {
+                        handleFileEnd();
+                    }
+                });
+
                 el.audio.addEventListener('error', function(e) {
                     console.error('Audio error:', e);
                     state.isPlaying = false;
+                    state.playPending = false;
                     updateUI();
+                });
+
+                el.audio.addEventListener('canplaythrough', function() {
+                    state.audioReady = true;
+                    state.isReady = true;
+                    updateUI();
+                    if (state.playPending && state.segments.length > 0) {
+                        state.playPending = false;
+                        playAudio();
+                    }
                 });
             }
 
             function handleFileEnd() {
                 var after = state.settings.after || 'stop';
-                console.log('File ended, mode:', after, 'current file:', state.currentFileIdx + 1, 'of', state.files.length);
+                console.log('File ended, mode:', after);
 
                 if (after === 'loop') {
                     state.currentSegIdx = 0;
                     state.repeatCount = 0;
                     var seg = getCurrentSegment();
-                    var startTime = state.currentFileStartTime || 0;
-                    el.audio.currentTime = seg.start + startTime;
+                    el.audio.currentTime = seg.start;
                     drawWaveform(0);
                     updateUI();
                     updateMediaSession();
@@ -2270,15 +2058,21 @@
                 } else if (after === 'next') {
                     var nextFileIdx = state.currentFileIdx + 1;
                     if (nextFileIdx < state.files.length) {
+                        state.isPlaying = false;
                         switchToFile(nextFileIdx);
-                        if (state.isPlaying) {
-                            setTimeout(function() { el.audio.play().catch(function() {}); }, 100);
-                        }
+                        setTimeout(function() {
+                            if (state.segments.length > 0) {
+                                playAudio();
+                            }
+                        }, 100);
                     } else if (state.files.length > 1) {
+                        state.isPlaying = false;
                         switchToFile(0);
-                        if (state.isPlaying) {
-                            setTimeout(function() { el.audio.play().catch(function() {}); }, 100);
-                        }
+                        setTimeout(function() {
+                            if (state.segments.length > 0) {
+                                playAudio();
+                            }
+                        }, 100);
                     } else {
                         state.isPlaying = false;
                         updateUI();
@@ -2295,15 +2089,14 @@
 
             // ===== WAVEFORM CLICK =====
             function handleWaveformClick(e) {
-                if (state.segments.length === 0 || state.isLoading) return;
+                if (state.segments.length === 0 || state.isLoading || state.isSwitching) return;
                 var rect = el.waveCanvas.parentElement.getBoundingClientRect();
                 var x = (e.clientX - rect.left) / rect.width;
                 var seg = getCurrentSegment();
                 var totalDuration = (seg.end - seg.start) + state.settings.silence;
                 var targetTime = seg.start + totalDuration * Math.max(0, Math.min(1, x));
                 var clampedTime = Math.min(targetTime, seg.end);
-                var startTime = state.currentFileStartTime || 0;
-                el.audio.currentTime = clampedTime + startTime;
+                el.audio.currentTime = clampedTime;
                 var progressInSeg = clampedTime - seg.start;
                 var pct = (progressInSeg / (seg.end - seg.start)) * 100;
                 if (el.waveProgress) el.waveProgress.style.width = Math.min(pct, 100) + '%';
@@ -2312,7 +2105,7 @@
 
             // ===== INIT =====
             function init() {
-                console.log('HablaSlice v29.0');
+                console.log('HablaSlice v34.0 (исправлен Play - полная инициализация)');
 
                 loadSettings();
                 updateUI();
@@ -2405,27 +2198,30 @@
 
                     if ((oldDb !== newDb || oldDur !== newDur) && state.files.length > 0) {
                         state.fileSegments = [];
+                        var ctx = new(window.AudioContext || window.webkitAudioContext)();
                         for (var i = 0; i < state.files.length; i++) {
-                            var startSample = state.fileOffsets[i] || 0;
-                            var endSample = startSample + (state.fileDurations[i] * state.sampleRate);
-                            var fileData = state.audioData.slice(
-                                Math.floor(startSample),
-                                Math.floor(endSample)
-                            );
-                            var tempBuffer = new AudioBuffer({
-                                length: fileData.length,
-                                numberOfChannels: 1,
-                                sampleRate: state.sampleRate
-                            });
-                            tempBuffer.copyToChannel(fileData, 0);
-                            state.fileSegments[i] = sliceAudioBySilence(tempBuffer, newDb, newDur);
+                            try {
+                                var buffer = state.fileBuffers[i];
+                                if (!buffer) {
+                                    var arrayBuffer = await state.files[i].arrayBuffer();
+                                    buffer = arrayBuffer;
+                                    state.fileBuffers[i] = buffer;
+                                }
+                                var audioBuffer = await ctx.decodeAudioData(buffer);
+                                var segments = sliceAudioBySilence(audioBuffer, newDb, newDur);
+                                state.fileSegments[i] = segments;
+                            } catch (e) {
+                                console.warn('Error reprocessing:', state.files[i].name, e);
+                                state.fileSegments[i] = [];
+                            }
                         }
+                        await ctx.close();
+
                         state.segments = state.fileSegments[state.currentFileIdx] || [];
                         state.currentSegIdx = 0;
                         state.repeatCount = 0;
-                        var startTime = state.currentFileStartTime || 0;
                         if (state.segments.length > 0) {
-                            el.audio.currentTime = state.segments[0].start + startTime;
+                            el.audio.currentTime = state.segments[0].start;
                         }
                         drawWaveform(0);
                         updateUI();
@@ -2506,21 +2302,14 @@
                 });
 
                 document.addEventListener('visibilitychange', function() {
-                    if (!document.hidden && state.isPlaying && el.audio.paused) {
-                        if (state.audioCtx && state.audioCtx.state === 'suspended') state.audioCtx.resume();
+                    if (!document.hidden && state.isPlaying && el.audio.paused && !state.isSwitching) {
                         el.audio.play().catch(function() {});
                     }
                 });
 
-                try {
-                    var raw = localStorage.getItem('hs_playback_state');
-                    if (raw && state.files.length === 0) {}
-                } catch (e) {}
-
                 console.log('HablaSlice ready');
             }
 
-            // ===== START =====
             if (document.readyState === 'complete') {
                 init();
             } else {
@@ -2529,20 +2318,18 @@
 
         })();
     </script>
-        <!-- ===== SERVICE WORKER REGISTRATION ===== -->
     <script>
-    if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
-            navigator.serviceWorker.register('./sw.js', { scope: '/HablaSlice/' })
-                .then((reg) => {
-                    console.log('Service Worker Ok!', reg.scope);
-                })
-                .catch((err) => {
-                    console.error('Error Service Worker:', err);
-                });
-        });
-    }
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', function() {
+                navigator.serviceWorker.register('./sw.js', { scope: '/HablaSlice/' })
+                    .then(function(reg) {
+                        console.log('Service Worker Ok!', reg.scope);
+                    })
+                    .catch(function(err) {
+                        console.error('Error Service Worker:', err);
+                    });
+            });
+        }
     </script>
-
 </body>
 </html>
