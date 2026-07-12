@@ -1,79 +1,65 @@
-const CACHE_NAME = 'hablaslice-cache-v2';
+const CACHE_NAME = 'hablaslice-v1';
 
-// Кешируем ВСЕ возможные варианты обращения к главной странице
-const ASSETS_TO_CACHE = [
-    '/HablaSlice/',                  // Запрос к корню папки (как обычно открывает телефон)
-    '/HablaSlice/index.html',         // Явный запрос к файлу
-    '/HablaSlice/manifest.json',
-    '/HablaSlice/icons/icon-72.png',
-    '/HablaSlice/icons/icon-96.png',
-    '/HablaSlice/icons/icon-128.png',
-    '/HablaSlice/icons/icon-144.png',
-    '/HablaSlice/icons/icon-152.png',
-    '/HablaSlice/icons/icon-192.png',
-    '/HablaSlice/icons/icon-384.png',
-    '/HablaSlice/icons/icon-512.png',
-    '/HablaSlice/screenshots/screenshot-mobile.png'
+// Кэшируем только основные файлы (без привязки к папке)
+const FILES_TO_CACHE = [
+    '.',                    // Текущая папка (главная страница)
+    'index.html',
+    'manifest.json'
+    // Иконки загружаются отдельно, если они есть
 ];
 
-// Установка Service Worker
-self.addEventListener('install', (event) => {
+// Установка
+self.addEventListener('install', function(event) {
     event.waitUntil(
         caches.open(CACHE_NAME)
-            .then((cache) => {
-                console.log('[Service Worker] Принудительное кеширование всех ресурсов');
-                return cache.addAll(ASSETS_TO_CACHE);
+            .then(function(cache) {
+                console.log('[SW] Кэшируем файлы');
+                return cache.addAll(FILES_TO_CACHE);
             })
-            .then(() => self.skipWaiting())
+            .then(function() {
+                return self.skipWaiting();
+            })
     );
 });
 
-// Активация и удаление старого кеша
-self.addEventListener('activate', (event) => {
+// Активация - удаляем старый кэш
+self.addEventListener('activate', function(event) {
     event.waitUntil(
-        caches.keys().then((cacheNames) => {
+        caches.keys().then(function(cacheNames) {
             return Promise.all(
-                cacheNames.map((cache) => {
-                    if (cache !== CACHE_NAME) {
-                        console.log('[Service Worker] Удаление старого кеша:', cache);
-                        return caches.delete(cache);
+                cacheNames.map(function(name) {
+                    if (name !== CACHE_NAME) {
+                        console.log('[SW] Удаляем старый кэш:', name);
+                        return caches.delete(name);
                     }
                 })
             );
-        }).then(() => self.clients.claim())
+        }).then(function() {
+            return self.clients.claim();
+        })
     );
 });
 
-// Перехват запросов (Стратегия: сначала Кеш, если нет — Сеть)
-self.addEventListener('fetch', (event) => {
-    // Полностью игнорируем blob-ссылки (аудиофайлы с телефона) и запросы, отличные от GET
+// Перехват запросов
+self.addEventListener('fetch', function(event) {
+    // Игнорируем blob (аудио) и не-GET запросы
     if (event.request.url.startsWith('blob:') || event.request.method !== 'GET') {
         return;
     }
 
     event.respondWith(
-        caches.match(event.request).then((cachedResponse) => {
-            if (cachedResponse) {
-                return cachedResponse; // Найдено точное совпадение в кеше
-            }
-
-            // УМНЫЙ ХАК ДЛЯ GITHUB PAGES:
-            // Если пользователь запрашивает подпапку /HablaSlice/ (или с параметрами),
-            // а точного совпадения нет, принудительно отдаем закешированный корень.
-            const url = new URL(event.request.url);
-            if (url.pathname === '/HablaSlice' || url.pathname === '/HablaSlice/') {
-                return caches.match('/HablaSlice/');
-            }
-
-            // Если в кеше ничего не нашлось, делаем обычный запрос в сеть
-            return fetch(event.request).catch((err) => {
-                console.error('[Service Worker] Сеть недоступна, ресурс не закеширован:', event.request.url);
-                
-                // Если сломался запрос к любой странице навигации, аварийно отдаем главную страницу
-                if (event.request.mode === 'navigate') {
-                    return caches.match('/HablaSlice/');
+        caches.match(event.request)
+            .then(function(response) {
+                if (response) {
+                    return response; // Найдено в кэше
                 }
-            });
-        })
+                return fetch(event.request); // Идем в сеть
+            })
+            .catch(function() {
+                // Если сеть недоступна, пытаемся отдать главную страницу
+                if (event.request.mode === 'navigate') {
+                    return caches.match('index.html');
+                }
+            })
     );
 });
