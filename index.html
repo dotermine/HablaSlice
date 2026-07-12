@@ -8,16 +8,16 @@
     <!-- Настройки для iOS (Apple) -->
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <link rel="apple-touch-icon" href="/icons/icon-192.png">
-    <link rel="apple-touch-icon" sizes="152x152" href="/icons/icon-128.png">
-    <link rel="apple-touch-icon" sizes="180x180" href="/icons/icon-192.png">
+    <link rel="apple-touch-icon" href="/HablaSlice/icons/icon-192.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="/HablaSlice/icons/icon-128.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/HablaSlice/icons/icon-192.png">
     
     <!-- Стандартные фавиконки для браузеров -->
-    <link rel="icon" type="image/png" sizes="32x32" href="/icons/icon-32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="/icons/icon-16.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/HablaSlice/icons/icon-32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/HablaSlice/icons/icon-16.png">
     
-    <!-- PWA Manifest -->
-    <link rel="manifest" href="manifest.json">
+    <!-- PWA Manifest с правильным путем для GitHub Pages -->
+    <link rel="manifest" href="/HablaSlice/manifest.json" type="application/manifest+json">
     
     <title>HablaSlice</title>
     <style>
@@ -1156,15 +1156,16 @@
             function init() {
                 console.log('HablaSlice v37.0 - PWA Ready');
                 
-                // REGISTER SERVICE WORKER - ПРАВИЛЬНАЯ РЕГИСТРАЦИЯ
+                // REGISTER SERVICE WORKER - ИСПРАВЛЕННЫЙ ПУТЬ ДЛЯ GITHUB PAGES
                 if ('serviceWorker' in navigator) {
                   window.addEventListener('load', function() {
-                    // Путь должен начинаться со слеша: '/sw.js'
-                    navigator.serviceWorker.register('/sw.js')
-                      .then(function(reg) { console.log('[App] SW зарегистрирован успешно'); })
+                    // Путь изменен с '/sw.js' на '/HablaSlice/sw.js'
+                    navigator.serviceWorker.register('/HablaSlice/sw.js')
+                      .then(function(reg) { console.log('[App] SW зарегистрирован успешно в области:', reg.scope); })
                       .catch(function(err) { console.error('[App] Ошибка регистрации SW:', err); });
                   });
                 }
+
                 
                 loadSettings();
                 updateUI();
