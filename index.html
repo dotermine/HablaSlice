@@ -270,7 +270,8 @@
                 isAudioInitialized: false, savedSettings: null,
                 _isProcessing: false,
                 _checkTimer: null,
-                _shouldResume: false
+                _shouldResume: false,
+                _isJumpInputFocused: false // Флаг для поля ввода
             };
 
             function sliceAudioBySilence(audioBuffer, thresholdDb, minSilenceSec) {
@@ -403,7 +404,20 @@
                     if (totalFiles > 1) { var fileName = state.files[state.currentFileIdx] ? state.files[state.currentFileIdx].name : '—';
                         el.fileInfo.textContent = currentFile + '/' + totalFiles + ' • ' + fileName; } else { el.fileInfo.textContent = totalFiles > 0 ? 'File 1/1' : ''; }
                 }
-                if (state.segments.length > 0) { var idx = state.currentSegIdx + 1; if (el.segInfo) el.segInfo.textContent = 'Segment ' + idx + ' of ' + state.segments.length; if (el.totalSegments) el.totalSegments.textContent = state.segments.length; if (el.jumpInput) { el.jumpInput.max = state.segments.length; el.jumpInput.value = Math.min(idx, state.segments.length); } } else { if (el.segInfo) el.segInfo.textContent = 'Ready'; }
+                if (state.segments.length > 0) { 
+                    var idx = state.currentSegIdx + 1; 
+                    if (el.segInfo) el.segInfo.textContent = 'Segment ' + idx + ' of ' + state.segments.length; 
+                    if (el.totalSegments) el.totalSegments.textContent = state.segments.length; 
+                    if (el.jumpInput) { 
+                        el.jumpInput.max = state.segments.length; 
+                        // Обновляем значение ТОЛЬКО если поле НЕ в фокусе
+                        if (!state._isJumpInputFocused) {
+                            el.jumpInput.value = Math.min(idx, state.segments.length);
+                        }
+                    } 
+                } else { 
+                    if (el.segInfo) el.segInfo.textContent = 'Ready'; 
+                }
                 if (el.repeatCount) { el.repeatCount.textContent = Math.min(state.repeatCount + 1, state.settings.n); }
                 if (el.silenceDuration) { el.silenceDuration.textContent = state.settings.silence.toFixed(1); }
                 if (el.silenceLabel) { el.silenceLabel.style.display = state.settings.silence > 0.01 ? 'inline' : 'none'; }
@@ -1154,7 +1168,7 @@
             }
 
             function init() {
-                console.log('HablaSlice v37.0 - PWA Ready');
+                console.log('HablaSlice v38.0 - PWA Ready + Fixed Jump Input');
                 
                 // REGISTER SERVICE WORKER - ИСПРАВЛЕННЫЙ ПУТЬ ДЛЯ GITHUB PAGES
                 if ('serviceWorker' in navigator) {
@@ -1165,7 +1179,6 @@
                       .catch(function(err) { console.error('[App] Ошибка регистрации SW:', err); });
                   });
                 }
-
                 
                 loadSettings();
                 updateUI();
@@ -1173,33 +1186,80 @@
                 setupAudioEvents();
                 setupMediaSession();
 
+                // ===== ОБРАБОТЧИКИ КНОПОК =====
                 el.btnOpen.addEventListener('click', togglePopover);
                 el.btnSettings.addEventListener('click', openModal);
                 el.btnPlay.addEventListener('click', togglePlay);
                 el.btnPrev.addEventListener('click', prevSegment);
                 el.btnNext.addEventListener('click', nextSegment);
                 el.jumpBtn.addEventListener('click', jumpToSegment);
-                el.jumpInput.addEventListener('keydown', function(e) { if (e.key === 'Enter') jumpToSegment(); });
                 el.waveformOverlay.addEventListener('click', handleWaveformClick);
 
-                el.popFile.addEventListener('click', function() { el.popover.classList.remove('active');
-                    el.fileInput.click(); });
-                el.popFolder.addEventListener('click', function() { el.popover.classList.remove('active');
-                    el.folderInput.click(); });
-                document.addEventListener('click', function(e) { if (el.popover && !el.popover.contains(e.target) && e.target !== el.btnOpen) { el.popover.classList.remove('active'); } });
+                // ===== ИСПРАВЛЕНИЕ ДЛЯ JUMP INPUT =====
+                // Отслеживаем фокус на поле ввода
+                el.jumpInput.addEventListener('focus', function() {
+                    state._isJumpInputFocused = true;
+                    this.select();
+                });
+
+                // Когда пользователь уходит с поля
+                el.jumpInput.addEventListener('blur', function() {
+                    state._isJumpInputFocused = false;
+                    var val = parseInt(this.value);
+                    if (isNaN(val) || val < 1) val = 1;
+                    if (state.segments.length > 0 && val > state.segments.length) {
+                        val = state.segments.length;
+                    }
+                    this.value = val;
+                });
+
+                // Enter - перейти к фрагменту
+                el.jumpInput.addEventListener('keydown', function(e) { 
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        state._isJumpInputFocused = false;
+                        jumpToSegment();
+                        this.blur();
+                    }
+                });
+
+                // Остальные обработчики
+                el.popFile.addEventListener('click', function() { 
+                    el.popover.classList.remove('active');
+                    el.fileInput.click(); 
+                });
+                el.popFolder.addEventListener('click', function() { 
+                    el.popover.classList.remove('active');
+                    el.folderInput.click(); 
+                });
+                document.addEventListener('click', function(e) { 
+                    if (el.popover && !el.popover.contains(e.target) && e.target !== el.btnOpen) { 
+                        el.popover.classList.remove('active'); 
+                    } 
+                });
 
                 el.fileInput.addEventListener('change', function() { handleFiles(this); });
                 el.folderInput.addEventListener('change', function() { handleFiles(this); });
 
-                el.settingsModal.addEventListener('click', function(e) { if (e.target === el.settingsModal) { if (state.savedSettings) { Object.assign(state.settings, state.savedSettings);
+                el.settingsModal.addEventListener('click', function(e) { 
+                    if (e.target === el.settingsModal) { 
+                        if (state.savedSettings) { 
+                            Object.assign(state.settings, state.savedSettings);
                             applySettings();
-                            saveSettings(); }
-                        closeModal(); } });
+                            saveSettings(); 
+                        }
+                        closeModal(); 
+                    } 
+                });
 
-                el.btnCancel.addEventListener('click', function() { if (state.savedSettings) { Object.assign(state.settings, state.savedSettings);
+                el.btnCancel.addEventListener('click', function() { 
+                    if (state.savedSettings) { 
+                        Object.assign(state.settings, state.savedSettings);
                         applySettings();
-                        saveSettings(); }
-                    closeModal(); });
+                        saveSettings(); 
+                    }
+                    closeModal(); 
+                });
 
                 el.btnReset.addEventListener('click', function() {
                     state.settings.n = 3;
@@ -1279,16 +1339,29 @@
                     }
                 });
 
-                el.themeDark.addEventListener('click', function() { state.settings.theme = 'dark';
+                el.themeDark.addEventListener('click', function() { 
+                    state.settings.theme = 'dark';
                     document.body.classList.remove('light');
-                    saveSettings(); if (state.savedSettings) state.savedSettings.theme = 'dark'; });
-                el.themeLight.addEventListener('click', function() { state.settings.theme = 'light';
+                    saveSettings(); 
+                    if (state.savedSettings) state.savedSettings.theme = 'dark'; 
+                });
+                el.themeLight.addEventListener('click', function() { 
+                    state.settings.theme = 'light';
                     document.body.classList.add('light');
-                    saveSettings(); if (state.savedSettings) state.savedSettings.theme = 'light'; });
+                    saveSettings(); 
+                    if (state.savedSettings) state.savedSettings.theme = 'light'; 
+                });
 
-                el.setDb.addEventListener('input', function() { if (el.dbVal) el.dbVal.textContent = el.setDb.value; });
-                el.setDur.addEventListener('input', function() { if (el.durVal) el.durVal.textContent = parseFloat(el.setDur.value).toFixed(1); });
-                el.setSil.addEventListener('input', function() { if (el.silVal) el.silVal.textContent = parseFloat(el.setSil.value).toFixed(2); if (state.segments.length > 0) drawWaveform(state.currentSegIdx); });
+                el.setDb.addEventListener('input', function() { 
+                    if (el.dbVal) el.dbVal.textContent = el.setDb.value; 
+                });
+                el.setDur.addEventListener('input', function() { 
+                    if (el.durVal) el.durVal.textContent = parseFloat(el.setDur.value).toFixed(1); 
+                });
+                el.setSil.addEventListener('input', function() { 
+                    if (el.silVal) el.silVal.textContent = parseFloat(el.setSil.value).toFixed(2); 
+                    if (state.segments.length > 0) drawWaveform(state.currentSegIdx); 
+                });
 
                 document.querySelectorAll('.step-btn').forEach(function(btn) {
                     btn.addEventListener('click', function() {
@@ -1327,12 +1400,17 @@
                 document.addEventListener('keydown', function(e) {
                     if (e.target.tagName === 'INPUT' || e.target.closest('.dropdown')) return;
                     if (e.code === 'Space') { e.preventDefault();
-                        togglePlay(); } else if (e.code === 'ArrowLeft') prevSegment();
+                        togglePlay(); } 
+                    else if (e.code === 'ArrowLeft') prevSegment();
                     else if (e.code === 'ArrowRight') nextSegment();
-                    else if (e.code === 'Escape' && el.settingsModal && el.settingsModal.classList.contains('active')) { if (state.savedSettings) { Object.assign(state.settings, state.savedSettings);
+                    else if (e.code === 'Escape' && el.settingsModal && el.settingsModal.classList.contains('active')) { 
+                        if (state.savedSettings) { 
+                            Object.assign(state.settings, state.savedSettings);
                             applySettings();
-                            saveSettings(); }
-                        closeModal(); }
+                            saveSettings(); 
+                        }
+                        closeModal(); 
+                    }
                 });
 
                 document.addEventListener('visibilitychange', function() {
@@ -1355,7 +1433,11 @@
                 console.log('HablaSlice ready');
             }
 
-            if (document.readyState === 'complete') { init(); } else { document.addEventListener('DOMContentLoaded', init); }
+            if (document.readyState === 'complete') { 
+                init(); 
+            } else { 
+                document.addEventListener('DOMContentLoaded', init); 
+            }
         })();
     </script>
 </body>
