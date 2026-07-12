@@ -2,8 +2,8 @@
   "name": "HablaSlice Language Player",
   "short_name": "HablaSlice",
   "description": "Audio segment player with silence detection for language learning",
-  "start_url": "/index.html",
-  "scope": "/",
+  "start_url": "/HablaSlice/index.html",
+  "scope": "/HablaSlice/",
   "display": "standalone",
   "orientation": "portrait",
   "background_color": "#000000",
@@ -11,40 +11,40 @@
   "categories": ["education", "audio", "productivity"],
   "icons": [
     {
-      "src": "/icons/icon-72.png",
+      "src": "/HablaSlice/icons/icon-72.png",
       "sizes": "72x72",
       "type": "image/png"
     },
     {
-      "src": "/icons/icon-96.png",
+      "src": "/HablaSlice/icons/icon-96.png",
       "sizes": "96x96",
       "type": "image/png"
     },
     {
-      "src": "/icons/icon-128.png",
+      "src": "/HablaSlice/icons/icon-128.png",
       "sizes": "128x128",
       "type": "image/png"
     },
     {
-      "src": "/icons/icon-192.png",
+      "src": "/HablaSlice/icons/icon-192.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "/icons/icon-192.png",
+      "src": "/HablaSlice/icons/icon-192.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "maskable"
     },
     {
-      "src": "/icons/icon-512.png",
+      "src": "/HablaSlice/icons/icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "/icons/icon-512.png",
+      "src": "/HablaSlice/icons/icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "maskable"
