@@ -7,6 +7,7 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     
+    <!-- PWA Manifest -->
     <link rel="manifest" href="manifest.json">
     
     <title>HablaSlice</title>
@@ -263,7 +264,6 @@
                 _shouldResume: false
             };
 
-            // ===== БЫСТРЫЙ И ПРОСТОЙ АЛГОРИТМ СЕГМЕНТАЦИИ =====
             function sliceAudioBySilence(audioBuffer, thresholdDb, minSilenceSec) {
                 if (!audioBuffer) return [];
                 var data = audioBuffer.getChannelData(0);
@@ -272,9 +272,7 @@
                 var sampleRate = audioBuffer.sampleRate;
                 var thresholdLinear = Math.pow(10, thresholdDb / 20);
                 var minSilenceSamples = Math.floor(sampleRate * minSilenceSec);
-                var minSegmentSamples = Math.floor(sampleRate * 0.15); // 150ms минимум
-            
-                // Находим тишину простым пороговым методом
+                
                 var silenceRegions = [];
                 var inSilence = false;
                 var silenceStart = 0;
@@ -288,7 +286,6 @@
                     } else if (!isSilent && inSilence) {
                         inSilence = false;
                         var duration = (i - silenceStart) / sampleRate;
-                        // Запоминаем только длинные тишины
                         if (duration >= minSilenceSec) {
                             silenceRegions.push({ start: silenceStart / sampleRate, end: i / sampleRate });
                         }
@@ -302,7 +299,6 @@
                     }
                 }
                 
-                // Создаем сегменты между тишинами
                 var segments = [];
                 var prevEnd = 0;
                 var totalDuration = audioBuffer.duration;
@@ -312,19 +308,16 @@
                     var segStart = prevEnd;
                     var segEnd = region.start;
                     
-                    // Добавляем сегмент только если он достаточно длинный
                     if (segEnd - segStart >= 0.2) {
                         segments.push({ start: segStart, end: segEnd });
                     }
                     prevEnd = region.end;
                 }
                 
-                // Последний сегмент
                 if (totalDuration - prevEnd >= 0.2) {
                     segments.push({ start: prevEnd, end: totalDuration });
                 }
                 
-                // Если сегментов нет - создаем один
                 if (segments.length === 0) {
                     segments.push({ start: 0, end: totalDuration });
                 }
@@ -1152,13 +1145,17 @@
             }
 
             function init() {
-                console.log('HablaSlice v36.0 - Fast & stable');
+                console.log('HablaSlice v37.0 - PWA Ready');
                 
-                // Register Service Worker
+                // REGISTER SERVICE WORKER - ПРАВИЛЬНАЯ РЕГИСТРАЦИЯ
                 if ('serviceWorker' in navigator) {
-                    navigator.serviceWorker.register('sw.js')
-                        .then(function(reg) { console.log('SW registered:', reg); })
-                        .catch(function(err) { console.log('SW registration failed:', err); });
+                    navigator.serviceWorker.register('sw.js', { scope: '/' })
+                        .then(function(reg) { 
+                            console.log('✅ SW registered successfully:', reg);
+                        })
+                        .catch(function(err) { 
+                            console.log('❌ SW registration failed:', err);
+                        });
                 }
                 
                 loadSettings();
