@@ -1,32 +1,32 @@
-const CACHE_NAME = 'hablaslice-v1';
+const CACHE_NAME = 'hablaslice-v4';
 
-// Кэшируем файлы, используя абсолютные пути от корня домена
 const FILES_TO_CACHE = [
     '/',
     '/index.html',
-    '/manifest.json'
+    '/manifest.json',
+    '/icons/icon-192.png',
+    '/icons/icon-512.png'
 ];
 
-// Установка сервис-воркера
+// Установка: Безопасное поочередное кэширование
 self.addEventListener('install', function(event) {
     event.waitUntil(
-        caches.open(CACHE_NAME)
-            .then(function(cache) {
-                console.log('[SW] Кэшируем файлы');
-                // На период отладки можно использовать map, но addAll надежнее,
-                // если вы уверены, что все файлы по путям физически существуют.
-                return cache.addAll(FILES_TO_CACHE);
-            })
-            .then(function() {
-                return self.skipWaiting();
-            })
-            .catch(function(error) {
-                console.error('[SW] Ошибка при первичной установке кэша:', error);
-            })
+        caches.open(CACHE_NAME).then(function(cache) {
+            console.log('[SW] Кэширование обязательных ресурсов...');
+            return Promise.all(
+                FILES_TO_CACHE.map(function(url) {
+                    return cache.add(url).catch(function(err) {
+                        console.error('[SW] Не удалось загрузить в кэш:', url, err);
+                    });
+                })
+            );
+        }).then(function() {
+            return self.skipWaiting();
+        })
     );
 });
 
-// Активация - удаляем старый кэш
+// Активация: Очистка старых версий кэша
 self.addEventListener('activate', function(event) {
     event.waitUntil(
         caches.keys().then(function(cacheNames) {
@@ -44,9 +44,8 @@ self.addEventListener('activate', function(event) {
     );
 });
 
-// Перехват запросов
+// Перехват запросов (Стратегия: Сначала Кэш, если нет — Сеть с динамическим кэшированием)
 self.addEventListener('fetch', function(event) {
-    // Игнорируем blob (аудио), chrome-extension, и не-GET запросы
     if (
         event.request.url.startsWith('blob:') || 
         event.request.url.startsWith('chrome-extension:') ||
@@ -56,22 +55,28 @@ self.addEventListener('fetch', function(event) {
     }
 
     event.respondWith(
-        caches.match(event.request)
-            .then(function(response) {
-                // Если файл найден в кэше — отдаем его сразу
-                if (response) {
-                    return response; 
+        caches.match(event.request).then(function(cachedResponse) {
+            if (cachedResponse) {
+                return cachedResponse; // Мгновенный ответ из кэша (офлайн работает!)
+            }
+
+            return fetch(event.request).then(function(networkResponse) {
+                // Если файл (например, иконка другого размера) успешно скачался из сети,
+                // автоматически добавляем его копию в кэш на будущее
+                if (networkResponse && networkResponse.status === 200) {
+                    const responseToCache = networkResponse.clone();
+                    caches.open(CACHE_NAME).then(function(cache) {
+                        cache.put(event.request, responseToCache);
+                    });
                 }
-                
-                // Если файла нет в кэше — идем в сеть
-                return fetch(event.request).catch(function(err) {
-                    // Если сеть недоступна (офлайн) и это запрос навигации (переход по страницам)
-                    if (event.request.mode === 'navigate') {
-                        return caches.match('/index.html');
-                    }
-                    // Для остальных ресурсов (например, картинок/скриптов) возвращаем ошибку
-                    throw err;
-                });
-            })
+                return networkResponse;
+            }).catch(function(err) {
+                // Защита от полной потери связи при перезагрузке
+                if (event.request.mode === 'navigate') {
+                    return caches.match('/index.html');
+                }
+                throw err;
+            });
+        })
     );
 });
