@@ -43,10 +43,33 @@
         .main{flex:1;overflow-y:auto;padding:12px 16px;display:flex;flex-direction:column;gap:12px}
         .track-card{width:100%;max-width:600px;background:var(--surface);border-radius:20px;padding:16px 18px;display:flex;flex-direction:column;gap:8px;margin:0 auto;border:1px solid var(--outline)}
         .track-name{font-size:20px;font-weight:600;word-break:break-word}
-        .track-meta{display:flex;gap:12px;flex-wrap:wrap;font-size:14px;color:var(--text2)}
+        .track-meta {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            font-size: 14px;
+            color: var(--text2);
+            align-items: center;
+            overflow: hidden;
+            min-width: 0;
+            max-width: 100%;
+        }
         .repeat-chip{display:inline-flex;align-items:center;gap:6px;padding:2px 14px;background:var(--surface2);border-radius:20px;font-size:14px;border:1px solid var(--outline)}
         .repeat-chip b{color:var(--primary)}
-        .file-info{font-size:13px;color:var(--text2);background:var(--surface2);padding:2px 12px;border-radius:12px;border:1px solid var(--outline)}
+        .file-info {
+            font-size: 13px;
+            color: var(--text2);
+            background: var(--surface2);
+            padding: 2px 12px;
+            border-radius: 12px;
+            border: 1px solid var(--outline);
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            max-width: 200px;
+            flex-shrink: 1;
+            min-width: 0;
+        }
         .time-info{font-size:32px;font-weight:300;font-variant-numeric:tabular-nums;margin:2px 0}
         .waveform-container{width:100%;height:60px;background:var(--surface);border-radius:12px;overflow:hidden;position:relative;border:1px solid var(--outline);cursor:pointer}
         .waveform-container canvas{width:100%;height:100%;display:block;position:absolute;top:0;left:0;pointer-events:none}
@@ -134,8 +157,35 @@
         .apply-section .warning-header span:last-child{font-size:11px;color:#f0a030}
         .no-scroll{overflow:hidden}
         .controls-wrapper{padding-bottom:max(clamp(12px,2vw,20px),env(safe-area-inset-bottom))}
-        @media(max-width:480px){.header h1{font-size:18px}.track-name{font-size:17px}.time-info{font-size:26px}.waveform-container{height:48px}.controls{gap:18px}.ctrl-btn{width:54px;height:54px}.ctrl-btn svg{width:28px;height:28px}.ctrl-btn.play-btn{width:66px;height:66px}.ctrl-btn.play-btn svg{width:34px;height:34px}.ctrl-btn-small{width:48px;height:48px}.ctrl-btn-small svg{width:26px;height:26px}.ctrl-btn-settings{width:48px;height:48px}.ctrl-btn-settings svg{width:26px;height:26px}}
-        @media(max-width:380px){.controls{gap:14px}.ctrl-btn{width:48px;height:48px}.ctrl-btn svg{width:24px;height:24px}.ctrl-btn.play-btn{width:58px;height:58px}.ctrl-btn.play-btn svg{width:30px;height:30px}.ctrl-btn-small{width:42px;height:42px}.ctrl-btn-small svg{width:22px;height:22px}.ctrl-btn-settings{width:42px;height:42px}.ctrl-btn-settings svg{width:22px;height:22px}}
+        @media(max-width:480px){
+            .header h1{font-size:18px}
+            .track-name{font-size:17px}
+            .time-info{font-size:26px}
+            .waveform-container{height:48px}
+            .controls{gap:18px}
+            .ctrl-btn{width:54px;height:54px}
+            .ctrl-btn svg{width:28px;height:28px}
+            .ctrl-btn.play-btn{width:66px;height:66px}
+            .ctrl-btn.play-btn svg{width:34px;height:34px}
+            .ctrl-btn-small{width:48px;height:48px}
+            .ctrl-btn-small svg{width:26px;height:26px}
+            .ctrl-btn-settings{width:48px;height:48px}
+            .ctrl-btn-settings svg{width:26px;height:26px}
+            .file-info{max-width:120px;font-size:11px}
+        }
+
+        @media(max-width:380px){
+            .controls{gap:14px}
+            .ctrl-btn{width:48px;height:48px}
+            .ctrl-btn svg{width:24px;height:24px}
+            .ctrl-btn.play-btn{width:58px;height:58px}
+            .ctrl-btn.play-btn svg{width:30px;height:30px}
+            .ctrl-btn-small{width:42px;height:42px}
+            .ctrl-btn-small svg{width:22px;height:22px}
+            .ctrl-btn-settings{width:42px;height:42px}
+            .ctrl-btn-settings svg{width:22px;height:22px}
+            .file-info{max-width:80px;font-size:10px}
+        }
     </style>
 </head>
 <body>
@@ -152,7 +202,6 @@
             <div class="track-name" id="trackName">—</div>
             <div class="track-meta">
                 <span id="segInfo">Ready</span>
-                <span class="file-info" id="fileInfo">File 1/1</span>
                 <span class="repeat-chip"><svg viewBox="0 0 24 24" width="14" height="14"><path d="M12 4V1L8 5l4 4V6c3.31 0 6 2.69 6 6 0 1.01-.25 1.97-.7 2.8l1.46 1.46C19.54 15.03 20 13.57 20 12c0-4.42-3.58-8-8-8zm0 14c-3.31 0-6-2.69-6-6 0-1.01.25-1.97.7-2.8L5.24 7.74C4.46 8.97 4 10.43 4 12c0 4.42 3.58 8 8 8v3l4-4-4-4v3z"/></svg><b id="repeatCount">1</b>/<span id="repeatTotal">3</span></span>
             </div>
             <div class="time-info" id="timeInfo">0.0s / 0.0s</div>
@@ -241,7 +290,7 @@
             const el = {
                 statusText: $('statusText'), progressWrap: $('progressWrap'), progressFill: $('progressFill'),
                 progressText: $('progressText'), trackName: $('trackName'), segInfo: $('segInfo'),
-                fileInfo: $('fileInfo'), timeInfo: $('timeInfo'), repeatCount: $('repeatCount'),
+                timeInfo: $('timeInfo'), repeatCount: $('repeatCount'),
                 repeatTotal: $('repeatTotal'), playlist: $('playlist'), emptyMsg: $('emptyMsg'),
                 btnOpen: $('btnOpen'), btnPrev: $('btnPrev'), btnPlay: $('btnPlay'), btnNext: $('btnNext'),
                 btnSettings: $('btnSettings'), fileInput: $('fileInput'), folderInput: $('folderInput'),
@@ -400,10 +449,6 @@
                 if (el.btnPrev) el.btnPrev.disabled = !isReady;
                 if (el.btnNext) el.btnNext.disabled = !isReady;
                 if (el.jumpBtn) el.jumpBtn.disabled = !isReady;
-                if (el.fileInfo) {
-                    if (totalFiles > 1) { var fileName = state.files[state.currentFileIdx] ? state.files[state.currentFileIdx].name : '—';
-                        el.fileInfo.textContent = currentFile + '/' + totalFiles + ' • ' + fileName; } else { el.fileInfo.textContent = totalFiles > 0 ? 'File 1/1' : ''; }
-                }
                 if (state.segments.length > 0) { 
                     var idx = state.currentSegIdx + 1; 
                     if (el.segInfo) el.segInfo.textContent = 'Segment ' + idx + ' of ' + state.segments.length; 
@@ -1020,64 +1065,75 @@
             }
 
             function handleFileEnd() {
-                var after = state.settings.after || 'stop';
-                var wasPlaying = state.isPlaying;
-                
-                state._isProcessing = true;
-                el.audio.pause();
-                
-                if (after === 'loop') {
-                    state.currentSegIdx = 0;
-                    state.repeatCount = 0;
-                    var seg = state.segments[0];
-                    var startTime = state.currentFileStartTime || 0;
-                    el.audio.currentTime = seg.start + startTime;
-                    drawWaveform(0);
+    var after = state.settings.after || 'stop';
+    var wasPlaying = state.isPlaying;
+    
+    state._isProcessing = true;
+    el.audio.pause();
+    
+    if (after === 'loop') {
+        state.currentSegIdx = 0;
+        state.repeatCount = 0;
+        var seg = state.segments[0];
+        var startTime = state.currentFileStartTime || 0;
+        el.audio.currentTime = seg.start + startTime;
+        drawWaveform(0);
+        updateUI();
+        updateMediaSession();
+        
+        if (wasPlaying) {
+            setTimeout(function() {
+                el.audio.play().then(function() {
+                    state.isPlaying = true;
+                    state._isProcessing = false;
                     updateUI();
-                    updateMediaSession();
-                    
-                    if (wasPlaying) {
-                        setTimeout(function() {
-                            el.audio.play().then(function() {
-                                state.isPlaying = true;
-                                state._isProcessing = false;
-                                updateUI();
-                            }).catch(function(e) {
-                                state.isPlaying = false;
-                                state._isProcessing = false;
-                                updateUI();
-                            });
-                        }, 30);
-                    } else {
-                        state._isProcessing = false;
-                    }
-                } else if (after === 'next') {
-                    var nextFileIdx = state.currentFileIdx + 1;
-                    if (nextFileIdx < state.files.length) {
-                        switchToFile(nextFileIdx);
-                        state._isProcessing = false;
-                    } else if (state.files.length > 1) {
-                        switchToFile(0);
-                        state._isProcessing = false;
-                    } else {
-                        state.isPlaying = false;
-                        state._isProcessing = false;
-                        clearInterval(state._checkTimer);
-                        state._checkTimer = null;
-                        updateUI();
-                        updateStatus('Finished');
-                        updateMediaSession();
-                    }
-                } else {
+                }).catch(function(e) {
                     state.isPlaying = false;
                     state._isProcessing = false;
-                    clearInterval(state._checkTimer);
-                    state._checkTimer = null;
                     updateUI();
-                    updateStatus('Finished');
-                    updateMediaSession();
-                }
+                });
+            }, 30);
+        } else {
+            state._isProcessing = false;
+        }
+    } else if (after === 'next') {
+        var nextFileIdx = state.currentFileIdx + 1;
+        
+        if (nextFileIdx < state.files.length) {
+            switchToFile(nextFileIdx);
+            state._isProcessing = false;
+        } else if (state.files.length > 1) {
+            // Переключаемся на первый файл
+            switchToFile(0);
+            state._isProcessing = false;
+            // Если играли - возобновляем воспроизведение
+            if (wasPlaying) {
+                setTimeout(function() {
+                    if (state.segments.length > 0) {
+                        playAudio();
+                    }
+                }, 100);
             }
+        } else {
+            // Один файл - останавливаемся
+            state.isPlaying = false;
+            state._isProcessing = false;
+            clearInterval(state._checkTimer);
+            state._checkTimer = null;
+            updateUI();
+            updateStatus('Finished');
+            updateMediaSession();
+        }
+    } else {
+        state.isPlaying = false;
+        state._isProcessing = false;
+        clearInterval(state._checkTimer);
+        state._checkTimer = null;
+        updateUI();
+        updateStatus('Finished');
+        updateMediaSession();
+    }
+}
 
             function setupAudioEvents() {
                 var lastUpdateTime = 0;
