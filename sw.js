@@ -1,22 +1,22 @@
-const CACHE_NAME = 'hablaslice-v4';
+const CACHE_NAME = 'hablaslice-v5';
 
+// Пути скорректированы под подпапку GitHub Pages
 const FILES_TO_CACHE = [
-    '/',
-    '/index.html',
-    '/manifest.json',
-    '/icons/icon-192.png',
-    '/icons/icon-512.png'
+    '/HablaSlice/',
+    '/HablaSlice/index.html',
+    '/HablaSlice/manifest.json',
+    '/HablaSlice/icons/icon-192.png',
+    '/HablaSlice/icons/icon-512.png'
 ];
 
-// Установка: Безопасное поочередное кэширование
 self.addEventListener('install', function(event) {
     event.waitUntil(
         caches.open(CACHE_NAME).then(function(cache) {
-            console.log('[SW] Кэширование обязательных ресурсов...');
+            console.log('[SW] Кэширование файлов для GitHub Pages...');
             return Promise.all(
                 FILES_TO_CACHE.map(function(url) {
                     return cache.add(url).catch(function(err) {
-                        console.error('[SW] Не удалось загрузить в кэш:', url, err);
+                        console.error('[SW] Ошибка кэширования ресурса:', url, err);
                     });
                 })
             );
@@ -26,7 +26,6 @@ self.addEventListener('install', function(event) {
     );
 });
 
-// Активация: Очистка старых версий кэша
 self.addEventListener('activate', function(event) {
     event.waitUntil(
         caches.keys().then(function(cacheNames) {
@@ -44,7 +43,6 @@ self.addEventListener('activate', function(event) {
     );
 });
 
-// Перехват запросов (Стратегия: Сначала Кэш, если нет — Сеть с динамическим кэшированием)
 self.addEventListener('fetch', function(event) {
     if (
         event.request.url.startsWith('blob:') || 
@@ -57,12 +55,10 @@ self.addEventListener('fetch', function(event) {
     event.respondWith(
         caches.match(event.request).then(function(cachedResponse) {
             if (cachedResponse) {
-                return cachedResponse; // Мгновенный ответ из кэша (офлайн работает!)
+                return cachedResponse; 
             }
 
             return fetch(event.request).then(function(networkResponse) {
-                // Если файл (например, иконка другого размера) успешно скачался из сети,
-                // автоматически добавляем его копию в кэш на будущее
                 if (networkResponse && networkResponse.status === 200) {
                     const responseToCache = networkResponse.clone();
                     caches.open(CACHE_NAME).then(function(cache) {
@@ -71,9 +67,8 @@ self.addEventListener('fetch', function(event) {
                 }
                 return networkResponse;
             }).catch(function(err) {
-                // Защита от полной потери связи при перезагрузке
                 if (event.request.mode === 'navigate') {
-                    return caches.match('/index.html');
+                    return caches.match('/HablaSlice/index.html');
                 }
                 throw err;
             });
