@@ -8,1019 +8,139 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <title>HablaSlice</title>
     <style>
-        /* ===== RESET & VARIABLES ===== */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        :root {
-            --primary: #4cc9f0;
-            --bg: #000000;
-            --surface: #1a1a1a;
-            --surface2: #2a2a2a;
-            --text: #e8e8f0;
-            --text2: #b0b0c0;
-            --outline: #3a3a4a;
-        }
-
-        body.light {
-            --primary: #2962ff;
-            --bg: #f5f7ff;
-            --surface: #ffffff;
-            --surface2: #f0f3ff;
-            --text: #1a1a2e;
-            --text2: #4a4a6a;
-            --outline: #c8c9d4;
-        }
-
-        html,
-        body {
-            height: 100%;
-            overflow: hidden;
-            position: fixed;
-            width: 100%;
-        }
-
-        body {
-            background: var(--bg);
-            color: var(--text);
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            display: flex;
-            flex-direction: column;
-            user-select: none;
-            font-size: 18px;
-        }
-
-        ::-webkit-scrollbar {
-            width: 0;
-            height: 0;
-        }
-
-        /* ===== HEADER ===== */
-        .header {
-            padding: 16px 20px;
-            background: var(--surface);
-            border-bottom: 1px solid var(--outline);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            flex-shrink: 0;
-            min-height: 60px;
-        }
-
-        .header h1 {
-            font-size: 22px;
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .header h1 svg {
-            width: 28px;
-            height: 28px;
-            fill: var(--primary);
-        }
-
-        .header h1 span {
-            font-size: 14px;
-            font-weight: 400;
-            color: var(--text2);
-        }
-
-        /* ===== STATUS BAR ===== */
-        .status-bar {
-            padding: 8px 20px;
-            font-size: 14px;
-            color: var(--text2);
-            background: var(--surface);
-            min-height: 36px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            flex-shrink: 0;
-            border-bottom: 1px solid var(--outline);
-        }
-
-        .status-content {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            flex: 1;
-        }
-
-        .spinner {
-            display: inline-block;
-            width: 18px;
-            height: 18px;
-            border: 2.5px solid var(--outline);
-            border-top-color: var(--primary);
-            border-radius: 50%;
-            animation: spin 0.7s linear infinite;
-            flex-shrink: 0;
-        }
-
-        @keyframes spin {
-            to {
-                transform: rotate(360deg);
-            }
-        }
-
-        .progress-wrap {
-            display: none;
-            align-items: center;
-            gap: 10px;
-            flex: 1;
-            max-width: 200px;
-        }
-
-        .progress-wrap.active {
-            display: flex;
-        }
-
-        .progress-track {
-            flex: 1;
-            height: 3px;
-            background: var(--outline);
-            border-radius: 3px;
-            overflow: hidden;
-        }
-
-        .progress-fill {
-            height: 100%;
-            width: 0%;
-            background: var(--primary);
-            border-radius: 3px;
-            transition: width 0.15s linear;
-        }
-
-        .progress-text {
-            font-size: 12px;
-            min-width: 32px;
-            text-align: right;
-        }
-
-        /* ===== MAIN CONTENT ===== */
-        .main {
-            flex: 1;
-            overflow-y: auto;
-            padding: 12px 16px;
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
-
-        .track-card {
-            width: 100%;
-            max-width: 600px;
-            background: var(--surface);
-            border-radius: 20px;
-            padding: 16px 18px;
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            margin: 0 auto;
-            border: 1px solid var(--outline);
-        }
-
-        .track-name {
-            font-size: 20px;
-            font-weight: 600;
-            word-break: break-word;
-        }
-
-        .track-meta {
-            display: flex;
-            gap: 12px;
-            flex-wrap: wrap;
-            font-size: 14px;
-            color: var(--text2);
-        }
-
-        .repeat-chip {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            padding: 2px 14px;
-            background: var(--surface2);
-            border-radius: 20px;
-            font-size: 14px;
-            border: 1px solid var(--outline);
-        }
-
-        .repeat-chip b {
-            color: var(--primary);
-        }
-
-        .file-info {
-            font-size: 13px;
-            color: var(--text2);
-            background: var(--surface2);
-            padding: 2px 12px;
-            border-radius: 12px;
-            border: 1px solid var(--outline);
-        }
-
-        .time-info {
-            font-size: 32px;
-            font-weight: 300;
-            font-variant-numeric: tabular-nums;
-            margin: 2px 0;
-        }
-
-        /* ===== WAVEFORM ===== */
-        .waveform-container {
-            width: 100%;
-            height: 60px;
-            background: var(--surface);
-            border-radius: 12px;
-            overflow: hidden;
-            position: relative;
-            border: 1px solid var(--outline);
-            cursor: pointer;
-        }
-
-        .waveform-container canvas {
-            width: 100%;
-            height: 100%;
-            display: block;
-            position: absolute;
-            top: 0;
-            left: 0;
-            pointer-events: none;
-        }
-
-        .waveform-progress {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 0%;
-            height: 100%;
-            pointer-events: none;
-            z-index: 2;
-            background: rgba(76, 201, 240, 0.1);
-            border-right: 2px solid var(--primary);
-        }
-
-        .waveform-silence {
-            position: absolute;
-            top: 0;
-            right: 0;
-            height: 100%;
-            background: var(--surface2);
-            opacity: 0.3;
-            pointer-events: none;
-            z-index: 1;
-        }
-
-        .waveform-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 3;
-            cursor: pointer;
-        }
-
-        .waveform-legend {
-            display: flex;
-            justify-content: space-between;
-            font-size: 11px;
-            color: var(--text2);
-            opacity: 0.5;
-            padding: 0 4px;
-        }
-
-        /* ===== SEGMENT JUMP ===== */
-        .segment-jump {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding: 6px 14px;
-            background: var(--surface);
-            border-radius: 12px;
-            border: 1px solid var(--outline);
-            flex-wrap: wrap;
-            margin-top: 2px;
-        }
-
-        .segment-jump label {
-            font-size: 14px;
-            color: var(--text2);
-        }
-
-        .segment-jump input {
-            width: 56px;
-            padding: 4px 8px;
-            background: var(--surface);
-            color: var(--text);
-            border: 1px solid var(--outline);
-            border-radius: 8px;
-            font-size: 16px;
-            font-weight: 600;
-            text-align: center;
-            outline: none;
-        }
-
-        .segment-jump input:focus {
-            border-color: var(--primary);
-        }
-
-        .segment-jump .jump-btn {
-            padding: 6px 18px;
-            background: var(--primary);
-            color: #000;
-            border: none;
-            border-radius: 8px;
-            font-size: 14px;
-            font-weight: 600;
-            cursor: pointer;
-        }
-
-        .segment-jump .jump-btn:disabled {
-            opacity: 0.3;
-            cursor: not-allowed;
-        }
-
-        .segment-jump .seg-total {
-            font-size: 14px;
-            color: var(--text2);
-        }
-
-        /* ===== PLAYLIST ===== */
-        .playlist {
-            width: 100%;
-            max-width: 600px;
-            display: flex;
-            flex-direction: column;
-            gap: 2px;
-            margin: 0 auto;
-        }
-
-        .playlist-item {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding: 6px 14px;
-            background: var(--surface);
-            border-radius: 12px;
-            border: 1px solid transparent;
-            cursor: pointer;
-            font-size: 14px;
-            min-height: 36px;
-            transition: all 0.2s;
-        }
-
-        .playlist-item:active {
-            background: var(--surface2);
-        }
-
-        .playlist-item.current {
-            border-color: var(--primary);
-            background: var(--surface2);
-        }
-
-        .playlist-item .idx {
-            color: var(--text2);
-            min-width: 28px;
-            font-size: 13px;
-        }
-
-        .playlist-item .name {
-            flex: 1;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        .playlist-item .status-dot {
-            width: 6px;
-            height: 6px;
-            border-radius: 50%;
-            background: var(--primary);
-            opacity: 0.3;
-            flex-shrink: 0;
-        }
-
-        .playlist-item.current .status-dot {
-            opacity: 1;
-        }
-
-        .playlist-item .file-status {
-            font-size: 11px;
-            color: var(--text2);
-            opacity: 0.6;
-            flex-shrink: 0;
-        }
-
-        .empty-msg {
-            color: var(--text2);
-            text-align: center;
-            padding: 30px 16px;
-            font-size: 16px;
-        }
-
-        /* ===== CONTROLS ===== */
-        .controls-wrapper {
-            flex-shrink: 0;
-            background: var(--surface);
-            border-top: 1px solid var(--outline);
-            padding: 8px 12px 12px 12px;
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-
-        .quick-controls {
-            display: flex;
-            gap: 10px;
-            padding: 6px 12px;
-            background: var(--surface);
-            border-radius: 14px;
-            border: 1px solid var(--outline);
-            flex-wrap: wrap;
-        }
-
-        .quick-controls .qc-group {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            flex: 1;
-            min-width: 100px;
-        }
-
-        .quick-controls .qc-label {
-            font-size: 13px;
-            color: var(--text2);
-            min-width: 44px;
-        }
-
-        .controls {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 24px;
-            padding: 8px 0;
-        }
-
-        .ctrl-btn {
-            background: transparent;
-            border: none;
-            color: var(--text);
-            width: 64px;
-            height: 64px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: transform 0.15s;
-        }
-
-        .ctrl-btn:active {
-            transform: scale(0.88);
-        }
-
-        .ctrl-btn svg {
-            width: 34px;
-            height: 34px;
-            fill: currentColor;
-        }
-
-        .ctrl-btn.play-btn {
-            width: 76px;
-            height: 76px;
-            background: var(--primary);
-            color: #000;
-            box-shadow: 0 4px 28px rgba(76, 201, 240, 0.35);
-        }
-
-        .ctrl-btn.play-btn svg {
-            width: 40px;
-            height: 40px;
-        }
-
-        .ctrl-btn-small {
-            width: 56px;
-            height: 56px;
-        }
-
-        .ctrl-btn-small svg {
-            width: 30px;
-            height: 30px;
-        }
-
-        .ctrl-btn-settings {
-            width: 56px;
-            height: 56px;
-            background: transparent;
-            border-radius: 50%;
-            border: none;
-        }
-
-        .ctrl-btn-settings svg {
-            width: 30px;
-            height: 30px;
-        }
-
-        /* ===== DROPDOWN ===== */
-        .dropdown {
-            position: relative;
-            flex: 1;
-            min-width: 60px;
-        }
-
-        .dropdown .toggle {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 4px 12px;
-            background: var(--surface);
-            color: var(--text);
-            border: 1px solid var(--outline);
-            border-radius: 10px;
-            font-size: 14px;
-            cursor: pointer;
-            min-height: 32px;
-            gap: 4px;
-        }
-
-        .dropdown .toggle .arrow {
-            transition: transform 0.2s;
-        }
-
-        .dropdown.open .toggle .arrow {
-            transform: rotate(180deg);
-        }
-
-        .dropdown .menu {
-            position: absolute;
-            bottom: calc(100% + 4px);
-            left: 0;
-            right: 0;
-            background: var(--surface);
-            border: 1px solid var(--outline);
-            border-radius: 10px;
-            padding: 4px 0;
-            max-height: 150px;
-            overflow-y: auto;
-            z-index: 50;
-            display: none;
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
-        }
-
-        .dropdown.open .menu {
-            display: block;
-        }
-
-        .dropdown .menu .item {
-            padding: 8px 14px;
-            font-size: 14px;
-            cursor: pointer;
-            color: var(--text);
-        }
-
-        .dropdown .menu .item:active {
-            background: var(--surface2);
-        }
-
-        .dropdown .menu .item.selected {
-            color: var(--primary);
-            font-weight: 600;
-        }
-
-        .dropdown .menu .item.selected::after {
-            content: "✓";
-            float: right;
-            color: var(--primary);
-        }
-
-        /* ===== POPOVER ===== */
-        .popover {
-            position: fixed;
-            background: var(--surface);
-            border: 1px solid var(--outline);
-            border-radius: 14px;
-            padding: 6px 0;
-            min-width: 180px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
-            z-index: 300;
-            display: none;
-        }
-
-        .popover.active {
-            display: block;
-        }
-
-        .popover-item {
-            padding: 12px 20px;
-            font-size: 15px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            border: none;
-            background: transparent;
-            color: var(--text);
-            width: 100%;
-            text-align: left;
-            font-family: inherit;
-        }
-
-        .popover-item:active {
-            background: var(--surface2);
-        }
-
-        .popover-item svg {
-            width: 20px;
-            height: 20px;
-            fill: currentColor;
-        }
-
-        /* ===== MODAL ===== */
-        .modal-bg {
-            position: fixed;
-            inset: 0;
-            background: rgba(0, 0, 0, 0.7);
-            display: none;
-            align-items: center;
-            justify-content: center;
-            z-index: 200;
-            padding: 16px;
-        }
-
-        .modal-bg.active {
-            display: flex;
-        }
-
-        .modal {
-            background: var(--surface);
-            border-radius: 20px;
-            padding: 18px 16px;
-            width: 100%;
-            max-width: 400px;
-            max-height: 90vh;
-            overflow-y: auto;
-            border: 1px solid var(--outline);
-        }
-
-        .modal h2 {
-            font-size: 20px;
-            margin-bottom: 14px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .modal h2 svg {
-            width: 24px;
-            height: 24px;
-            fill: var(--primary);
-        }
-
-        .setting {
-            margin-bottom: 10px;
-            padding: 4px 2px;
-            border-bottom: 1px solid var(--outline);
-        }
-
-        .setting:last-of-type {
-            border-bottom: none;
-        }
-
-        .setting .label-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 4px;
-        }
-
-        .setting .label-row label {
-            font-size: 14px;
-            color: var(--text2);
-        }
-
-        .setting .label-row .value {
-            font-size: 14px;
-            font-weight: 600;
-            color: var(--primary);
-            min-width: 32px;
-            text-align: right;
-        }
-
-        .setting .slider-row {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .setting .slider-row .step-btn {
-            width: 28px;
-            height: 28px;
-            border-radius: 50%;
-            border: 1px solid var(--outline);
-            background: var(--surface);
-            color: var(--text);
-            font-size: 14px;
-            font-weight: 600;
-            cursor: pointer;
-        }
-
-        .setting input[type="range"] {
-            flex: 1;
-            height: 3px;
-            background: var(--outline);
-            border-radius: 3px;
-            -webkit-appearance: none;
-            appearance: none;
-            outline: none;
-        }
-
-        .setting input[type="range"]::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            width: 18px;
-            height: 18px;
-            background: var(--primary);
-            border-radius: 50%;
-            cursor: pointer;
-        }
-
-        .setting input[type="range"]::-moz-range-thumb {
-            width: 18px;
-            height: 18px;
-            background: var(--primary);
-            border-radius: 50%;
-            border: none;
-            cursor: pointer;
-        }
-
-        .theme-switch {
-            display: flex;
-            gap: 6px;
-            margin-top: 4px;
-        }
-
-        .theme-switch button {
-            flex: 1;
-            padding: 6px 12px;
-            background: var(--surface);
-            color: var(--text);
-            border: 1px solid var(--outline);
-            border-radius: 20px;
-            font-size: 14px;
-            cursor: pointer;
-        }
-
-        .theme-switch button.active {
-            background: var(--primary);
-            color: #000;
-            border-color: var(--primary);
-        }
-
-        .modal-actions {
-            display: flex;
-            gap: 6px;
-            margin-top: 12px;
-            padding-top: 10px;
-            border-top: 1px solid var(--outline);
-        }
-
-        .modal-actions button {
-            flex: 1;
-            padding: 8px 12px;
-            border: none;
-            border-radius: 20px;
-            font-size: 14px;
-            font-weight: 600;
-            cursor: pointer;
-        }
-
-        .btn-primary {
-            background: var(--primary);
-            color: #000;
-        }
-
-        .btn-secondary {
-            background: var(--surface);
-            color: var(--text);
-            border: 1px solid var(--outline) !important;
-        }
-
-        .btn-reset {
-            background: #e94560;
-            color: #fff;
-            flex: 0.4;
-        }
-
-        .setting .hint {
-            font-size: 11px;
-            color: var(--text2);
-            opacity: 0.5;
-            margin-top: 2px;
-        }
-
-        input[type="file"] {
-            display: none;
-        }
-
-        .section-divider {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin: 4px 0 8px 0;
-        }
-
-        .section-divider span {
-            font-size: 11px;
-            font-weight: 500;
-            color: var(--primary);
-            text-transform: uppercase;
-        }
-
-        .section-divider .line {
-            flex: 1;
-            height: 1px;
-            background: var(--outline);
-        }
-
-        .apply-section {
-            background: var(--surface);
-            border-radius: 10px;
-            padding: 8px 10px;
-            border-left: 3px solid #f0a030;
-        }
-
-        .apply-section .warning-header {
-            display: flex;
-            gap: 6px;
-            margin-bottom: 4px;
-        }
-
-        .apply-section .warning-header span:first-child {
-            font-weight: 600;
-            font-size: 12px;
-            color: #f0a030;
-        }
-
-        .apply-section .warning-header span:last-child {
-            font-size: 11px;
-            color: #f0a030;
-        }
-
-        .no-scroll {
-            overflow: hidden;
-        }
-
-        /* ===== SAFE AREA ===== */
-        .controls-wrapper {
-            padding-bottom: max(clamp(12px, 2vw, 20px), env(safe-area-inset-bottom));
-        }
-
-        /* ===== RESPONSIVE ===== */
-        @media (max-width: 480px) {
-            .header h1 {
-                font-size: 18px;
-            }
-
-            .track-name {
-                font-size: 17px;
-            }
-
-            .time-info {
-                font-size: 26px;
-            }
-
-            .waveform-container {
-                height: 48px;
-            }
-
-            .controls {
-                gap: 18px;
-            }
-
-            .ctrl-btn {
-                width: 54px;
-                height: 54px;
-            }
-
-            .ctrl-btn svg {
-                width: 28px;
-                height: 28px;
-            }
-
-            .ctrl-btn.play-btn {
-                width: 66px;
-                height: 66px;
-            }
-
-            .ctrl-btn.play-btn svg {
-                width: 34px;
-                height: 34px;
-            }
-
-            .ctrl-btn-small {
-                width: 48px;
-                height: 48px;
-            }
-
-            .ctrl-btn-small svg {
-                width: 26px;
-                height: 26px;
-            }
-
-            .ctrl-btn-settings {
-                width: 48px;
-                height: 48px;
-            }
-
-            .ctrl-btn-settings svg {
-                width: 26px;
-                height: 26px;
-            }
-        }
-
-        @media (max-width: 380px) {
-            .controls {
-                gap: 14px;
-            }
-
-            .ctrl-btn {
-                width: 48px;
-                height: 48px;
-            }
-
-            .ctrl-btn svg {
-                width: 24px;
-                height: 24px;
-            }
-
-            .ctrl-btn.play-btn {
-                width: 58px;
-                height: 58px;
-            }
-
-            .ctrl-btn.play-btn svg {
-                width: 30px;
-                height: 30px;
-            }
-
-            .ctrl-btn-small {
-                width: 42px;
-                height: 42px;
-            }
-
-            .ctrl-btn-small svg {
-                width: 22px;
-                height: 22px;
-            }
-
-            .ctrl-btn-settings {
-                width: 42px;
-                height: 42px;
-            }
-
-            .ctrl-btn-settings svg {
-                width: 22px;
-                height: 22px;
-            }
-        }
+        *{margin:0;padding:0;box-sizing:border-box}
+        :root{--primary:#4cc9f0;--bg:#000000;--surface:#1a1a1a;--surface2:#2a2a2a;--text:#e8e8f0;--text2:#b0b0c0;--outline:#3a3a4a}
+        body.light{--primary:#2962ff;--bg:#f5f7ff;--surface:#ffffff;--surface2:#f0f3ff;--text:#1a1a2e;--text2:#4a4a6a;--outline:#c8c9d4}
+        html,body{height:100%;overflow:hidden;position:fixed;width:100%}
+        body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;display:flex;flex-direction:column;user-select:none;font-size:18px}
+        ::-webkit-scrollbar{width:0;height:0}
+        .header{padding:16px 20px;background:var(--surface);border-bottom:1px solid var(--outline);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;min-height:60px}
+        .header h1{font-size:22px;font-weight:600;display:flex;align-items:center;gap:8px}
+        .header h1 svg{width:28px;height:28px;fill:var(--primary)}
+        .header h1 span{font-size:14px;font-weight:400;color:var(--text2)}
+        .status-bar{padding:8px 20px;font-size:14px;color:var(--text2);background:var(--surface);min-height:36px;display:flex;align-items:center;gap:12px;flex-shrink:0;border-bottom:1px solid var(--outline)}
+        .status-content{display:flex;align-items:center;gap:8px;flex:1}
+        .spinner{display:inline-block;width:18px;height:18px;border:2.5px solid var(--outline);border-top-color:var(--primary);border-radius:50%;animation:spin 0.7s linear infinite;flex-shrink:0}
+        @keyframes spin{to{transform:rotate(360deg)}}
+        .progress-wrap{display:none;align-items:center;gap:10px;flex:1;max-width:200px}
+        .progress-wrap.active{display:flex}
+        .progress-track{flex:1;height:3px;background:var(--outline);border-radius:3px;overflow:hidden}
+        .progress-fill{height:100%;width:0%;background:var(--primary);border-radius:3px;transition:width 0.15s linear}
+        .progress-text{font-size:12px;min-width:32px;text-align:right}
+        .main{flex:1;overflow-y:auto;padding:12px 16px;display:flex;flex-direction:column;gap:12px}
+        .track-card{width:100%;max-width:600px;background:var(--surface);border-radius:20px;padding:16px 18px;display:flex;flex-direction:column;gap:8px;margin:0 auto;border:1px solid var(--outline)}
+        .track-name{font-size:20px;font-weight:600;word-break:break-word}
+        .track-meta{display:flex;gap:12px;flex-wrap:wrap;font-size:14px;color:var(--text2)}
+        .repeat-chip{display:inline-flex;align-items:center;gap:6px;padding:2px 14px;background:var(--surface2);border-radius:20px;font-size:14px;border:1px solid var(--outline)}
+        .repeat-chip b{color:var(--primary)}
+        .file-info{font-size:13px;color:var(--text2);background:var(--surface2);padding:2px 12px;border-radius:12px;border:1px solid var(--outline)}
+        .time-info{font-size:32px;font-weight:300;font-variant-numeric:tabular-nums;margin:2px 0}
+        .waveform-container{width:100%;height:60px;background:var(--surface);border-radius:12px;overflow:hidden;position:relative;border:1px solid var(--outline);cursor:pointer}
+        .waveform-container canvas{width:100%;height:100%;display:block;position:absolute;top:0;left:0;pointer-events:none}
+        .waveform-progress{position:absolute;top:0;left:0;width:0%;height:100%;pointer-events:none;z-index:2;background:rgba(76,201,240,0.1);border-right:2px solid var(--primary)}
+        .waveform-silence{position:absolute;top:0;right:0;height:100%;background:var(--surface2);opacity:0.3;pointer-events:none;z-index:1}
+        .waveform-overlay{position:absolute;top:0;left:0;width:100%;height:100%;z-index:3;cursor:pointer}
+        .waveform-legend{display:flex;justify-content:space-between;font-size:11px;color:var(--text2);opacity:0.5;padding:0 4px}
+        .segment-jump{display:flex;align-items:center;gap:10px;padding:6px 14px;background:var(--surface);border-radius:12px;border:1px solid var(--outline);flex-wrap:wrap;margin-top:2px}
+        .segment-jump label{font-size:14px;color:var(--text2)}
+        .segment-jump input{width:56px;padding:4px 8px;background:var(--surface);color:var(--text);border:1px solid var(--outline);border-radius:8px;font-size:16px;font-weight:600;text-align:center;outline:none}
+        .segment-jump input:focus{border-color:var(--primary)}
+        .segment-jump .jump-btn{padding:6px 18px;background:var(--primary);color:#000;border:none;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer}
+        .segment-jump .jump-btn:disabled{opacity:0.3;cursor:not-allowed}
+        .segment-jump .seg-total{font-size:14px;color:var(--text2)}
+        .playlist{width:100%;max-width:600px;display:flex;flex-direction:column;gap:2px;margin:0 auto}
+        .playlist-item{display:flex;align-items:center;gap:10px;padding:6px 14px;background:var(--surface);border-radius:12px;border:1px solid transparent;cursor:pointer;font-size:14px;min-height:36px;transition:all 0.2s}
+        .playlist-item:active{background:var(--surface2)}
+        .playlist-item.current{border-color:var(--primary);background:var(--surface2)}
+        .playlist-item .idx{color:var(--text2);min-width:28px;font-size:13px}
+        .playlist-item .name{flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+        .playlist-item .status-dot{width:6px;height:6px;border-radius:50%;background:var(--primary);opacity:0.3;flex-shrink:0}
+        .playlist-item.current .status-dot{opacity:1}
+        .playlist-item .file-status{font-size:11px;color:var(--text2);opacity:0.6;flex-shrink:0}
+        .empty-msg{color:var(--text2);text-align:center;padding:30px 16px;font-size:16px}
+        .controls-wrapper{flex-shrink:0;background:var(--surface);border-top:1px solid var(--outline);padding:8px 12px 12px 12px;display:flex;flex-direction:column;gap:8px}
+        .quick-controls{display:flex;gap:10px;padding:6px 12px;background:var(--surface);border-radius:14px;border:1px solid var(--outline);flex-wrap:wrap}
+        .quick-controls .qc-group{display:flex;align-items:center;gap:6px;flex:1;min-width:100px}
+        .quick-controls .qc-label{font-size:13px;color:var(--text2);min-width:44px}
+        .controls{display:flex;align-items:center;justify-content:center;gap:24px;padding:8px 0}
+        .ctrl-btn{background:transparent;border:none;color:var(--text);width:64px;height:64px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:transform 0.15s}
+        .ctrl-btn:active{transform:scale(0.88)}
+        .ctrl-btn svg{width:34px;height:34px;fill:currentColor}
+        .ctrl-btn.play-btn{width:76px;height:76px;background:var(--primary);color:#000;box-shadow:0 4px 28px rgba(76,201,240,0.35)}
+        .ctrl-btn.play-btn svg{width:40px;height:40px}
+        .ctrl-btn-small{width:56px;height:56px}
+        .ctrl-btn-small svg{width:30px;height:30px}
+        .ctrl-btn-settings{width:56px;height:56px;background:transparent;border-radius:50%;border:none}
+        .ctrl-btn-settings svg{width:30px;height:30px}
+        .dropdown{position:relative;flex:1;min-width:60px}
+        .dropdown .toggle{display:flex;align-items:center;justify-content:space-between;padding:4px 12px;background:var(--surface);color:var(--text);border:1px solid var(--outline);border-radius:10px;font-size:14px;cursor:pointer;min-height:32px;gap:4px}
+        .dropdown .toggle .arrow{transition:transform 0.2s}
+        .dropdown.open .toggle .arrow{transform:rotate(180deg)}
+        .dropdown .menu{position:absolute;bottom:calc(100% + 4px);left:0;right:0;background:var(--surface);border:1px solid var(--outline);border-radius:10px;padding:4px 0;max-height:150px;overflow-y:auto;z-index:50;display:none;box-shadow:0 8px 24px rgba(0,0,0,0.5)}
+        .dropdown.open .menu{display:block}
+        .dropdown .menu .item{padding:8px 14px;font-size:14px;cursor:pointer;color:var(--text)}
+        .dropdown .menu .item:active{background:var(--surface2)}
+        .dropdown .menu .item.selected{color:var(--primary);font-weight:600}
+        .dropdown .menu .item.selected::after{content:"✓";float:right;color:var(--primary)}
+        .popover{position:fixed;background:var(--surface);border:1px solid var(--outline);border-radius:14px;padding:6px 0;min-width:180px;box-shadow:0 8px 32px rgba(0,0,0,0.6);z-index:300;display:none}
+        .popover.active{display:block}
+        .popover-item{padding:12px 20px;font-size:15px;cursor:pointer;display:flex;align-items:center;gap:12px;border:none;background:transparent;color:var(--text);width:100%;text-align:left;font-family:inherit}
+        .popover-item:active{background:var(--surface2)}
+        .popover-item svg{width:20px;height:20px;fill:currentColor}
+        .modal-bg{position:fixed;inset:0;background:rgba(0,0,0,0.7);display:none;align-items:center;justify-content:center;z-index:200;padding:16px}
+        .modal-bg.active{display:flex}
+        .modal{background:var(--surface);border-radius:20px;padding:18px 16px;width:100%;max-width:400px;max-height:90vh;overflow-y:auto;border:1px solid var(--outline)}
+        .modal h2{font-size:20px;margin-bottom:14px;display:flex;align-items:center;gap:10px}
+        .modal h2 svg{width:24px;height:24px;fill:var(--primary)}
+        .setting{margin-bottom:10px;padding:4px 2px;border-bottom:1px solid var(--outline)}
+        .setting:last-of-type{border-bottom:none}
+        .setting .label-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px}
+        .setting .label-row label{font-size:14px;color:var(--text2)}
+        .setting .label-row .value{font-size:14px;font-weight:600;color:var(--primary);min-width:32px;text-align:right}
+        .setting .slider-row{display:flex;align-items:center;gap:8px}
+        .setting .slider-row .step-btn{width:28px;height:28px;border-radius:50%;border:1px solid var(--outline);background:var(--surface);color:var(--text);font-size:14px;font-weight:600;cursor:pointer}
+        .setting input[type="range"]{flex:1;height:3px;background:var(--outline);border-radius:3px;-webkit-appearance:none;appearance:none;outline:none}
+        .setting input[type="range"]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;background:var(--primary);border-radius:50%;cursor:pointer}
+        .setting input[type="range"]::-moz-range-thumb{width:18px;height:18px;background:var(--primary);border-radius:50%;border:none;cursor:pointer}
+        .theme-switch{display:flex;gap:6px;margin-top:4px}
+        .theme-switch button{flex:1;padding:6px 12px;background:var(--surface);color:var(--text);border:1px solid var(--outline);border-radius:20px;font-size:14px;cursor:pointer}
+        .theme-switch button.active{background:var(--primary);color:#000;border-color:var(--primary)}
+        .modal-actions{display:flex;gap:6px;margin-top:12px;padding-top:10px;border-top:1px solid var(--outline)}
+        .modal-actions button{flex:1;padding:8px 12px;border:none;border-radius:20px;font-size:14px;font-weight:600;cursor:pointer}
+        .btn-primary{background:var(--primary);color:#000}
+        .btn-secondary{background:var(--surface);color:var(--text);border:1px solid var(--outline)!important}
+        .btn-reset{background:#e94560;color:#fff;flex:0.4}
+        .setting .hint{font-size:11px;color:var(--text2);opacity:0.5;margin-top:2px}
+        input[type="file"]{display:none}
+        .section-divider{display:flex;align-items:center;gap:10px;margin:4px 0 8px 0}
+        .section-divider span{font-size:11px;font-weight:500;color:var(--primary);text-transform:uppercase}
+        .section-divider .line{flex:1;height:1px;background:var(--outline)}
+        .apply-section{background:var(--surface);border-radius:10px;padding:8px 10px;border-left:3px solid #f0a030}
+        .apply-section .warning-header{display:flex;gap:6px;margin-bottom:4px}
+        .apply-section .warning-header span:first-child{font-weight:600;font-size:12px;color:#f0a030}
+        .apply-section .warning-header span:last-child{font-size:11px;color:#f0a030}
+        .no-scroll{overflow:hidden}
+        .controls-wrapper{padding-bottom:max(clamp(12px,2vw,20px),env(safe-area-inset-bottom))}
+        @media(max-width:480px){.header h1{font-size:18px}.track-name{font-size:17px}.time-info{font-size:26px}.waveform-container{height:48px}.controls{gap:18px}.ctrl-btn{width:54px;height:54px}.ctrl-btn svg{width:28px;height:28px}.ctrl-btn.play-btn{width:66px;height:66px}.ctrl-btn.play-btn svg{width:34px;height:34px}.ctrl-btn-small{width:48px;height:48px}.ctrl-btn-small svg{width:26px;height:26px}.ctrl-btn-settings{width:48px;height:48px}.ctrl-btn-settings svg{width:26px;height:26px}}
+        @media(max-width:380px){.controls{gap:14px}.ctrl-btn{width:48px;height:48px}.ctrl-btn svg{width:24px;height:24px}.ctrl-btn.play-btn{width:58px;height:58px}.ctrl-btn.play-btn svg{width:30px;height:30px}.ctrl-btn-small{width:42px;height:42px}.ctrl-btn-small svg{width:22px;height:22px}.ctrl-btn-settings{width:42px;height:42px}.ctrl-btn-settings svg{width:22px;height:22px}}
     </style>
 </head>
 <body>
-    <!-- ===== HEADER ===== -->
     <header class="header">
-        <h1>
-            <svg viewBox="0 0 24 24"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/></svg>
-            HablaSlice <span id="fileCounter"></span>
-        </h1>
+        <h1><svg viewBox="0 0 24 24"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/></svg>HablaSlice <span id="fileCounter"></span></h1>
         <div style="width:40px;"></div>
     </header>
-
-    <!-- ===== STATUS BAR ===== -->
     <div class="status-bar">
-        <div class="status-content">
-            <span id="statusText">No file</span>
-        </div>
-        <div class="progress-wrap" id="progressWrap">
-            <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
-            <span class="progress-text" id="progressText">0%</span>
-        </div>
+        <div class="status-content"><span id="statusText">No file</span></div>
+        <div class="progress-wrap" id="progressWrap"><div class="progress-track"><div class="progress-fill" id="progressFill"></div></div><span class="progress-text" id="progressText">0%</span></div>
     </div>
-
-    <!-- ===== MAIN CONTENT ===== -->
     <div class="main" id="main">
         <div class="track-card">
             <div class="track-name" id="trackName">—</div>
             <div class="track-meta">
                 <span id="segInfo">Ready</span>
                 <span class="file-info" id="fileInfo">File 1/1</span>
-                <span class="repeat-chip">
-                    <svg viewBox="0 0 24 24" width="14" height="14"><path d="M12 4V1L8 5l4 4V6c3.31 0 6 2.69 6 6 0 1.01-.25 1.97-.7 2.8l1.46 1.46C19.54 15.03 20 13.57 20 12c0-4.42-3.58-8-8-8zm0 14c-3.31 0-6-2.69-6-6 0-1.01.25-1.97.7-2.8L5.24 7.74C4.46 8.97 4 10.43 4 12c0 4.42 3.58 8 8 8v3l4-4-4-4v3z"/></svg>
-                    <b id="repeatCount">1</b>/<span id="repeatTotal">3</span>
-                </span>
+                <span class="repeat-chip"><svg viewBox="0 0 24 24" width="14" height="14"><path d="M12 4V1L8 5l4 4V6c3.31 0 6 2.69 6 6 0 1.01-.25 1.97-.7 2.8l1.46 1.46C19.54 15.03 20 13.57 20 12c0-4.42-3.58-8-8-8zm0 14c-3.31 0-6-2.69-6-6 0-1.01.25-1.97.7-2.8L5.24 7.74C4.46 8.97 4 10.43 4 12c0 4.42 3.58 8 8 8v3l4-4-4-4v3z"/></svg><b id="repeatCount">1</b>/<span id="repeatTotal">3</span></span>
             </div>
             <div class="time-info" id="timeInfo">0.0s / 0.0s</div>
             <div class="waveform-container">
@@ -1029,10 +149,7 @@
                 <div class="waveform-silence" id="waveSilence"></div>
                 <div class="waveform-overlay" id="waveformOverlay"></div>
             </div>
-            <div class="waveform-legend">
-                <span>Audio</span>
-                <span id="silenceLabel">Silence: <span id="silenceDuration">0.0</span>s</span>
-            </div>
+            <div class="waveform-legend"><span>Audio</span><span id="silenceLabel">Silence: <span id="silenceDuration">0.0</span>s</span></div>
             <div class="segment-jump">
                 <label>Go to</label>
                 <input type="number" id="jumpInput" min="1" value="1" step="1">
@@ -1040,288 +157,113 @@
                 <button class="jump-btn" id="jumpBtn">Go</button>
             </div>
         </div>
-
         <div class="playlist" id="playlist"></div>
         <div class="empty-msg" id="emptyMsg">Open a file or folder to start</div>
     </div>
-
-    <!-- ===== CONTROLS ===== -->
     <div class="controls-wrapper">
         <div class="quick-controls">
-            <div class="qc-group">
-                <span class="qc-label">Speed</span>
-                <div class="dropdown" id="speedDropdown">
-                    <div class="toggle" id="speedToggle">
-                        <span id="speedDisplay">1.0x</span>
-                        <span class="arrow">▼</span>
-                    </div>
+            <div class="qc-group"><span class="qc-label">Speed</span>
+                <div class="dropdown" id="speedDropdown"><div class="toggle" id="speedToggle"><span id="speedDisplay">1.0x</span><span class="arrow">▼</span></div>
                     <div class="menu" id="speedMenu">
-                        <div class="item" data-value="0.5">0.5x</div>
-                        <div class="item" data-value="0.6">0.6x</div>
-                        <div class="item" data-value="0.7">0.7x</div>
-                        <div class="item" data-value="0.8">0.8x</div>
-                        <div class="item" data-value="0.9">0.9x</div>
+                        <div class="item" data-value="0.5">0.5x</div><div class="item" data-value="0.6">0.6x</div><div class="item" data-value="0.7">0.7x</div>
+                        <div class="item" data-value="0.8">0.8x</div><div class="item" data-value="0.9">0.9x</div>
                         <div class="item selected" data-value="1.0">1.0x</div>
-                        <div class="item" data-value="1.1">1.1x</div>
-                        <div class="item" data-value="1.2">1.2x</div>
-                        <div class="item" data-value="1.3">1.3x</div>
-                        <div class="item" data-value="1.4">1.4x</div>
-                        <div class="item" data-value="1.5">1.5x</div>
-                        <div class="item" data-value="1.6">1.6x</div>
-                        <div class="item" data-value="1.7">1.7x</div>
-                        <div class="item" data-value="1.8">1.8x</div>
-                        <div class="item" data-value="1.9">1.9x</div>
-                        <div class="item" data-value="2.0">2.0x</div>
+                        <div class="item" data-value="1.1">1.1x</div><div class="item" data-value="1.2">1.2x</div>
+                        <div class="item" data-value="1.3">1.3x</div><div class="item" data-value="1.4">1.4x</div>
+                        <div class="item" data-value="1.5">1.5x</div><div class="item" data-value="1.6">1.6x</div>
+                        <div class="item" data-value="1.7">1.7x</div><div class="item" data-value="1.8">1.8x</div>
+                        <div class="item" data-value="1.9">1.9x</div><div class="item" data-value="2.0">2.0x</div>
                     </div>
                 </div>
             </div>
-            <div class="qc-group">
-                <span class="qc-label">Repeats</span>
-                <div class="dropdown" id="repeatsDropdown">
-                    <div class="toggle" id="repeatsToggle">
-                        <span id="repeatsDisplay">3</span>
-                        <span class="arrow">▼</span>
-                    </div>
+            <div class="qc-group"><span class="qc-label">Repeats</span>
+                <div class="dropdown" id="repeatsDropdown"><div class="toggle" id="repeatsToggle"><span id="repeatsDisplay">3</span><span class="arrow">▼</span></div>
                     <div class="menu" id="repeatsMenu">
-                        <div class="item" data-value="1">1</div>
-                        <div class="item" data-value="2">2</div>
+                        <div class="item" data-value="1">1</div><div class="item" data-value="2">2</div>
                         <div class="item selected" data-value="3">3</div>
-                        <div class="item" data-value="4">4</div>
-                        <div class="item" data-value="5">5</div>
-                        <div class="item" data-value="6">6</div>
-                        <div class="item" data-value="7">7</div>
-                        <div class="item" data-value="8">8</div>
-                        <div class="item" data-value="9">9</div>
+                        <div class="item" data-value="4">4</div><div class="item" data-value="5">5</div>
+                        <div class="item" data-value="6">6</div><div class="item" data-value="7">7</div>
+                        <div class="item" data-value="8">8</div><div class="item" data-value="9">9</div>
                         <div class="item" data-value="10">10</div>
                     </div>
                 </div>
             </div>
         </div>
-
         <div class="controls">
-            <button class="ctrl-btn ctrl-btn-small" id="btnOpen" aria-label="Open files">
-                <svg viewBox="0 0 24 24"><path d="M20 6h-8l-2-2H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm0 12H4V8h16v10z"/></svg>
-            </button>
-            <button class="ctrl-btn ctrl-btn-small" id="btnPrev" disabled aria-label="Previous segment">
-                <svg viewBox="0 0 24 24"><path d="M6 6h2v12H6zm3.5 6l8.5 6V6z"/></svg>
-            </button>
-            <button class="ctrl-btn play-btn" id="btnPlay" disabled aria-label="Play/Pause">
-                <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
-            </button>
-            <button class="ctrl-btn ctrl-btn-small" id="btnNext" disabled aria-label="Next segment">
-                <svg viewBox="0 0 24 24"><path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z"/></svg>
-            </button>
-            <button class="ctrl-btn ctrl-btn-settings" id="btnSettings" aria-label="Settings">
-                <svg viewBox="0 0 24 24"><path d="M19.14 12.94a7.07 7.07 0 0 0 0-1.88l2.03-1.58a.49.49 0 0 0 .12-.61l-1.92-3.32a.49.49 0 0 0-.59-.22l-2.39.96a7.04 7.04 0 0 0-1.62-.94l-.36-2.54a.48.48 0 0 0-.48-.41h-3.84a.48.48 0 0 0-.48.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96a.49.49 0 0 0-.59.22L2.74 8.87a.48.48 0 0 0 .12.61l2.03 1.58a7.07 7.07 0 0 0 0 1.88l-2.03 1.58a.49.49 0 0 0-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.49.37 1.03.7 1.62.94l.36 2.54c.05.24.26.41.48.41h3.84c.22 0 .43-.17.48-.41l.36-2.54c.59-.24 1.13-.57 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32a.49.49 0 0 0-.12-.61l-2.03-1.58zM12 15.6A3.6 3.6 0 1 1 15.6 12 3.6 3.6 0 0 1 12 15.6z"/></svg>
-            </button>
+            <button class="ctrl-btn ctrl-btn-small" id="btnOpen" aria-label="Open files"><svg viewBox="0 0 24 24"><path d="M20 6h-8l-2-2H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm0 12H4V8h16v10z"/></svg></button>
+            <button class="ctrl-btn ctrl-btn-small" id="btnPrev" disabled aria-label="Previous segment"><svg viewBox="0 0 24 24"><path d="M6 6h2v12H6zm3.5 6l8.5 6V6z"/></svg></button>
+            <button class="ctrl-btn play-btn" id="btnPlay" disabled aria-label="Play/Pause"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></button>
+            <button class="ctrl-btn ctrl-btn-small" id="btnNext" disabled aria-label="Next segment"><svg viewBox="0 0 24 24"><path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z"/></svg></button>
+            <button class="ctrl-btn ctrl-btn-settings" id="btnSettings" aria-label="Settings"><svg viewBox="0 0 24 24"><path d="M19.14 12.94a7.07 7.07 0 0 0 0-1.88l2.03-1.58a.49.49 0 0 0 .12-.61l-1.92-3.32a.49.49 0 0 0-.59-.22l-2.39.96a7.04 7.04 0 0 0-1.62-.94l-.36-2.54a.48.48 0 0 0-.48-.41h-3.84a.48.48 0 0 0-.48.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96a.49.49 0 0 0-.59.22L2.74 8.87a.48.48 0 0 0 .12.61l2.03 1.58a7.07 7.07 0 0 0 0 1.88l-2.03 1.58a.49.49 0 0 0-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.49.37 1.03.7 1.62.94l.36 2.54c.05.24.26.41.48.41h3.84c.22 0 .43-.17.48-.41l.36-2.54c.59-.24 1.13-.57 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32a.49.49 0 0 0-.12-.61l-2.03-1.58zM12 15.6A3.6 3.6 0 1 1 15.6 12 3.6 3.6 0 0 1 12 15.6z"/></svg></button>
         </div>
     </div>
-
-    <!-- ===== POPOVER ===== -->
     <div class="popover" id="popover">
-        <button class="popover-item" id="popFile">
-            <svg viewBox="0 0 24 24"><path d="M20 6h-8l-2-2H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm0 12H4V8h16v10z"/></svg>
-            Select File(s)
-        </button>
-        <button class="popover-item" id="popFolder">
-            <svg viewBox="0 0 24 24"><path d="M20 6h-8l-2-2H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm0 12H4V8h16v10z"/></svg>
-            Select Folder
-        </button>
+        <button class="popover-item" id="popFile"><svg viewBox="0 0 24 24"><path d="M20 6h-8l-2-2H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm0 12H4V8h16v10z"/></svg>Select File(s)</button>
+        <button class="popover-item" id="popFolder"><svg viewBox="0 0 24 24"><path d="M20 6h-8l-2-2H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm0 12H4V8h16v10z"/></svg>Select Folder</button>
     </div>
-
-    <!-- ===== FILE INPUTS ===== -->
     <input type="file" id="fileInput" accept="audio/*" multiple>
     <input type="file" id="folderInput" webkitdirectory multiple>
-
-    <!-- ===== SETTINGS MODAL ===== -->
     <div class="modal-bg" id="settingsModal">
         <div class="modal">
             <h2><svg viewBox="0 0 24 24"><path d="M19.14 12.94a7.07 7.07 0 0 0 0-1.88l2.03-1.58a.49.49 0 0 0 .12-.61l-1.92-3.32a.49.49 0 0 0-.59-.22l-2.39.96a7.04 7.04 0 0 0-1.62-.94l-.36-2.54a.48.48 0 0 0-.48-.41h-3.84a.48.48 0 0 0-.48.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96a.49.49 0 0 0-.59.22L2.74 8.87a.48.48 0 0 0 .12.61l2.03 1.58a7.07 7.07 0 0 0 0 1.88l-2.03 1.58a.49.49 0 0 0-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.49.37 1.03.7 1.62.94l.36 2.54c.05.24.26.41.48.41h3.84c.22 0 .43-.17.48-.41l.36-2.54c.59-.24 1.13-.57 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32a.49.49 0 0 0-.12-.61l-2.03-1.58zM12 15.6A3.6 3.6 0 1 1 15.6 12 3.6 3.6 0 0 1 12 15.6z"/></svg> Settings</h2>
-
-            <div class="setting">
-                <div class="label-row"><label>Theme</label></div>
-                <div class="theme-switch">
-                    <button data-theme="dark" class="active" id="themeDark">Dark</button>
-                    <button data-theme="light" id="themeLight">Light</button>
-                </div>
-            </div>
-
+            <div class="setting"><div class="label-row"><label>Theme</label></div><div class="theme-switch"><button data-theme="dark" class="active" id="themeDark">Dark</button><button data-theme="light" id="themeLight">Light</button></div></div>
             <div class="section-divider"><span>Quick settings</span><div class="line"></div></div>
-
-            <div class="setting">
-                <div class="label-row"><label>Silence gap</label><span class="value" id="silVal">0.30</span></div>
-                <div class="slider-row">
-                    <button class="step-btn" data-target="setSil" data-dir="-1">−</button>
-                    <input type="range" id="setSil" min="0" max="3" step="0.05" value="0.3">
-                    <button class="step-btn" data-target="setSil" data-dir="1">+</button>
-                </div>
-                <div class="hint">Comfort noise gap between repeats</div>
-            </div>
-
-            <div class="setting">
-                <div class="label-row"><label>After file ends</label></div>
-                <div class="dropdown" id="afterDropdown">
-                    <div class="toggle" id="afterToggle">
-                        <span id="afterDisplay">Next track</span>
-                        <span class="arrow">▼</span>
-                    </div>
-                    <div class="menu" id="afterMenu">
-                        <div class="item" data-value="loop">Loop file</div>
-                        <div class="item selected" data-value="next">Next track</div>
-                        <div class="item" data-value="stop">Stop</div>
-                    </div>
-                </div>
-            </div>
-
+            <div class="setting"><div class="label-row"><label>Silence gap</label><span class="value" id="silVal">0.30</span></div><div class="slider-row"><button class="step-btn" data-target="setSil" data-dir="-1">−</button><input type="range" id="setSil" min="0" max="3" step="0.05" value="0.3"><button class="step-btn" data-target="setSil" data-dir="1">+</button></div><div class="hint">Comfort noise gap between repeats</div></div>
+            <div class="setting"><div class="label-row"><label>After file ends</label></div><div class="dropdown" id="afterDropdown"><div class="toggle" id="afterToggle"><span id="afterDisplay">Next track</span><span class="arrow">▼</span></div><div class="menu" id="afterMenu"><div class="item" data-value="loop">Loop file</div><div class="item selected" data-value="next">Next track</div><div class="item" data-value="stop">Stop</div></div></div></div>
             <div class="section-divider"><span>Segmentation</span><div class="line"></div></div>
-
             <div class="apply-section">
-                <div class="warning-header">
-                    <span>⚠️</span>
-                    <span>Changes require re-processing the audio file</span>
-                </div>
-                <div class="setting" style="border-bottom:none;margin-bottom:4px;padding-bottom:2px;">
-                    <div class="label-row"><label>Silence threshold</label><span class="value" id="dbVal">-40</span></div>
-                    <div class="slider-row">
-                        <button class="step-btn" data-target="setDb" data-dir="-1">−</button>
-                        <input type="range" id="setDb" min="-60" max="-10" value="-40">
-                        <button class="step-btn" data-target="setDb" data-dir="1">+</button>
-                    </div>
-                    <div class="hint">Lower = more sensitive to silence</div>
-                </div>
-                <div class="setting" style="border-bottom:none;margin-bottom:0;padding-bottom:0;">
-                    <div class="label-row"><label>Min silence duration</label><span class="value" id="durVal">0.5</span></div>
-                    <div class="slider-row">
-                        <button class="step-btn" data-target="setDur" data-dir="-1">−</button>
-                        <input type="range" id="setDur" min="0.1" max="3" step="0.1" value="0.5">
-                        <button class="step-btn" data-target="setDur" data-dir="1">+</button>
-                    </div>
-                    <div class="hint">Minimum silence (seconds) to create a split</div>
-                </div>
+                <div class="warning-header"><span>⚠️</span><span>Changes require re-processing the audio file</span></div>
+                <div class="setting" style="border-bottom:none;margin-bottom:4px;padding-bottom:2px;"><div class="label-row"><label>Silence threshold</label><span class="value" id="dbVal">-40</span></div><div class="slider-row"><button class="step-btn" data-target="setDb" data-dir="-1">−</button><input type="range" id="setDb" min="-60" max="-10" value="-40"><button class="step-btn" data-target="setDb" data-dir="1">+</button></div><div class="hint">Lower = more sensitive to silence</div></div>
+                <div class="setting" style="border-bottom:none;margin-bottom:0;padding-bottom:0;"><div class="label-row"><label>Min silence duration</label><span class="value" id="durVal">0.5</span></div><div class="slider-row"><button class="step-btn" data-target="setDur" data-dir="-1">−</button><input type="range" id="setDur" min="0.1" max="3" step="0.1" value="0.5"><button class="step-btn" data-target="setDur" data-dir="1">+</button></div><div class="hint">Minimum silence (seconds) to create a split</div></div>
             </div>
-
-            <div class="modal-actions">
-                <button class="btn-reset" id="btnReset">Reset</button>
-                <button class="btn-secondary" id="btnCancel">Cancel</button>
-                <button class="btn-primary" id="btnApply">Apply</button>
-            </div>
+            <div class="modal-actions"><button class="btn-reset" id="btnReset">Reset</button><button class="btn-secondary" id="btnCancel">Cancel</button><button class="btn-primary" id="btnApply">Apply</button></div>
         </div>
     </div>
-
-    <!-- ===== AUDIO ELEMENT ===== -->
     <audio id="audio-engine" preload="auto"></audio>
-
-    <!-- ===== APPLICATION SCRIPT ===== -->
     <script>
         (function() {
             'use strict';
 
-            // ===== DOM REFS =====
             const $ = id => document.getElementById(id);
             const el = {
-                statusText: $('statusText'),
-                progressWrap: $('progressWrap'),
-                progressFill: $('progressFill'),
-                progressText: $('progressText'),
-                trackName: $('trackName'),
-                segInfo: $('segInfo'),
-                fileInfo: $('fileInfo'),
-                timeInfo: $('timeInfo'),
-                repeatCount: $('repeatCount'),
-                repeatTotal: $('repeatTotal'),
-                playlist: $('playlist'),
-                emptyMsg: $('emptyMsg'),
-                btnOpen: $('btnOpen'),
-                btnPrev: $('btnPrev'),
-                btnPlay: $('btnPlay'),
-                btnNext: $('btnNext'),
-                btnSettings: $('btnSettings'),
-                fileInput: $('fileInput'),
-                folderInput: $('folderInput'),
-                settingsModal: $('settingsModal'),
-                btnCancel: $('btnCancel'),
-                btnApply: $('btnApply'),
-                btnReset: $('btnReset'),
-                setDb: $('setDb'),
-                setDur: $('setDur'),
-                setSil: $('setSil'),
-                afterDropdown: $('afterDropdown'),
-                afterToggle: $('afterToggle'),
-                afterDisplay: $('afterDisplay'),
-                afterMenu: $('afterMenu'),
-                dbVal: $('dbVal'),
-                durVal: $('durVal'),
-                silVal: $('silVal'),
-                waveCanvas: $('waveCanvas'),
-                waveProgress: $('waveProgress'),
-                waveSilence: $('waveSilence'),
-                waveformOverlay: $('waveformOverlay'),
-                silenceDuration: $('silenceDuration'),
-                silenceLabel: $('silenceLabel'),
-                themeDark: $('themeDark'),
-                themeLight: $('themeLight'),
-                popover: $('popover'),
-                popFile: $('popFile'),
-                popFolder: $('popFolder'),
-                fileCounter: $('fileCounter'),
-                speedDisplay: $('speedDisplay'),
-                repeatsDisplay: $('repeatsDisplay'),
-                speedDropdown: $('speedDropdown'),
-                repeatsDropdown: $('repeatsDropdown'),
-                speedMenu: $('speedMenu'),
-                repeatsMenu: $('repeatsMenu'),
-                speedToggle: $('speedToggle'),
-                repeatsToggle: $('repeatsToggle'),
-                audio: $('audio-engine'),
-                jumpInput: $('jumpInput'),
-                jumpBtn: $('jumpBtn'),
-                totalSegments: $('totalSegments')
+                statusText: $('statusText'), progressWrap: $('progressWrap'), progressFill: $('progressFill'),
+                progressText: $('progressText'), trackName: $('trackName'), segInfo: $('segInfo'),
+                fileInfo: $('fileInfo'), timeInfo: $('timeInfo'), repeatCount: $('repeatCount'),
+                repeatTotal: $('repeatTotal'), playlist: $('playlist'), emptyMsg: $('emptyMsg'),
+                btnOpen: $('btnOpen'), btnPrev: $('btnPrev'), btnPlay: $('btnPlay'), btnNext: $('btnNext'),
+                btnSettings: $('btnSettings'), fileInput: $('fileInput'), folderInput: $('folderInput'),
+                settingsModal: $('settingsModal'), btnCancel: $('btnCancel'), btnApply: $('btnApply'),
+                btnReset: $('btnReset'), setDb: $('setDb'), setDur: $('setDur'), setSil: $('setSil'),
+                afterDropdown: $('afterDropdown'), afterToggle: $('afterToggle'), afterDisplay: $('afterDisplay'),
+                afterMenu: $('afterMenu'), dbVal: $('dbVal'), durVal: $('durVal'), silVal: $('silVal'),
+                waveCanvas: $('waveCanvas'), waveProgress: $('waveProgress'), waveSilence: $('waveSilence'),
+                waveformOverlay: $('waveformOverlay'), silenceDuration: $('silenceDuration'),
+                silenceLabel: $('silenceLabel'), themeDark: $('themeDark'), themeLight: $('themeLight'),
+                popover: $('popover'), popFile: $('popFile'), popFolder: $('popFolder'),
+                fileCounter: $('fileCounter'), speedDisplay: $('speedDisplay'), repeatsDisplay: $('repeatsDisplay'),
+                speedDropdown: $('speedDropdown'), repeatsDropdown: $('repeatsDropdown'),
+                speedMenu: $('speedMenu'), repeatsMenu: $('repeatsMenu'), speedToggle: $('speedToggle'),
+                repeatsToggle: $('repeatsToggle'), audio: $('audio-engine'), jumpInput: $('jumpInput'),
+                jumpBtn: $('jumpBtn'), totalSegments: $('totalSegments')
             };
 
-            // ===== APPLICATION STATE =====
             const state = {
-                files: [],
-                currentFileIdx: 0,
-                segments: [],
-                currentSegIdx: 0,
-                repeatCount: 0,
-                isPlaying: false,
-                speed: 1.0,
-                settings: {
-                    n: 3,
-                    db: -40,
-                    dur: 0.5,
-                    after: 'next',
-                    theme: 'dark',
-                    silence: 0.3
-                },
-                audioData: null,
-                sampleRate: 44100,
-                isLoading: false,
-                isReady: false,
-                mergedBuffer: null,
-                fileOffsets: [],
-                fileDurations: [],
-                fileSegments: [],
-                currentFileStartTime: 0,
-                originalFileUrl: null,
-                gainNode: null,
-                audioCtx: null,
-                isAudioInitialized: false,
-                savedSettings: null,
-                // Для предотвращения "прилипания" фрагментов
-                _seekTimeout: null,
-                _lastSegment: -1,
-                _isSeeking: false
+                files: [], currentFileIdx: 0, segments: [], currentSegIdx: 0, repeatCount: 0,
+                isPlaying: false, speed: 1.0,
+                settings: { n: 3, db: -40, dur: 0.5, after: 'next', theme: 'dark', silence: 0.3 },
+                audioData: null, sampleRate: 44100, isLoading: false, isReady: false,
+                mergedBuffer: null, fileOffsets: [], fileDurations: [], fileSegments: [],
+                currentFileStartTime: 0, originalFileUrl: null, gainNode: null, audioCtx: null,
+                isAudioInitialized: false, savedSettings: null,
+                _isProcessing: false,
+                _checkTimer: null,
+                _shouldResume: false // Флаг для возобновления после переключения
             };
 
-            // ===== DROPDOWN =====
             function initDropdown(dropdownEl, menuEl, toggleEl, displayEl, onSelect) {
                 if (!dropdownEl || !menuEl || !toggleEl || !displayEl) return;
-                toggleEl.addEventListener('click', function(e) {
-                    e.stopPropagation();
-                    dropdownEl.classList.toggle('open');
-                });
+                toggleEl.addEventListener('click', function(e) { e.stopPropagation();
+                    dropdownEl.classList.toggle('open'); });
                 menuEl.querySelectorAll('.item').forEach(function(item) {
                     item.addEventListener('click', function(e) {
                         e.stopPropagation();
@@ -1334,27 +276,17 @@
                         if (onSelect) onSelect(value);
                     });
                 });
-                document.addEventListener('click', function() {
-                    dropdownEl.classList.remove('open');
-                });
+                document.addEventListener('click', function() { dropdownEl.classList.remove('open'); });
             }
 
-            // ===== SETTINGS =====
             function loadSettings() {
-                try {
-                    var s = JSON.parse(localStorage.getItem('hs_settings'));
-                    if (s) {
-                        Object.assign(state.settings, s);
-                        if (s.speed !== undefined) state.speed = s.speed;
-                    }
-                } catch (e) {}
+                try { var s = JSON.parse(localStorage.getItem('hs_settings')); if (s) { Object.assign(state.settings, s); if (s
+                            .speed !== undefined) state.speed = s.speed; } } catch (e) {}
                 applySettings();
             }
 
-            function saveSettings() {
-                var data = Object.assign({}, state.settings, { speed: state.speed });
-                localStorage.setItem('hs_settings', JSON.stringify(data));
-            }
+            function saveSettings() { var data = Object.assign({}, state.settings, { speed: state.speed });
+                localStorage.setItem('hs_settings', JSON.stringify(data)); }
 
             function applySettings() {
                 document.body.classList.toggle('light', state.settings.theme === 'light');
@@ -1369,34 +301,21 @@
                 if (el.speedDisplay) el.speedDisplay.textContent = state.speed.toFixed(1) + 'x';
                 if (el.themeDark) el.themeDark.classList.toggle('active', state.settings.theme === 'dark');
                 if (el.themeLight) el.themeLight.classList.toggle('active', state.settings.theme === 'light');
-
                 var afterMap = { loop: 'Loop file', next: 'Next track', stop: 'Stop' };
                 if (el.afterDisplay) el.afterDisplay.textContent = afterMap[state.settings.after] || 'Next track';
-
-                if (el.speedMenu) {
-                    el.speedMenu.querySelectorAll('.item').forEach(function(item) {
-                        item.classList.toggle('selected', parseFloat(item.dataset.value) === state.speed);
-                    });
-                }
-                if (el.repeatsMenu) {
-                    el.repeatsMenu.querySelectorAll('.item').forEach(function(item) {
-                        item.classList.toggle('selected', parseInt(item.dataset.value) === state.settings.n);
-                    });
-                }
-                if (el.afterMenu) {
-                    el.afterMenu.querySelectorAll('.item').forEach(function(item) {
-                        item.classList.toggle('selected', item.dataset.value === state.settings.after);
-                    });
-                }
+                if (el.speedMenu) { el.speedMenu.querySelectorAll('.item').forEach(function(item) { item.classList.toggle(
+                        'selected', parseFloat(item.dataset.value) === state.speed); }); }
+                if (el.repeatsMenu) { el.repeatsMenu.querySelectorAll('.item').forEach(function(item) { item.classList.toggle(
+                        'selected', parseInt(item.dataset.value) === state.settings.n); }); }
+                if (el.afterMenu) { el.afterMenu.querySelectorAll('.item').forEach(function(item) { item.classList.toggle(
+                        'selected', item.dataset.value === state.settings.after); }); }
                 updateUI();
             }
 
-            // ===== UI UPDATES =====
             function updateUI() {
                 var isReady = state.segments.length > 0 && !state.isLoading && state.isReady;
                 var totalFiles = state.files.length;
                 var currentFile = state.currentFileIdx + 1;
-
                 if (el.btnPlay) {
                     el.btnPlay.disabled = !isReady;
                     el.btnPlay.innerHTML = state.isPlaying ?
@@ -1406,61 +325,32 @@
                 if (el.btnPrev) el.btnPrev.disabled = !isReady;
                 if (el.btnNext) el.btnNext.disabled = !isReady;
                 if (el.jumpBtn) el.jumpBtn.disabled = !isReady;
-
                 if (el.fileInfo) {
-                    if (totalFiles > 1) {
-                        var fileName = state.files[state.currentFileIdx] ? state.files[state.currentFileIdx].name : '—';
-                        el.fileInfo.textContent = currentFile + '/' + totalFiles + ' • ' + fileName;
-                    } else {
-                        el.fileInfo.textContent = totalFiles > 0 ? 'File 1/1' : '';
-                    }
+                    if (totalFiles > 1) { var fileName = state.files[state.currentFileIdx] ? state.files[state.currentFileIdx]
+                            .name : '—';
+                        el.fileInfo.textContent = currentFile + '/' + totalFiles + ' • ' + fileName; } else { el.fileInfo
+                            .textContent = totalFiles > 0 ? 'File 1/1' : ''; }
                 }
-
-                if (state.segments.length > 0) {
-                    var idx = state.currentSegIdx + 1;
-                    if (el.segInfo) el.segInfo.textContent = 'Segment ' + idx + ' of ' + state.segments.length;
-                    if (el.totalSegments) el.totalSegments.textContent = state.segments.length;
-                    if (el.jumpInput) {
-                        el.jumpInput.max = state.segments.length;
-                        el.jumpInput.value = Math.min(idx, state.segments.length);
-                    }
-                } else {
-                    if (el.segInfo) el.segInfo.textContent = 'Ready';
-                }
-
-                if (el.repeatCount) {
-                    el.repeatCount.textContent = Math.min(state.repeatCount + 1, state.settings.n);
-                }
-
-                if (el.silenceDuration) {
-                    el.silenceDuration.textContent = state.settings.silence.toFixed(1);
-                }
-                if (el.silenceLabel) {
-                    el.silenceLabel.style.display = state.settings.silence > 0.01 ? 'inline' : 'none';
-                }
-
-                if (el.fileCounter) {
-                    el.fileCounter.textContent = totalFiles > 0 ? '[' + currentFile + '/' + totalFiles + ']' : '';
-                }
-
-                if (totalFiles > 0 && state.files[state.currentFileIdx]) {
-                    if (el.trackName) el.trackName.textContent = state.files[state.currentFileIdx].name;
-                } else {
-                    if (el.trackName) el.trackName.textContent = '—';
-                }
-
+                if (state.segments.length > 0) { var idx = state.currentSegIdx + 1; if (el.segInfo) el.segInfo.textContent =
+                        'Segment ' + idx + ' of ' + state.segments.length; if (el.totalSegments) el.totalSegments.textContent =
+                        state.segments.length; if (el.jumpInput) { el.jumpInput.max = state.segments.length;
+                        el.jumpInput.value = Math.min(idx, state.segments.length); } } else { if (el.segInfo) el.segInfo
+                        .textContent = 'Ready'; }
+                if (el.repeatCount) { el.repeatCount.textContent = Math.min(state.repeatCount + 1, state.settings.n); }
+                if (el.silenceDuration) { el.silenceDuration.textContent = state.settings.silence.toFixed(1); }
+                if (el.silenceLabel) { el.silenceLabel.style.display = state.settings.silence > 0.01 ? 'inline' : 'none'; }
+                if (el.fileCounter) { el.fileCounter.textContent = totalFiles > 0 ? '[' + currentFile + '/' + totalFiles +
+                        ']' : ''; }
+                if (totalFiles > 0 && state.files[state.currentFileIdx]) { if (el.trackName) el.trackName.textContent = state
+                        .files[state.currentFileIdx].name; } else { if (el.trackName) el.trackName.textContent = '—'; }
                 updatePlaylist();
             }
 
             function updatePlaylist() {
                 if (!el.playlist) return;
-                if (state.files.length <= 1) {
-                    el.playlist.innerHTML = '';
-                    if (el.emptyMsg) el.emptyMsg.style.display = state.files.length === 0 ? 'block' : 'none';
-                    return;
-                }
+                if (state.files.length <= 1) { el.playlist.innerHTML = ''; if (el.emptyMsg) el.emptyMsg.style.display = state
+                        .files.length === 0 ? 'block' : 'none'; return; }
                 if (el.emptyMsg) el.emptyMsg.style.display = 'none';
-
                 el.playlist.innerHTML = state.files.map(function(f, i) {
                     var isCurrent = i === state.currentFileIdx;
                     var segCount = state.fileSegments[i] ? state.fileSegments[i].length : 0;
@@ -1468,25 +358,18 @@
                         '<span class="idx">' + (i + 1) + '</span>' +
                         '<span class="name">' + f.name + '</span>' +
                         '<span class="file-status">' + segCount + ' segs</span>' +
-                        '<span class="status-dot"></span>' +
-                        '</div>';
+                        '<span class="status-dot"></span></div>';
                 }).join('');
-
                 el.playlist.querySelectorAll('.playlist-item').forEach(function(item) {
-                    item.addEventListener('click', function() {
-                        var idx = parseInt(this.dataset.idx);
-                        if (idx !== state.currentFileIdx) switchToFile(idx);
-                    });
+                    item.addEventListener('click', function() { var idx = parseInt(this.dataset.idx); if (idx !== state
+                            .currentFileIdx) switchToFile(idx); });
                 });
             }
 
             function updateStatus(text, spinner) {
                 if (!el.statusText) return;
-                if (spinner) {
-                    el.statusText.innerHTML = '<span class="spinner"></span> ' + text;
-                } else {
-                    el.statusText.textContent = text;
-                }
+                if (spinner) { el.statusText.innerHTML = '<span class="spinner"></span> ' + text; } else { el.statusText
+                        .textContent = text; }
             }
 
             function updateProgress(pct, text) {
@@ -1499,49 +382,38 @@
                 if (el.timeInfo) el.timeInfo.textContent = current.toFixed(1) + 's / ' + total.toFixed(1) + 's';
             }
 
-            // ===== WAVEFORM =====
             function drawWaveform(segIdx) {
                 if (!state.audioData || state.segments.length === 0) return;
                 if (segIdx >= state.segments.length) segIdx = state.segments.length - 1;
                 if (segIdx < 0) segIdx = 0;
                 var seg = state.segments[segIdx];
                 if (!seg) return;
-
                 var canvas = el.waveCanvas;
                 if (!canvas) return;
                 var ctx = canvas.getContext('2d');
                 var rect = canvas.parentElement.getBoundingClientRect();
                 var w = rect.width || 400;
                 var h = rect.height || 60;
-
                 canvas.width = w * 2;
                 canvas.height = h * 2;
                 canvas.style.width = w + 'px';
                 canvas.style.height = h + 'px';
                 ctx.scale(2, 2);
-
                 var silence = state.settings.silence || 0;
                 var totalDuration = (seg.end - seg.start) + silence;
                 var audioWidth = totalDuration > 0 ? ((seg.end - seg.start) / totalDuration) * w : w;
                 var silenceWidth = w - audioWidth;
-
                 ctx.clearRect(0, 0, w, h);
-
-                if (el.waveSilence) {
-                    el.waveSilence.style.width = silenceWidth + 'px';
-                    el.waveSilence.style.display = (silence > 0.01 && silenceWidth > 2) ? 'block' : 'none';
-                }
-
+                if (el.waveSilence) { el.waveSilence.style.width = silenceWidth + 'px';
+                    el.waveSilence.style.display = (silence > 0.01 && silenceWidth > 2) ? 'block' : 'none'; }
                 var startSample = Math.floor(seg.start * state.sampleRate);
                 var endSample = Math.floor(seg.end * state.sampleRate);
                 if (startSample >= state.audioData.length || endSample > state.audioData.length) return;
                 var data = state.audioData.slice(startSample, endSample);
                 if (data.length === 0) return;
-
                 var step = Math.max(1, Math.floor(data.length / (audioWidth * 2)));
                 var amp = h / 2.4;
                 var color = getComputedStyle(document.documentElement).getPropertyValue('--primary').trim() || '#4cc9f0';
-
                 var points = [];
                 var drawWidth = Math.max(1, Math.floor(audioWidth));
                 for (var i = 0; i < drawWidth; i++) {
@@ -1550,48 +422,32 @@
                     var limit = Math.min(idx + step, data.length);
                     for (var j = idx; j < limit; j++) sum += Math.abs(data[j]);
                     var val = sum / step;
-                    points.push({
-                        top: Math.max(0, (h / 2) - val * amp),
-                        bottom: Math.min(h, (h / 2) + val * amp)
-                    });
+                    points.push({ top: Math.max(0, (h / 2) - val * amp), bottom: Math.min(h, (h / 2) + val * amp) });
                 }
-
                 ctx.beginPath();
                 ctx.moveTo(0, h / 2);
-                for (var k = 0; k < points.length; k++) {
-                    ctx.lineTo(k, points[k].top);
-                }
-                for (var l = points.length - 1; l >= 0; l--) {
-                    ctx.lineTo(l, points[l].bottom);
-                }
+                for (var k = 0; k < points.length; k++) { ctx.lineTo(k, points[k].top); }
+                for (var l = points.length - 1; l >= 0; l--) { ctx.lineTo(l, points[l].bottom); }
                 ctx.closePath();
                 ctx.fillStyle = color + '44';
                 ctx.fill();
-
                 ctx.beginPath();
                 ctx.strokeStyle = color;
                 ctx.lineWidth = 1.2;
                 ctx.globalAlpha = 0.6;
-                for (var m = 0; m < points.length; m++) {
-                    if (m === 0) ctx.moveTo(m, points[m].top);
-                    else ctx.lineTo(m, points[m].top);
-                }
+                for (var m = 0; m < points.length; m++) { if (m === 0) ctx.moveTo(m, points[m].top);
+                    else ctx.lineTo(m, points[m].top); }
                 ctx.stroke();
                 ctx.beginPath();
-                for (var n = 0; n < points.length; n++) {
-                    if (n === 0) ctx.moveTo(n, points[n].bottom);
-                    else ctx.lineTo(n, points[n].bottom);
-                }
+                for (var n = 0; n < points.length; n++) { if (n === 0) ctx.moveTo(n, points[n].bottom);
+                    else ctx.lineTo(n, points[n].bottom); }
                 ctx.stroke();
                 ctx.globalAlpha = 1;
-
                 if (el.waveProgress) el.waveProgress.style.width = '0%';
             }
 
-            // ===== AUDIO PROCESSING - С сохранением всех каналов =====
             function sliceAudioBySilence(audioBuffer, thresholdDb, minSilenceSec) {
                 if (!audioBuffer) return [];
-                // Используем первый канал для анализа, но сохраняем все каналы для воспроизведения
                 var data = audioBuffer.getChannelData(0);
                 if (!data || data.length === 0) return [];
                 var sampleRate = audioBuffer.sampleRate;
@@ -1599,68 +455,41 @@
                 var silenceRegions = [];
                 var inSilence = false;
                 var silenceStart = 0;
-
                 for (var i = 0; i < data.length; i++) {
-                    if (Math.abs(data[i]) < thresholdLinear) {
-                        if (!inSilence) { silenceStart = i;
-                            inSilence = true; }
-                    } else {
-                        if (inSilence) {
-                            var duration = (i - silenceStart) / sampleRate;
-                            if (duration >= minSilenceSec) {
-                                silenceRegions.push({ start: silenceStart / sampleRate, end: i / sampleRate });
-                            }
-                            inSilence = false;
-                        }
-                    }
+                    if (Math.abs(data[i]) < thresholdLinear) { if (!inSilence) { silenceStart = i;
+                            inSilence = true; } } else { if (inSilence) { var duration = (i - silenceStart) / sampleRate; if (
+                                duration >= minSilenceSec) { silenceRegions.push({ start: silenceStart / sampleRate,
+                                    end: i / sampleRate }); }
+                            inSilence = false; } }
                 }
-                if (inSilence) {
-                    var dur = (data.length - silenceStart) / sampleRate;
-                    if (dur >= minSilenceSec) {
-                        silenceRegions.push({ start: silenceStart / sampleRate, end: data.length / sampleRate });
-                    }
-                }
-
+                if (inSilence) { var dur = (data.length - silenceStart) / sampleRate; if (dur >= minSilenceSec) {
+                        silenceRegions.push({ start: silenceStart / sampleRate, end: data.length / sampleRate }); } }
                 var segments = [];
                 var prevEnd = 0;
                 var duration = audioBuffer.duration;
-                for (var j = 0; j < silenceRegions.length; j++) {
-                    var region = silenceRegions[j];
-                    var segStart = prevEnd;
-                    var segEnd = region.start;
-                    if (segEnd - segStart > 0.2) {
-                        segments.push({ start: segStart, end: segEnd });
-                    }
-                    prevEnd = region.end;
-                }
-                if (duration - prevEnd > 0.2) {
-                    segments.push({ start: prevEnd, end: duration });
-                }
+                for (var j = 0; j < silenceRegions.length; j++) { var region = silenceRegions[j]; var segStart = prevEnd; var
+                        segEnd = region.start; if (segEnd - segStart > 0.2) { segments.push({ start: segStart, end: segEnd }); }
+                    prevEnd = region.end; }
+                if (duration - prevEnd > 0.2) { segments.push({ start: prevEnd, end: duration }); }
                 if (segments.length === 0) segments.push({ start: 0, end: duration });
                 return segments;
             }
 
-            // ===== MERGE FILES - С сохранением всех каналов =====
             async function mergeAllFiles(files) {
                 if (!files || files.length === 0) return null;
-
                 updateStatus('Merging audio files...', true);
                 updateProgress(5, 'Loading...');
-
                 var ctx = new(window.AudioContext || window.webkitAudioContext)();
                 if (ctx.state === 'suspended') await ctx.resume();
-
                 var buffers = [];
                 state.fileOffsets = [];
                 state.fileDurations = [];
                 var totalSamples = 0;
                 var maxChannels = 0;
-
                 for (var i = 0; i < files.length; i++) {
                     var progress = 5 + (i / files.length) * 80;
                     updateProgress(progress, (i + 1) + '/' + files.length);
                     updateStatus('Loading ' + (i + 1) + '/' + files.length + '...', true);
-
                     try {
                         var arrayBuffer = await files[i].arrayBuffer();
                         var audioBuffer = await ctx.decodeAudioData(arrayBuffer);
@@ -1668,36 +497,17 @@
                         state.fileOffsets.push(totalSamples);
                         state.fileDurations.push(audioBuffer.duration);
                         totalSamples += audioBuffer.length;
-                        if (audioBuffer.numberOfChannels > maxChannels) {
-                            maxChannels = audioBuffer.numberOfChannels;
-                        }
-                    } catch (e) {
-                        console.warn('Error decoding:', files[i].name, e);
-                    }
+                        if (audioBuffer.numberOfChannels > maxChannels) { maxChannels = audioBuffer.numberOfChannels; }
+                    } catch (e) { console.warn('Error decoding:', files[i].name, e); }
                 }
-
-                if (buffers.length === 0) {
-                    await ctx.close();
-                    updateStatus('No valid audio files');
-                    return null;
-                }
-
-                // Если все файлы моно, используем 1 канал, иначе сохраняем стерео
+                if (buffers.length === 0) { await ctx.close();
+                    updateStatus('No valid audio files'); return null; }
                 var channels = Math.min(maxChannels, 2);
-                // Если есть хоть один стерео, делаем стерео
-                for (var b = 0; b < buffers.length; b++) {
-                    if (buffers[b].numberOfChannels > 1) {
-                        channels = 2;
-                        break;
-                    }
-                }
-
+                for (var b = 0; b < buffers.length; b++) { if (buffers[b].numberOfChannels > 1) { channels = 2; break; } }
                 updateProgress(90, 'Creating merged buffer...');
                 updateStatus('Creating merged audio...', true);
-
                 var sampleRate = buffers[0].sampleRate;
                 var mergedBuffer = ctx.createBuffer(channels, totalSamples, sampleRate);
-
                 var writePos = 0;
                 for (var k = 0; k < buffers.length; k++) {
                     var buf = buffers[k];
@@ -1705,32 +515,21 @@
                     for (var ch = 0; ch < channels; ch++) {
                         var srcChannel = ch < bufChannels ? buf.getChannelData(ch) : buf.getChannelData(0);
                         var dstChannel = mergedBuffer.getChannelData(ch);
-                        for (var s = 0; s < buf.length; s++) {
-                            dstChannel[writePos + s] = srcChannel[s] || 0;
-                        }
+                        for (var s = 0; s < buf.length; s++) { dstChannel[writePos + s] = srcChannel[s] || 0; }
                     }
                     writePos += buf.length;
-                    if (k % 5 === 0 || k === buffers.length - 1) {
-                        updateProgress(90 + (k / buffers.length) * 10, 'Building ' + (k + 1) + '/' + buffers.length);
-                    }
+                    if (k % 5 === 0 || k === buffers.length - 1) { updateProgress(90 + (k / buffers.length) * 10, 'Building ' +
+                            (k + 1) + '/' + buffers.length); }
                 }
-
-                // Обновляем audioData для визуализации (используем первый канал)
                 state.audioData = mergedBuffer.getChannelData(0);
-
                 updateProgress(100, 'Done');
                 await ctx.close();
                 updateStatus('Ready');
-
                 return mergedBuffer;
             }
 
-            // ===== BUFFER TO WAV - С поддержкой стерео =====
-            function writeString(view, offset, string) {
-                for (var i = 0; i < string.length; i++) {
-                    view.setUint8(offset + i, string.charCodeAt(i));
-                }
-            }
+            function writeString(view, offset, string) { for (var i = 0; i < string.length; i++) { view.setUint8(offset + i,
+                        string.charCodeAt(i)); } }
 
             async function bufferToWav(buffer) {
                 var numChannels = buffer.numberOfChannels;
@@ -1742,10 +541,8 @@
                 var dataSize = buffer.length * blockAlign;
                 var headerSize = 44;
                 var totalSize = headerSize + dataSize;
-
                 var arrayBuffer = new ArrayBuffer(totalSize);
                 var view = new DataView(arrayBuffer);
-
                 writeString(view, 0, 'RIFF');
                 view.setUint32(4, totalSize - 8, true);
                 writeString(view, 8, 'WAVE');
@@ -1759,7 +556,6 @@
                 view.setUint16(34, bitDepth, true);
                 writeString(view, 36, 'data');
                 view.setUint32(40, dataSize, true);
-
                 var offset = 44;
                 var scale = Math.pow(2, bitDepth - 1);
                 for (var ch = 0; ch < numChannels; ch++) {
@@ -1770,264 +566,197 @@
                         view.setInt16(idx, Math.round(val * (scale - 1)), true);
                     }
                 }
-
                 return arrayBuffer;
             }
 
-            // ===== LOAD FILES =====
             async function loadMergedFiles(files) {
                 if (state.isLoading) return;
                 state.isLoading = true;
                 state.isReady = false;
-                state._lastSegment = -1;
+                state._isProcessing = false;
+                state._shouldResume = false;
+                clearInterval(state._checkTimer);
+                state._checkTimer = null;
                 updateUI();
-
                 try {
                     state.files = files;
                     state.fileSegments = [];
-
                     var merged = await mergeAllFiles(files);
-                    if (!merged) {
-                        state.isLoading = false;
-                        updateStatus('No valid audio files');
-                        return;
-                    }
-
+                    if (!merged) { state.isLoading = false;
+                        updateStatus('No valid audio files'); return; }
                     state.mergedBuffer = merged;
                     state.sampleRate = merged.sampleRate;
-
                     updateStatus('Analyzing segments...', true);
                     updateProgress(50, 'Analyzing...');
-
                     for (var i = 0; i < files.length; i++) {
                         updateProgress(50 + (i / files.length) * 40, 'Analyzing ' + (i + 1) + '/' + files.length);
                         updateStatus('Analyzing ' + files[i].name + '...', true);
-
                         var startSample = state.fileOffsets[i] || 0;
                         var endSample = startSample + (state.fileDurations[i] * state.sampleRate);
-
-                        // Создаем временный буфер с сохранением всех каналов
                         var numChannels = merged.numberOfChannels;
                         var fileDataLength = Math.floor(endSample - startSample);
-                        var tempBuffer = new AudioBuffer({
-                            length: fileDataLength,
-                            numberOfChannels: numChannels,
-                            sampleRate: state.sampleRate
-                        });
-
+                        var tempBuffer = new AudioBuffer({ length: fileDataLength, numberOfChannels: numChannels,
+                            sampleRate: state.sampleRate });
                         for (var ch = 0; ch < numChannels; ch++) {
                             var srcChannel = merged.getChannelData(ch);
                             var dstChannel = tempBuffer.getChannelData(ch);
-                            for (var s = 0; s < fileDataLength; s++) {
-                                dstChannel[s] = srcChannel[Math.floor(startSample + s)] || 0;
-                            }
+                            for (var s = 0; s < fileDataLength; s++) { dstChannel[s] = srcChannel[Math.floor(startSample +
+                                    s)] || 0; }
                         }
-
                         var segments = sliceAudioBySilence(tempBuffer, state.settings.db, state.settings.dur);
                         state.fileSegments[i] = segments;
                     }
-
                     state.currentFileIdx = 0;
                     state.segments = state.fileSegments[0] || [];
                     state.currentSegIdx = 0;
                     state.repeatCount = 0;
                     state.currentFileStartTime = 0;
-
                     updateStatus('Converting to WAV...', true);
                     updateProgress(90, 'Converting...');
-
                     var wavData = await bufferToWav(merged);
                     var blob = new Blob([wavData], { type: 'audio/wav' });
                     var url = URL.createObjectURL(blob);
-
                     if (state.originalFileUrl) URL.revokeObjectURL(state.originalFileUrl);
                     state.originalFileUrl = url;
-
                     updateStatus('Loading audio...', true);
                     updateProgress(95, 'Loading audio...');
-
-                    // Сбрасываем аудио элемент
                     el.audio.pause();
                     el.audio.src = '';
                     el.audio.load();
                     el.audio.src = url;
                     el.audio.load();
                     el.audio.playbackRate = state.speed;
-
                     await new Promise(function(resolve) {
-                        var onCanPlay = function() {
-                            el.audio.removeEventListener('canplaythrough', onCanPlay);
+                        var onCanPlay = function() { el.audio.removeEventListener('canplaythrough', onCanPlay);
                             clearTimeout(timeout);
-                            resolve();
-                        };
+                            resolve(); };
                         el.audio.addEventListener('canplaythrough', onCanPlay);
                         var timeout = setTimeout(resolve, 5000);
                     });
-
-                    if (state.segments.length > 0) {
-                        var firstSeg = state.segments[0];
-                        el.audio.currentTime = firstSeg.start;
-                    }
-
+                    if (state.segments.length > 0) { var firstSeg = state.segments[0];
+                        el.audio.currentTime = firstSeg.start; }
                     state.isLoading = false;
                     state.isReady = true;
                     state.isPlaying = false;
-
+                    state._isProcessing = false;
                     updateStatus('Ready');
                     updateProgress(0);
                     updateUI();
                     drawWaveform(0);
                     updateMediaSession();
                     savePlaybackState();
-
-                    console.log('Loaded', state.files.length, 'files,', state.segments.length, 'segments, channels:',
-                        merged.numberOfChannels);
-
-                } catch (e) {
-                    console.error('Load error:', e);
+                    startCheckTimer();
+                    console.log('Loaded', state.files.length, 'files,', state.segments.length, 'segments');
+                } catch (e) { console.error('Load error:', e);
                     updateStatus('Error: ' + e.message);
                     state.isLoading = false;
                     state.isReady = true;
-                    updateUI();
-                }
+                    state._isProcessing = false;
+                    updateUI(); }
             }
 
-            // ===== SWITCH TO FILE =====
+            function startCheckTimer() {
+                clearInterval(state._checkTimer);
+                state._checkTimer = setInterval(function() {
+                    if (!state.isPlaying || state.isLoading || state._isProcessing || state.segments.length === 0)
+                        return;
+                    var seg = state.segments[state.currentSegIdx];
+                    if (!seg) return;
+                    var startTime = state.currentFileStartTime || 0;
+                    var currentTime = el.audio.currentTime - startTime;
+                    var segEnd = seg.end;
+                    var silence = state.settings.silence || 0;
+                    var virtualEnd = segEnd + silence;
+                    if (currentTime >= virtualEnd) {
+                        handleSegmentEnd();
+                    }
+                }, 50);
+            }
+
             function switchToFile(fileIdx) {
                 if (fileIdx < 0 || fileIdx >= state.files.length) return;
-                if (fileIdx === state.currentFileIdx && state.isPlaying) return;
-
                 var wasPlaying = state.isPlaying;
                 state.currentFileIdx = fileIdx;
                 state.currentSegIdx = 0;
                 state.repeatCount = 0;
-                state._lastSegment = -1;
-
+                state._isProcessing = false;
                 state.segments = state.fileSegments[fileIdx] || [];
                 state.currentFileStartTime = (state.fileOffsets[fileIdx] || 0) / state.sampleRate;
-
                 updateUI();
                 drawWaveform(0);
                 updateMediaSession();
                 savePlaybackState();
-
-                if (state.segments.length > 0) {
-                    var firstSeg = state.segments[0];
-                    el.audio.currentTime = firstSeg.start + state.currentFileStartTime;
-                }
-
-                if (wasPlaying && state.segments.length > 0) {
-                    setTimeout(function() {
+                if (state.segments.length > 0) { var firstSeg = state.segments[0];
+                    el.audio.currentTime = firstSeg.start + state.currentFileStartTime; }
+                if (wasPlaying && state.segments.length > 0) { 
+                    state._shouldResume = true;
+                    setTimeout(function() { 
                         el.audio.play().catch(function() {});
-                    }, 50);
+                        state._shouldResume = false;
+                    }, 50); 
                 }
-
                 console.log('Switched to file', fileIdx + 1, 'segments:', state.segments.length);
             }
 
-            // ===== PLAYBACK =====
             function setupAudio() {
                 try {
-                    if (!state.audioCtx) {
-                        state.audioCtx = new(window.AudioContext || window.webkitAudioContext)();
-                    }
-                    if (state.audioCtx.state === 'suspended') {
-                        state.audioCtx.resume();
-                    }
-
-                    if (!state.gainNode) {
-                        state.gainNode = state.audioCtx.createGain();
+                    if (!state.audioCtx) { state.audioCtx = new(window.AudioContext || window.webkitAudioContext)(); }
+                    if (state.audioCtx.state === 'suspended') { state.audioCtx.resume(); }
+                    if (!state.gainNode) { state.gainNode = state.audioCtx.createGain();
                         state.gainNode.gain.value = 1.0;
-                        state.gainNode.connect(state.audioCtx.destination);
-                    }
-
-                    if (!window._sourceNode) {
-                        window._sourceNode = state.audioCtx.createMediaElementSource(el.audio);
-                    }
+                        state.gainNode.connect(state.audioCtx.destination); }
+                    if (!window._sourceNode) { window._sourceNode = state.audioCtx.createMediaElementSource(el.audio); }
                     try { window._sourceNode.disconnect(); } catch (e) {}
                     window._sourceNode.connect(state.gainNode);
                     state.isAudioInitialized = true;
                     return true;
-                } catch (e) {
-                    console.warn('Audio setup error:', e);
-                    return false;
-                }
+                } catch (e) { console.warn('Audio setup error:', e); return false; }
             }
 
             function playAudio() {
                 if (state.segments.length === 0 || state.isLoading) return;
-
-                var seg = getCurrentSegment();
+                var seg = state.segments[state.currentSegIdx];
                 if (!seg || seg.end - seg.start < 0.01) return;
-
                 try {
-                    if (!state.isAudioInitialized) {
-                        if (!setupAudio()) {
-                            updateStatus('Audio setup failed');
-                            return;
-                        }
-                    }
-
-                    // Обновляем текущий сегмент в аудио
+                    if (!state.isAudioInitialized) { if (!setupAudio()) { updateStatus('Audio setup failed'); return; } }
                     var startTime = state.currentFileStartTime || 0;
                     var targetTime = seg.start + startTime;
-                    
-                    // Предотвращаем "прилипание" фрагментов
-                    if (state._isSeeking) {
-                        clearTimeout(state._seekTimeout);
-                        state._seekTimeout = null;
-                    }
-                    
-                    state._isSeeking = true;
+                    state._isProcessing = false;
                     el.audio.currentTime = targetTime;
                     el.audio.playbackRate = state.speed;
-
-                    // Небольшая задержка перед воспроизведением, чтобы избежать глитчей
-                    setTimeout(function() {
-                        state._isSeeking = false;
-                        el.audio.play().then(function() {
-                            state.isPlaying = true;
-                            state._lastSegment = state.currentSegIdx;
-                            updateUI();
-                            updateMediaSession();
-                        }).catch(function(e) {
-                            console.warn('Play error:', e);
-                            state.isPlaying = false;
-                            state._isSeeking = false;
-                            updateUI();
-                        });
-                    }, 30);
-
-                } catch (e) {
-                    console.error('Play error:', e);
+                    el.audio.play().then(function() {
+                        state.isPlaying = true;
+                        state._shouldResume = false;
+                        updateUI();
+                        updateMediaSession();
+                        startCheckTimer();
+                    }).catch(function(e) { console.warn('Play error:', e);
+                        state.isPlaying = false;
+                        updateUI(); });
+                } catch (e) { console.error('Play error:', e);
                     state.isPlaying = false;
-                    state._isSeeking = false;
-                    updateUI();
-                }
+                    updateUI(); }
             }
 
             function pauseAudio() {
                 el.audio.pause();
                 state.isPlaying = false;
-                state._isSeeking = false;
-                clearTimeout(state._seekTimeout);
+                state._isProcessing = false;
+                state._shouldResume = false;
+                clearInterval(state._checkTimer);
+                state._checkTimer = null;
                 updateUI();
                 updateMediaSession();
             }
 
             function togglePlay() {
                 if (state.isLoading || state.segments.length === 0) return;
-                if (state.isPlaying) {
-                    pauseAudio();
-                } else {
-                    playAudio();
-                }
+                if (state.isPlaying) { pauseAudio(); } else { playAudio(); }
             }
 
             function getCurrentSegment() {
-                if (state.segments.length === 0 || state.currentSegIdx >= state.segments.length) {
-                    return { start: 0, end: 0 };
-                }
+                if (state.segments.length === 0 || state.currentSegIdx >= state.segments.length) { return { start: 0,
+                        end: 0 }; }
                 return state.segments[state.currentSegIdx];
             }
 
@@ -2036,62 +765,64 @@
                 if (state.currentSegIdx > 0) {
                     state.currentSegIdx--;
                     state.repeatCount = 0;
-                    state._lastSegment = -1;
-                    var seg = getCurrentSegment();
+                    state._isProcessing = false;
+                    var seg = state.segments[state.currentSegIdx];
                     var startTime = state.currentFileStartTime || 0;
                     el.audio.currentTime = seg.start + startTime;
                     drawWaveform(state.currentSegIdx);
                     updateUI();
                     updateMediaSession();
-                    if (state.isPlaying) {
-                        // Небольшая задержка для стабильности
-                        setTimeout(function() { el.audio.play().catch(function() {}); }, 50);
+                    if (state.isPlaying) { 
+                        state._shouldResume = true;
+                        setTimeout(function() { 
+                            el.audio.play().catch(function() {});
+                            state._shouldResume = false;
+                        }, 50); 
                     }
                 }
             }
 
             function nextSegment() {
                 if (state.segments.length === 0 || state.isLoading) return;
-
                 var nextIdx = state.currentSegIdx + 1;
                 if (nextIdx >= state.segments.length) {
                     var nextFile = state.currentFileIdx + 1;
-                    if (nextFile < state.files.length) {
-                        switchToFile(nextFile);
-                        if (state.isPlaying) {
-                            setTimeout(function() { el.audio.play().catch(function() {}); }, 100);
-                        }
-                    } else if (state.files.length > 1) {
-                        switchToFile(0);
-                        if (state.isPlaying) {
-                            setTimeout(function() { el.audio.play().catch(function() {}); }, 100);
-                        }
-                    } else {
+                    if (nextFile < state.files.length) { switchToFile(nextFile); } 
+                    else if (state.files.length > 1) { switchToFile(0); } 
+                    else {
                         state.currentSegIdx = 0;
                         state.repeatCount = 0;
-                        state._lastSegment = -1;
-                        var seg = getCurrentSegment();
+                        state._isProcessing = false;
+                        var seg = state.segments[0];
                         var startTime = state.currentFileStartTime || 0;
                         el.audio.currentTime = seg.start + startTime;
                         drawWaveform(0);
                         updateUI();
                         updateMediaSession();
-                        if (state.isPlaying) {
-                            setTimeout(function() { el.audio.play().catch(function() {}); }, 50);
+                        if (state.isPlaying) { 
+                            state._shouldResume = true;
+                            setTimeout(function() { 
+                                el.audio.play().catch(function() {});
+                                state._shouldResume = false;
+                            }, 50); 
                         }
                     }
                 } else {
                     state.currentSegIdx = nextIdx;
                     state.repeatCount = 0;
-                    state._lastSegment = -1;
-                    var seg = getCurrentSegment();
+                    state._isProcessing = false;
+                    var seg = state.segments[state.currentSegIdx];
                     var startTime = state.currentFileStartTime || 0;
                     el.audio.currentTime = seg.start + startTime;
                     drawWaveform(state.currentSegIdx);
                     updateUI();
                     updateMediaSession();
-                    if (state.isPlaying) {
-                        setTimeout(function() { el.audio.play().catch(function() {}); }, 50);
+                    if (state.isPlaying) { 
+                        state._shouldResume = true;
+                        setTimeout(function() { 
+                            el.audio.play().catch(function() {});
+                            state._shouldResume = false;
+                        }, 50); 
                     }
                 }
             }
@@ -2104,19 +835,22 @@
                 el.jumpInput.value = val;
                 state.currentSegIdx = val - 1;
                 state.repeatCount = 0;
-                state._lastSegment = -1;
-                var seg = getCurrentSegment();
+                state._isProcessing = false;
+                var seg = state.segments[state.currentSegIdx];
                 var startTime = state.currentFileStartTime || 0;
                 el.audio.currentTime = seg.start + startTime;
                 drawWaveform(state.currentSegIdx);
                 updateUI();
                 updateMediaSession();
-                if (state.isPlaying) {
-                    setTimeout(function() { el.audio.play().catch(function() {}); }, 50);
+                if (state.isPlaying) { 
+                    state._shouldResume = true;
+                    setTimeout(function() { 
+                        el.audio.play().catch(function() {});
+                        state._shouldResume = false;
+                    }, 50); 
                 }
             }
 
-            // ===== MEDIA SESSION =====
             function updateMediaSession() {
                 if (!('mediaSession' in navigator)) return;
                 try {
@@ -2126,13 +860,9 @@
                     var title = file ? file.name : 'HablaSlice';
                     var artist = 'Seg ' + segIdx + '/' + total + ' • ' + Math.min(state.repeatCount + 1, state.settings.n) +
                         '/' + state.settings.n;
-
-                    navigator.mediaSession.metadata = new MediaMetadata({
-                        title: title,
-                        artist: artist,
-                        album: 'File ' + (state.currentFileIdx + 1) + '/' + state.files.length + ' • Speed: ' + state.speed
-                            .toFixed(1) + 'x'
-                    });
+                    navigator.mediaSession.metadata = new MediaMetadata({ title: title, artist: artist, album: 'File ' + (
+                            state.currentFileIdx + 1) + '/' + state.files.length + ' • Speed: ' + state.speed.toFixed(
+                            1) + 'x' });
                     navigator.mediaSession.playbackState = state.isPlaying ? "playing" : "paused";
                 } catch (e) {}
             }
@@ -2148,44 +878,30 @@
                 updateMediaSession();
             }
 
-            // ===== STATE SAVE =====
             function savePlaybackState() {
                 try {
                     if (state.files.length === 0) return;
-                    var data = {
-                        fileNames: state.files.map(function(f) { return f.name; }),
-                        currentFileIdx: state.currentFileIdx,
-                        currentSegIdx: state.currentSegIdx,
-                        repeatCount: state.repeatCount,
-                        settings: state.settings,
-                        speed: state.speed
-                    };
+                    var data = { fileNames: state.files.map(function(f) { return f.name; }), currentFileIdx: state
+                            .currentFileIdx, currentSegIdx: state.currentSegIdx, repeatCount: state.repeatCount,
+                        settings: state.settings, speed: state.speed };
                     localStorage.setItem('hs_playback_state', JSON.stringify(data));
                 } catch (e) {}
             }
 
-            // ===== FILE HANDLERS =====
             function handleFiles(input) {
                 var files = Array.from(input.files).filter(function(f) {
                     return f.type.startsWith('audio/') || /\.(mp3|wav|ogg|m4a|flac|aac|opus|webm)$/i.test(f.name);
                 });
-                if (!files.length) {
-                    updateStatus('No audio files selected');
-                    return;
-                }
+                if (!files.length) { updateStatus('No audio files selected'); return; }
                 loadMergedFiles(files.sort(function(a, b) { return a.name.localeCompare(b.name); }));
                 input.value = '';
             }
 
-            // ===== UI EVENTS =====
             function togglePopover(e) {
                 e.stopPropagation();
                 if (!el.popover || !el.btnOpen) return;
                 var isOpen = el.popover.classList.contains('active');
-                if (isOpen) {
-                    el.popover.classList.remove('active');
-                    return;
-                }
+                if (isOpen) { el.popover.classList.remove('active'); return; }
                 el.popover.classList.add('active');
                 var rect = el.btnOpen.getBoundingClientRect();
                 var popRect = el.popover.getBoundingClientRect();
@@ -2208,11 +924,8 @@
                 if (el.silVal) el.silVal.textContent = parseFloat(state.settings.silence).toFixed(2);
                 var afterMap = { loop: 'Loop file', next: 'Next track', stop: 'Stop' };
                 if (el.afterDisplay) el.afterDisplay.textContent = afterMap[state.settings.after] || 'Next track';
-                if (el.afterMenu) {
-                    el.afterMenu.querySelectorAll('.item').forEach(function(item) {
-                        item.classList.toggle('selected', item.dataset.value === state.settings.after);
-                    });
-                }
+                if (el.afterMenu) { el.afterMenu.querySelectorAll('.item').forEach(function(item) { item.classList.toggle(
+                        'selected', item.dataset.value === state.settings.after); }); }
                 el.settingsModal.classList.add('active');
                 document.body.classList.add('no-scroll');
             }
@@ -2223,18 +936,134 @@
                 document.body.classList.remove('no-scroll');
             }
 
+            // ===== ОСНОВНАЯ ЛОГИКА ПЕРЕКЛЮЧЕНИЯ =====
+            function handleSegmentEnd() {
+                if (state._isProcessing) return;
+                state._isProcessing = true;
+                
+                var wasPlaying = state.isPlaying;
+                
+                // Принудительно останавливаем
+                el.audio.pause();
+                
+                state.repeatCount++;
+                
+                if (state.repeatCount >= state.settings.n) {
+                    state.repeatCount = 0;
+                    var nextSegIdx = state.currentSegIdx + 1;
+                    
+                    if (nextSegIdx >= state.segments.length) {
+                        state._isProcessing = false;
+                        handleFileEnd();
+                        return;
+                    } else {
+                        state.currentSegIdx = nextSegIdx;
+                    }
+                }
+                
+                var seg = state.segments[state.currentSegIdx];
+                var startTime = state.currentFileStartTime || 0;
+                
+                if (seg && seg.end > seg.start) {
+                    el.audio.currentTime = seg.start + startTime;
+                    drawWaveform(state.currentSegIdx);
+                    updateUI();
+                    updateMediaSession();
+                    
+                    // Возобновляем если играли
+                    if (wasPlaying) {
+                        setTimeout(function() {
+                            el.audio.play().then(function() {
+                                state.isPlaying = true;
+                                state._isProcessing = false;
+                                updateUI();
+                            }).catch(function(e) {
+                                console.warn('Resume after segment error:', e);
+                                state.isPlaying = false;
+                                state._isProcessing = false;
+                                updateUI();
+                            });
+                        }, 30);
+                    } else {
+                        state._isProcessing = false;
+                    }
+                } else {
+                    state._isProcessing = false;
+                }
+            }
+
+            function handleFileEnd() {
+                var after = state.settings.after || 'stop';
+                var wasPlaying = state.isPlaying;
+                
+                state._isProcessing = true;
+                el.audio.pause();
+                
+                if (after === 'loop') {
+                    state.currentSegIdx = 0;
+                    state.repeatCount = 0;
+                    var seg = state.segments[0];
+                    var startTime = state.currentFileStartTime || 0;
+                    el.audio.currentTime = seg.start + startTime;
+                    drawWaveform(0);
+                    updateUI();
+                    updateMediaSession();
+                    
+                    if (wasPlaying) {
+                        setTimeout(function() {
+                            el.audio.play().then(function() {
+                                state.isPlaying = true;
+                                state._isProcessing = false;
+                                updateUI();
+                            }).catch(function(e) {
+                                state.isPlaying = false;
+                                state._isProcessing = false;
+                                updateUI();
+                            });
+                        }, 30);
+                    } else {
+                        state._isProcessing = false;
+                    }
+                } else if (after === 'next') {
+                    var nextFileIdx = state.currentFileIdx + 1;
+                    if (nextFileIdx < state.files.length) {
+                        switchToFile(nextFileIdx);
+                        state._isProcessing = false;
+                    } else if (state.files.length > 1) {
+                        switchToFile(0);
+                        state._isProcessing = false;
+                    } else {
+                        state.isPlaying = false;
+                        state._isProcessing = false;
+                        clearInterval(state._checkTimer);
+                        state._checkTimer = null;
+                        updateUI();
+                        updateStatus('Finished');
+                        updateMediaSession();
+                    }
+                } else {
+                    state.isPlaying = false;
+                    state._isProcessing = false;
+                    clearInterval(state._checkTimer);
+                    state._checkTimer = null;
+                    updateUI();
+                    updateStatus('Finished');
+                    updateMediaSession();
+                }
+            }
+
             // ===== AUDIO EVENTS =====
             function setupAudioEvents() {
                 var lastUpdateTime = 0;
 
                 el.audio.addEventListener('timeupdate', function() {
-                    if (state.isLoading || state.segments.length === 0) return;
-
+                    if (state.isLoading || state.segments.length === 0 || state._isProcessing) return;
                     var now = Date.now();
                     if (now - lastUpdateTime < 50) return;
                     lastUpdateTime = now;
 
-                    var seg = getCurrentSegment();
+                    var seg = state.segments[state.currentSegIdx];
+                    if (!seg) return;
                     var startTime = state.currentFileStartTime || 0;
                     var currentTime = el.audio.currentTime - startTime;
                     var segEnd = seg.end;
@@ -2250,131 +1079,71 @@
                         if (el.waveProgress) el.waveProgress.style.width = Math.min(pct, 100) + '%';
                     }
 
-                    if (state.isPlaying && !state.isLoading && !state._isSeeking) {
+                    if (state.isPlaying && !state.isLoading && !state._isProcessing) {
                         if (currentTime >= virtualEnd) {
-                            state.repeatCount++;
-                            if (state.repeatCount >= state.settings.n) {
-                                state.repeatCount = 0;
-                                var nextSegIdx = state.currentSegIdx + 1;
-                                if (nextSegIdx >= state.segments.length) {
-                                    handleFileEnd();
-                                    return;
-                                } else {
-                                    state.currentSegIdx = nextSegIdx;
-                                    state._lastSegment = -1;
-                                }
-                            }
-                            var newSeg = getCurrentSegment();
-                            if (newSeg && newSeg.end > newSeg.start) {
-                                el.audio.currentTime = newSeg.start + startTime;
-                                drawWaveform(state.currentSegIdx);
-                                updateUI();
-                                updateMediaSession();
-                            }
+                            handleSegmentEnd();
                         }
                     }
                 });
 
                 el.audio.addEventListener('play', function() {
                     state.isPlaying = true;
+                    state._isProcessing = false;
                     updateUI();
                     updateMediaSession();
-                    if (state.audioCtx && state.audioCtx.state === 'suspended') {
-                        state.audioCtx.resume();
-                    }
+                    if (state.audioCtx && state.audioCtx.state === 'suspended') { state.audioCtx.resume(); }
+                    if (!state._checkTimer && state.segments.length > 0) { startCheckTimer(); }
                 });
 
                 el.audio.addEventListener('pause', function() {
-                    state.isPlaying = false;
-                    updateUI();
-                    updateMediaSession();
+                    // Проверяем, не является ли пауза частью переключения
+                    if (!state._isProcessing) {
+                        state.isPlaying = false;
+                        updateUI();
+                        updateMediaSession();
+                    }
                 });
 
                 el.audio.addEventListener('error', function(e) {
                     console.error('Audio error:', e);
                     state.isPlaying = false;
-                    state._isSeeking = false;
+                    state._isProcessing = false;
+                    clearInterval(state._checkTimer);
+                    state._checkTimer = null;
                     updateUI();
                 });
-                
-                // Обработка окончания воспроизведения
+
                 el.audio.addEventListener('ended', function() {
-                    if (state.isPlaying) {
-                        handleFileEnd();
+                    if (state.isPlaying && !state._isProcessing) {
+                        handleSegmentEnd();
                     }
                 });
             }
 
-            function handleFileEnd() {
-                var after = state.settings.after || 'stop';
-                console.log('File ended, mode:', after, 'current file:', state.currentFileIdx + 1, 'of', state.files.length);
-
-                if (after === 'loop') {
-                    state.currentSegIdx = 0;
-                    state.repeatCount = 0;
-                    state._lastSegment = -1;
-                    var seg = getCurrentSegment();
-                    var startTime = state.currentFileStartTime || 0;
-                    el.audio.currentTime = seg.start + startTime;
-                    drawWaveform(0);
-                    updateUI();
-                    updateMediaSession();
-                    if (state.isPlaying) {
-                        setTimeout(function() { el.audio.play().catch(function() {}); }, 50);
-                    }
-                } else if (after === 'next') {
-                    var nextFileIdx = state.currentFileIdx + 1;
-                    if (nextFileIdx < state.files.length) {
-                        switchToFile(nextFileIdx);
-                        if (state.isPlaying) {
-                            setTimeout(function() { el.audio.play().catch(function() {}); }, 100);
-                        }
-                    } else if (state.files.length > 1) {
-                        switchToFile(0);
-                        if (state.isPlaying) {
-                            setTimeout(function() { el.audio.play().catch(function() {}); }, 100);
-                        }
-                    } else {
-                        state.isPlaying = false;
-                        updateUI();
-                        updateStatus('Finished');
-                        updateMediaSession();
-                    }
-                } else {
-                    state.isPlaying = false;
-                    updateUI();
-                    updateStatus('Finished');
-                    updateMediaSession();
-                }
-            }
-
-            // ===== WAVEFORM CLICK =====
             function handleWaveformClick(e) {
                 if (state.segments.length === 0 || state.isLoading) return;
                 var rect = el.waveCanvas.parentElement.getBoundingClientRect();
                 var x = (e.clientX - rect.left) / rect.width;
-                var seg = getCurrentSegment();
+                var seg = state.segments[state.currentSegIdx];
                 var totalDuration = (seg.end - seg.start) + state.settings.silence;
                 var targetTime = seg.start + totalDuration * Math.max(0, Math.min(1, x));
                 var clampedTime = Math.min(targetTime, seg.end);
                 var startTime = state.currentFileStartTime || 0;
-                
-                state._isSeeking = true;
+                state._isProcessing = false;
+                var wasPlaying = state.isPlaying;
+                el.audio.pause();
                 el.audio.currentTime = clampedTime + startTime;
-                setTimeout(function() {
-                    state._isSeeking = false;
-                }, 100);
-                
+                if (wasPlaying) { 
+                    setTimeout(function() { el.audio.play().catch(function() {}); }, 50); 
+                }
                 var progressInSeg = clampedTime - seg.start;
                 var pct = (progressInSeg / (seg.end - seg.start)) * 100;
                 if (el.waveProgress) el.waveProgress.style.width = Math.min(pct, 100) + '%';
                 updateTimeInfo(Math.min(progressInSeg, totalDuration), totalDuration);
             }
 
-            // ===== INIT =====
             function init() {
-                console.log('HablaSlice v30.0');
-
+                console.log('HablaSlice v34.0 - Fixed segment switching and settings');
                 loadSettings();
                 updateUI();
                 updateStatus('Ready');
@@ -2390,42 +1159,27 @@
                 el.jumpInput.addEventListener('keydown', function(e) { if (e.key === 'Enter') jumpToSegment(); });
                 el.waveformOverlay.addEventListener('click', handleWaveformClick);
 
-                el.popFile.addEventListener('click', function() {
-                    el.popover.classList.remove('active');
-                    el.fileInput.click();
-                });
-                el.popFolder.addEventListener('click', function() {
-                    el.popover.classList.remove('active');
-                    el.folderInput.click();
-                });
-                document.addEventListener('click', function(e) {
-                    if (el.popover && !el.popover.contains(e.target) && e.target !== el.btnOpen) {
-                        el.popover.classList.remove('active');
-                    }
-                });
+                el.popFile.addEventListener('click', function() { el.popover.classList.remove('active');
+                    el.fileInput.click(); });
+                el.popFolder.addEventListener('click', function() { el.popover.classList.remove('active');
+                    el.folderInput.click(); });
+                document.addEventListener('click', function(e) { if (el.popover && !el.popover.contains(e.target) && e
+                        .target !== el.btnOpen) { el.popover.classList.remove('active'); } });
 
                 el.fileInput.addEventListener('change', function() { handleFiles(this); });
                 el.folderInput.addEventListener('change', function() { handleFiles(this); });
 
-                el.settingsModal.addEventListener('click', function(e) {
-                    if (e.target === el.settingsModal) {
-                        if (state.savedSettings) {
-                            Object.assign(state.settings, state.savedSettings);
+                el.settingsModal.addEventListener('click', function(e) { if (e.target === el.settingsModal) { if (state
+                            .savedSettings) { Object.assign(state.settings, state.savedSettings);
                             applySettings();
-                            saveSettings();
-                        }
-                        closeModal();
-                    }
-                });
+                            saveSettings(); }
+                        closeModal(); } });
 
-                el.btnCancel.addEventListener('click', function() {
-                    if (state.savedSettings) {
-                        Object.assign(state.settings, state.savedSettings);
+                el.btnCancel.addEventListener('click', function() { if (state.savedSettings) { Object.assign(state.settings,
+                            state.savedSettings);
                         applySettings();
-                        saveSettings();
-                    }
-                    closeModal();
-                });
+                        saveSettings(); }
+                    closeModal(); });
 
                 el.btnReset.addEventListener('click', function() {
                     state.settings.n = 3;
@@ -2449,38 +1203,42 @@
                 el.btnApply.addEventListener('click', async function() {
                     var oldDb = state.settings.db;
                     var oldDur = state.settings.dur;
-                    var newDb = el.setDb ? parseInt(el.setDb.value) : state.settings.db;
-                    var newDur = el.setDur ? parseFloat(el.setDur.value) : state.settings.dur;
-                    var newSilence = el.setSil ? parseFloat(el.setSil.value) : state.settings.silence;
+                    
+                    // Читаем значения напрямую из полей ввода
+                    var newDb = parseInt(el.setDb.value);
+                    var newDur = parseFloat(el.setDur.value);
+                    var newSilence = parseFloat(el.setSil.value);
                     var newAfter = state.settings.after;
-
+                    
+                    // Сохраняем изменения
                     state.settings.db = newDb;
                     state.settings.dur = newDur;
                     state.settings.silence = newSilence;
                     state.settings.after = newAfter;
-
+                    
                     saveSettings();
                     applySettings();
                     closeModal();
                     updateUI();
-
-                    if ((oldDb !== newDb || oldDur !== newDur) && state.files.length > 0) {
+                    
+                    // Если изменились параметры сегментации - пересоздаем сегменты
+                    if ((oldDb !== newDb || oldDur !== newDur) && state.files.length > 0 && state.mergedBuffer) {
                         state.fileSegments = [];
-                        var numChannels = state.mergedBuffer ? state.mergedBuffer.numberOfChannels : 1;
+                        var numChannels = state.mergedBuffer.numberOfChannels;
                         for (var i = 0; i < state.files.length; i++) {
                             var startSample = state.fileOffsets[i] || 0;
                             var endSample = startSample + (state.fileDurations[i] * state.sampleRate);
                             var fileDataLength = Math.floor(endSample - startSample);
-                            var tempBuffer = new AudioBuffer({
-                                length: fileDataLength,
+                            var tempBuffer = new AudioBuffer({ 
+                                length: fileDataLength, 
                                 numberOfChannels: numChannels,
-                                sampleRate: state.sampleRate
+                                sampleRate: state.sampleRate 
                             });
                             for (var ch = 0; ch < numChannels; ch++) {
                                 var srcChannel = state.mergedBuffer.getChannelData(ch);
                                 var dstChannel = tempBuffer.getChannelData(ch);
-                                for (var s = 0; s < fileDataLength; s++) {
-                                    dstChannel[s] = srcChannel[Math.floor(startSample + s)] || 0;
+                                for (var s = 0; s < fileDataLength; s++) { 
+                                    dstChannel[s] = srcChannel[Math.floor(startSample + s)] || 0; 
                                 }
                             }
                             state.fileSegments[i] = sliceAudioBySilence(tempBuffer, newDb, newDur);
@@ -2488,38 +1246,34 @@
                         state.segments = state.fileSegments[state.currentFileIdx] || [];
                         state.currentSegIdx = 0;
                         state.repeatCount = 0;
-                        state._lastSegment = -1;
+                        state._isProcessing = false;
                         var startTime = state.currentFileStartTime || 0;
-                        if (state.segments.length > 0) {
-                            el.audio.currentTime = state.segments[0].start + startTime;
+                        if (state.segments.length > 0) { 
+                            el.audio.currentTime = state.segments[0].start + startTime; 
                         }
                         drawWaveform(0);
                         updateUI();
                         updateMediaSession();
+                        if (state.isPlaying) { 
+                            clearInterval(state._checkTimer);
+                            state._checkTimer = null;
+                            startCheckTimer(); 
+                        }
                     }
                 });
 
-                el.themeDark.addEventListener('click', function() {
-                    state.settings.theme = 'dark';
+                el.themeDark.addEventListener('click', function() { state.settings.theme = 'dark';
                     document.body.classList.remove('light');
-                    saveSettings();
-                    if (state.savedSettings) state.savedSettings.theme = 'dark';
-                });
-
-                el.themeLight.addEventListener('click', function() {
-                    state.settings.theme = 'light';
+                    saveSettings(); if (state.savedSettings) state.savedSettings.theme = 'dark'; });
+                el.themeLight.addEventListener('click', function() { state.settings.theme = 'light';
                     document.body.classList.add('light');
-                    saveSettings();
-                    if (state.savedSettings) state.savedSettings.theme = 'light';
-                });
+                    saveSettings(); if (state.savedSettings) state.savedSettings.theme = 'light'; });
 
                 el.setDb.addEventListener('input', function() { if (el.dbVal) el.dbVal.textContent = el.setDb.value; });
                 el.setDur.addEventListener('input', function() { if (el.durVal) el.durVal.textContent = parseFloat(el.setDur
                         .value).toFixed(1); });
-                el.setSil.addEventListener('input', function() {
-                    if (el.silVal) el.silVal.textContent = parseFloat(el.setSil.value).toFixed(2);
-                    if (state.segments.length > 0) drawWaveform(state.currentSegIdx);
-                });
+                el.setSil.addEventListener('input', function() { if (el.silVal) el.silVal.textContent = parseFloat(el.setSil
+                        .value).toFixed(2); if (state.segments.length > 0) drawWaveform(state.currentSegIdx); });
 
                 document.querySelectorAll('.step-btn').forEach(function(btn) {
                     btn.addEventListener('click', function() {
@@ -2561,19 +1315,16 @@
                         togglePlay(); } else if (e.code === 'ArrowLeft') prevSegment();
                     else if (e.code === 'ArrowRight') nextSegment();
                     else if (e.code === 'Escape' && el.settingsModal && el.settingsModal.classList.contains(
-                        'active')) {
-                        if (state.savedSettings) {
-                            Object.assign(state.settings, state.savedSettings);
+                        'active')) { if (state.savedSettings) { Object.assign(state.settings, state
+                                .savedSettings);
                             applySettings();
-                            saveSettings();
-                        }
-                        closeModal();
-                    }
+                            saveSettings(); }
+                        closeModal(); }
                 });
 
                 document.addEventListener('visibilitychange', function() {
-                    if (!document.hidden && state.isPlaying && el.audio.paused) {
-                        if (state.audioCtx && state.audioCtx.state === 'suspended') state.audioCtx.resume();
+                    if (!document.hidden && state.isPlaying && el.audio.paused && !state._isProcessing) {
+                        if (state.audioCtx && state.audioCtx.state === 'suspended') { state.audioCtx.resume(); }
                         el.audio.play().catch(function() {});
                     }
                 });
@@ -2581,13 +1332,7 @@
                 console.log('HablaSlice ready');
             }
 
-            // ===== START =====
-            if (document.readyState === 'complete') {
-                init();
-            } else {
-                document.addEventListener('DOMContentLoaded', init);
-            }
-
+            if (document.readyState === 'complete') { init(); } else { document.addEventListener('DOMContentLoaded', init); }
         })();
     </script>
 </body>
