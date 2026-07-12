@@ -1,22 +1,27 @@
 const CACHE_NAME = 'hablaslice-v1';
 
-// Кэшируем только основные файлы (без привязки к папке)
+// Кэшируем файлы, используя абсолютные пути от корня домена
 const FILES_TO_CACHE = [
-    '.',
-    'index.html',
-    'manifest.json'
+    '/',
+    '/index.html',
+    '/manifest.json'
 ];
 
-// Установка
+// Установка сервис-воркера
 self.addEventListener('install', function(event) {
     event.waitUntil(
         caches.open(CACHE_NAME)
             .then(function(cache) {
                 console.log('[SW] Кэшируем файлы');
+                // На период отладки можно использовать map, но addAll надежнее,
+                // если вы уверены, что все файлы по путям физически существуют.
                 return cache.addAll(FILES_TO_CACHE);
             })
             .then(function() {
                 return self.skipWaiting();
+            })
+            .catch(function(error) {
+                console.error('[SW] Ошибка при первичной установке кэша:', error);
             })
     );
 });
@@ -41,24 +46,32 @@ self.addEventListener('activate', function(event) {
 
 // Перехват запросов
 self.addEventListener('fetch', function(event) {
-    // Игнорируем blob (аудио) и не-GET запросы
-    if (event.request.url.startsWith('blob:') || event.request.method !== 'GET') {
+    // Игнорируем blob (аудио), chrome-extension, и не-GET запросы
+    if (
+        event.request.url.startsWith('blob:') || 
+        event.request.url.startsWith('chrome-extension:') ||
+        event.request.method !== 'GET'
+    ) {
         return;
     }
 
     event.respondWith(
         caches.match(event.request)
             .then(function(response) {
+                // Если файл найден в кэше — отдаем его сразу
                 if (response) {
-                    return response; // Найдено в кэше
+                    return response; 
                 }
-                return fetch(event.request); // Идем в сеть
-            })
-            .catch(function() {
-                // Если сеть недоступна, пытаемся отдать главную страницу
-                if (event.request.mode === 'navigate') {
-                    return caches.match('index.html');
-                }
+                
+                // Если файла нет в кэше — идем в сеть
+                return fetch(event.request).catch(function(err) {
+                    // Если сеть недоступна (офлайн) и это запрос навигации (переход по страницам)
+                    if (event.request.mode === 'navigate') {
+                        return caches.match('/index.html');
+                    }
+                    // Для остальных ресурсов (например, картинок/скриптов) возвращаем ошибку
+                    throw err;
+                });
             })
     );
 });
