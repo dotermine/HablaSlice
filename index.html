@@ -4,26 +4,19 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="theme-color" content="#000000">
-    
-    <!-- Настройки для iOS (Apple) -->
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <link rel="apple-touch-icon" href="/HablaSlice/icons/icon-192.png">
     <link rel="apple-touch-icon" sizes="152x152" href="/HablaSlice/icons/icon-128.png">
     <link rel="apple-touch-icon" sizes="180x180" href="/HablaSlice/icons/icon-192.png">
-    
-    <!-- Стандартные фавиконки для браузеров -->
     <link rel="icon" type="image/png" sizes="32x32" href="/HablaSlice/icons/icon-32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="/HablaSlice/icons/icon-16.png">
-    
-    <!-- PWA Manifest с правильным путем для GitHub Pages -->
     <link rel="manifest" href="/HablaSlice/manifest.json" type="application/manifest+json">
-    
     <title>HablaSlice</title>
     <style>
         *{margin:0;padding:0;box-sizing:border-box}
-        :root{--primary:#4cc9f0;--bg:#000000;--surface:#1a1a1a;--surface2:#2a2a2a;--text:#e8e8f0;--text2:#b0b0c0;--outline:#3a3a4a}
-        body.light{--primary:#2962ff;--bg:#f5f7ff;--surface:#ffffff;--surface2:#f0f3ff;--text:#1a1a2e;--text2:#4a4a6a;--outline:#c8c9d4}
+        :root{--primary:#4cc9f0;--bg:#000000;--surface:#1a1a1a;--surface2:#2a2a2a;--text:#e8e8f0;--text2:#b0b0c0;--outline:#3a3a4a;--shadow:rgba(0,0,0,0.6);--danger:#e94560}
+        body.light{--primary:#2962ff;--bg:#f5f7ff;--surface:#ffffff;--surface2:#f0f3ff;--text:#1a1a2e;--text2:#4a4a6a;--outline:#c8c9d4;--shadow:rgba(0,0,0,0.1)}
         html,body{height:100%;overflow:hidden;position:fixed;width:100%}
         body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;display:flex;flex-direction:column;user-select:none;font-size:18px}
         ::-webkit-scrollbar{width:0;height:0}
@@ -43,33 +36,9 @@
         .main{flex:1;overflow-y:auto;padding:12px 16px;display:flex;flex-direction:column;gap:12px}
         .track-card{width:100%;max-width:600px;background:var(--surface);border-radius:20px;padding:16px 18px;display:flex;flex-direction:column;gap:8px;margin:0 auto;border:1px solid var(--outline)}
         .track-name{font-size:20px;font-weight:600;word-break:break-word}
-        .track-meta {
-            display: flex;
-            gap: 12px;
-            flex-wrap: wrap;
-            font-size: 14px;
-            color: var(--text2);
-            align-items: center;
-            overflow: hidden;
-            min-width: 0;
-            max-width: 100%;
-        }
+        .track-meta{display:flex;gap:12px;flex-wrap:wrap;font-size:14px;color:var(--text2);align-items:center;overflow:hidden;min-width:0;max-width:100%}
         .repeat-chip{display:inline-flex;align-items:center;gap:6px;padding:2px 14px;background:var(--surface2);border-radius:20px;font-size:14px;border:1px solid var(--outline)}
         .repeat-chip b{color:var(--primary)}
-        .file-info {
-            font-size: 13px;
-            color: var(--text2);
-            background: var(--surface2);
-            padding: 2px 12px;
-            border-radius: 12px;
-            border: 1px solid var(--outline);
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-            max-width: 200px;
-            flex-shrink: 1;
-            min-width: 0;
-        }
         .time-info{font-size:32px;font-weight:300;font-variant-numeric:tabular-nums;margin:2px 0}
         .waveform-container{width:100%;height:60px;background:var(--surface);border-radius:12px;overflow:hidden;position:relative;border:1px solid var(--outline);cursor:pointer}
         .waveform-container canvas{width:100%;height:100%;display:block;position:absolute;top:0;left:0;pointer-events:none}
@@ -112,13 +81,13 @@
         .dropdown .toggle{display:flex;align-items:center;justify-content:space-between;padding:4px 12px;background:var(--surface);color:var(--text);border:1px solid var(--outline);border-radius:10px;font-size:14px;cursor:pointer;min-height:32px;gap:4px;touch-action:manipulation}
         .dropdown .toggle .arrow{transition:transform 0.2s}
         .dropdown.open .toggle .arrow{transform:rotate(180deg)}
-        .dropdown .menu{position:absolute;bottom:calc(100% + 4px);left:0;right:0;background:var(--surface);border:1px solid var(--outline);border-radius:10px;padding:4px 0;max-height:150px;overflow-y:auto;z-index:50;display:none;box-shadow:0 8px 24px rgba(0,0,0,0.5)}
+        .dropdown .menu{position:absolute;bottom:calc(100% + 4px);left:0;right:0;background:var(--surface);border:1px solid var(--outline);border-radius:10px;padding:4px 0;max-height:150px;overflow-y:auto;z-index:50;display:none;box-shadow:0 8px 24px var(--shadow)}
         .dropdown.open .menu{display:block}
         .dropdown .menu .item{padding:8px 14px;font-size:14px;cursor:pointer;color:var(--text);touch-action:manipulation}
         .dropdown .menu .item:active{background:var(--surface2)}
         .dropdown .menu .item.selected{color:var(--primary);font-weight:600}
         .dropdown .menu .item.selected::after{content:"✓";float:right;color:var(--primary)}
-        .popover{position:fixed;background:var(--surface);border:1px solid var(--outline);border-radius:14px;padding:6px 0;min-width:180px;box-shadow:0 8px 32px rgba(0,0,0,0.6);z-index:300;display:none}
+        .popover{position:fixed;background:var(--surface);border:1px solid var(--outline);border-radius:14px;padding:6px 0;min-width:180px;box-shadow:0 8px 32px var(--shadow);z-index:300;display:none}
         .popover.active{display:block}
         .popover-item{padding:12px 20px;font-size:15px;cursor:pointer;display:flex;align-items:center;gap:12px;border:none;background:transparent;color:var(--text);width:100%;text-align:left;font-family:inherit;touch-action:manipulation}
         .popover-item:active{background:var(--surface2)}
@@ -157,6 +126,17 @@
         .apply-section .warning-header span:last-child{font-size:11px;color:#f0a030}
         .no-scroll{overflow:hidden}
         .controls-wrapper{padding-bottom:max(clamp(12px,2vw,20px),env(safe-area-inset-bottom))}
+        .loading-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);z-index:999;display:none;align-items:center;justify-content:center;flex-direction:column;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+        .loading-overlay.active{display:flex}
+        .loading-overlay .big-spinner{width:60px;height:60px;border:4px solid var(--outline);border-top-color:var(--primary);border-radius:50%;animation:spin 0.8s linear infinite;margin-bottom:20px}
+        .loading-overlay .loading-text{color:var(--text);font-size:20px;font-weight:500;text-align:center;max-width:300px}
+        .loading-overlay .loading-sub{color:var(--text2);font-size:15px;margin-top:6px}
+        .loading-overlay .loading-progress{width:280px;height:5px;background:var(--outline);border-radius:5px;margin-top:18px;overflow:hidden;max-width:90%}
+        .loading-overlay .loading-progress-fill{height:100%;width:0%;background:var(--primary);border-radius:5px;transition:width 0.15s ease}
+        .loading-overlay .loading-detail{color:var(--text2);font-size:13px;margin-top:10px;opacity:0.7;text-align:center;max-width:300px}
+        .loading-overlay .cancel-btn{margin-top:28px;padding:12px 40px;background:var(--danger);color:#fff;border:none;border-radius:28px;font-size:16px;font-weight:600;cursor:pointer;touch-action:manipulation;min-width:140px;transition:all 0.2s;box-shadow:0 4px 20px rgba(233,69,96,0.3)}
+        .loading-overlay .cancel-btn:active{transform:scale(0.95)}
+        .loading-overlay .cancel-btn:disabled{opacity:0.5;transform:scale(0.98)}
         @media(max-width:480px){
             .header h1{font-size:18px}
             .track-name{font-size:17px}
@@ -171,9 +151,8 @@
             .ctrl-btn-small svg{width:26px;height:26px}
             .ctrl-btn-settings{width:48px;height:48px}
             .ctrl-btn-settings svg{width:26px;height:26px}
-            .file-info{max-width:120px;font-size:11px}
+            .loading-overlay .loading-progress{width:200px}
         }
-
         @media(max-width:380px){
             .controls{gap:14px}
             .ctrl-btn{width:48px;height:48px}
@@ -184,11 +163,19 @@
             .ctrl-btn-small svg{width:22px;height:22px}
             .ctrl-btn-settings{width:42px;height:42px}
             .ctrl-btn-settings svg{width:22px;height:22px}
-            .file-info{max-width:80px;font-size:10px}
         }
     </style>
 </head>
 <body>
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="big-spinner" id="loadSpinner"></div>
+        <div class="loading-text" id="loadingText">Processing...</div>
+        <div class="loading-sub" id="loadingSub">Please wait</div>
+        <div class="loading-progress"><div class="loading-progress-fill" id="loadingProgressFill"></div></div>
+        <div class="loading-detail" id="loadingDetail">Initializing...</div>
+        <button class="cancel-btn" id="cancelLoadBtn">✕ Cancel</button>
+    </div>
+
     <header class="header">
         <h1><svg viewBox="0 0 24 24"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/></svg>HablaSlice <span id="fileCounter"></span></h1>
         <div style="width:40px;"></div>
@@ -285,28 +272,30 @@
     <script>
         (function() {
             'use strict';
-
             const $ = id => document.getElementById(id);
             const el = {
                 statusText: $('statusText'), progressWrap: $('progressWrap'), progressFill: $('progressFill'),
                 progressText: $('progressText'), trackName: $('trackName'), segInfo: $('segInfo'),
-                timeInfo: $('timeInfo'), repeatCount: $('repeatCount'),
-                repeatTotal: $('repeatTotal'), playlist: $('playlist'), emptyMsg: $('emptyMsg'),
-                btnOpen: $('btnOpen'), btnPrev: $('btnPrev'), btnPlay: $('btnPlay'), btnNext: $('btnNext'),
-                btnSettings: $('btnSettings'), fileInput: $('fileInput'), folderInput: $('folderInput'),
-                settingsModal: $('settingsModal'), btnCancel: $('btnCancel'), btnApply: $('btnApply'),
-                btnReset: $('btnReset'), setDb: $('setDb'), setDur: $('setDur'), setSil: $('setSil'),
-                afterDropdown: $('afterDropdown'), afterToggle: $('afterToggle'), afterDisplay: $('afterDisplay'),
-                afterMenu: $('afterMenu'), dbVal: $('dbVal'), durVal: $('durVal'), silVal: $('silVal'),
-                waveCanvas: $('waveCanvas'), waveProgress: $('waveProgress'), waveSilence: $('waveSilence'),
-                waveformOverlay: $('waveformOverlay'), silenceDuration: $('silenceDuration'),
-                silenceLabel: $('silenceLabel'), themeDark: $('themeDark'), themeLight: $('themeLight'),
-                popover: $('popover'), popFile: $('popFile'), popFolder: $('popFolder'),
-                fileCounter: $('fileCounter'), speedDisplay: $('speedDisplay'), repeatsDisplay: $('repeatsDisplay'),
+                timeInfo: $('timeInfo'), repeatCount: $('repeatCount'), repeatTotal: $('repeatTotal'),
+                playlist: $('playlist'), emptyMsg: $('emptyMsg'), btnOpen: $('btnOpen'), btnPrev: $('btnPrev'),
+                btnPlay: $('btnPlay'), btnNext: $('btnNext'), btnSettings: $('btnSettings'),
+                fileInput: $('fileInput'), folderInput: $('folderInput'), settingsModal: $('settingsModal'),
+                btnCancel: $('btnCancel'), btnApply: $('btnApply'), btnReset: $('btnReset'),
+                setDb: $('setDb'), setDur: $('setDur'), setSil: $('setSil'), afterDropdown: $('afterDropdown'),
+                afterToggle: $('afterToggle'), afterDisplay: $('afterDisplay'), afterMenu: $('afterMenu'),
+                dbVal: $('dbVal'), durVal: $('durVal'), silVal: $('silVal'), waveCanvas: $('waveCanvas'),
+                waveProgress: $('waveProgress'), waveSilence: $('waveSilence'), waveformOverlay: $('waveformOverlay'),
+                silenceDuration: $('silenceDuration'), silenceLabel: $('silenceLabel'),
+                themeDark: $('themeDark'), themeLight: $('themeLight'), popover: $('popover'),
+                popFile: $('popFile'), popFolder: $('popFolder'), fileCounter: $('fileCounter'),
+                speedDisplay: $('speedDisplay'), repeatsDisplay: $('repeatsDisplay'),
                 speedDropdown: $('speedDropdown'), repeatsDropdown: $('repeatsDropdown'),
                 speedMenu: $('speedMenu'), repeatsMenu: $('repeatsMenu'), speedToggle: $('speedToggle'),
                 repeatsToggle: $('repeatsToggle'), audio: $('audio-engine'), jumpInput: $('jumpInput'),
-                jumpBtn: $('jumpBtn'), totalSegments: $('totalSegments')
+                jumpBtn: $('jumpBtn'), totalSegments: $('totalSegments'),
+                loadingOverlay: $('loadingOverlay'), loadingText: $('loadingText'),
+                loadingSub: $('loadingSub'), loadingProgressFill: $('loadingProgressFill'),
+                loadingDetail: $('loadingDetail'), cancelLoadBtn: $('cancelLoadBtn'), loadSpinner: $('loadSpinner')
             };
 
             const state = {
@@ -317,84 +306,367 @@
                 mergedBuffer: null, fileOffsets: [], fileDurations: [], fileSegments: [],
                 currentFileStartTime: 0, originalFileUrl: null, gainNode: null, audioCtx: null,
                 isAudioInitialized: false, savedSettings: null,
-                _isProcessing: false,
-                _checkTimer: null,
-                _shouldResume: false,
-                _isJumpInputFocused: false // Флаг для поля ввода
+                _isProcessing: false, _checkTimer: null, _shouldResume: false,
+                _isJumpInputFocused: false,
+                cachedSegments: null, cachedDb: null, cachedDur: null,
+                _cancelRequested: false, _cancelled: false,
+                _previousFiles: [], _previousFileIdx: 0, _previousSegIdx: 0,
+                _currentLoadPromise: null
             };
 
+            // ===== Loading Overlay =====
+            function showLoading(text, sub, progress, detail) {
+                el.loadingOverlay.classList.add('active');
+                if (text) el.loadingText.textContent = text;
+                if (sub) el.loadingSub.textContent = sub;
+                if (progress !== undefined) el.loadingProgressFill.style.width = Math.min(progress, 100) + '%';
+                if (detail !== undefined) el.loadingDetail.textContent = detail;
+                document.body.classList.add('no-scroll');
+                el.cancelLoadBtn.disabled = false;
+                el.cancelLoadBtn.textContent = '✕ Cancel';
+                el.loadSpinner.style.display = 'block';
+            }
+            function updateLoading(text, sub, progress, detail) {
+                if (text) el.loadingText.textContent = text;
+                if (sub) el.loadingSub.textContent = sub;
+                if (progress !== undefined) el.loadingProgressFill.style.width = Math.min(progress, 100) + '%';
+                if (detail !== undefined) el.loadingDetail.textContent = detail;
+            }
+            function hideLoading() {
+                el.loadingOverlay.classList.remove('active');
+                document.body.classList.remove('no-scroll');
+                el.loadingProgressFill.style.width = '0%';
+                el.loadingDetail.textContent = '';
+                el.cancelLoadBtn.disabled = false;
+                el.cancelLoadBtn.textContent = '✕ Cancel';
+                el.loadSpinner.style.display = 'block';
+            }
+
+            // ===== Audio processing =====
             function sliceAudioBySilence(audioBuffer, thresholdDb, minSilenceSec) {
                 if (!audioBuffer) return [];
                 var data = audioBuffer.getChannelData(0);
                 if (!data || data.length === 0) return [];
-                
                 var sampleRate = audioBuffer.sampleRate;
                 var thresholdLinear = Math.pow(10, thresholdDb / 20);
                 var minSilenceSamples = Math.floor(sampleRate * minSilenceSec);
-                
                 var silenceRegions = [];
                 var inSilence = false;
                 var silenceStart = 0;
-                
-                for (var i = 0; i < data.length; i++) {
+                var len = data.length;
+                for (var i = 0; i < len; i++) {
                     var isSilent = Math.abs(data[i]) < thresholdLinear;
-                    
-                    if (isSilent && !inSilence) {
-                        inSilence = true;
-                        silenceStart = i;
-                    } else if (!isSilent && inSilence) {
+                    if (isSilent && !inSilence) { inSilence = true; silenceStart = i; } 
+                    else if (!isSilent && inSilence) {
                         inSilence = false;
                         var duration = (i - silenceStart) / sampleRate;
-                        if (duration >= minSilenceSec) {
-                            silenceRegions.push({ start: silenceStart / sampleRate, end: i / sampleRate });
-                        }
+                        if (duration >= minSilenceSec) silenceRegions.push({ start: silenceStart / sampleRate, end: i / sampleRate });
                     }
                 }
-                
                 if (inSilence) {
-                    var duration = (data.length - silenceStart) / sampleRate;
-                    if (duration >= minSilenceSec) {
-                        silenceRegions.push({ start: silenceStart / sampleRate, end: data.length / sampleRate });
-                    }
+                    var duration = (len - silenceStart) / sampleRate;
+                    if (duration >= minSilenceSec) silenceRegions.push({ start: silenceStart / sampleRate, end: len / sampleRate });
                 }
-                
                 var segments = [];
                 var prevEnd = 0;
                 var totalDuration = audioBuffer.duration;
-                
                 for (var j = 0; j < silenceRegions.length; j++) {
                     var region = silenceRegions[j];
                     var segStart = prevEnd;
                     var segEnd = region.start;
-                    
-                    if (segEnd - segStart >= 0.2) {
-                        segments.push({ start: segStart, end: segEnd });
-                    }
+                    if (segEnd - segStart >= 0.2) segments.push({ start: segStart, end: segEnd });
                     prevEnd = region.end;
                 }
-                
-                if (totalDuration - prevEnd >= 0.2) {
-                    segments.push({ start: prevEnd, end: totalDuration });
-                }
-                
-                if (segments.length === 0) {
-                    segments.push({ start: 0, end: totalDuration });
-                }
-                
+                if (totalDuration - prevEnd >= 0.2) segments.push({ start: prevEnd, end: totalDuration });
+                if (segments.length === 0) segments.push({ start: 0, end: totalDuration });
                 return segments;
             }
 
+            function checkCancel() {
+                if (state._cancelRequested) {
+                    state._cancelled = true;
+                    throw new Error('CANCELLED');
+                }
+            }
+
+            // ===== Main load function with detailed progress =====
+            async function loadMergedFiles(files) {
+                if (state.isLoading) return;
+                if (state.isPlaying) {
+                    el.audio.pause();
+                    state.isPlaying = false;
+                    clearInterval(state._checkTimer);
+                    state._checkTimer = null;
+                }
+                state._previousFiles = state.files.slice();
+                state._previousFileIdx = state.currentFileIdx;
+                state._previousSegIdx = state.currentSegIdx;
+                state._cancelRequested = false;
+                state._cancelled = false;
+                state.isLoading = true;
+                state.isReady = false;
+                state._isProcessing = false;
+                clearInterval(state._checkTimer);
+                state._checkTimer = null;
+
+                showLoading('Initializing...', 'Preparing audio engine', 0, 'Starting up...');
+                updateUI();
+
+                try {
+                    state.files = files;
+                    state.fileSegments = [];
+                    state.fileOffsets = [];
+                    state.fileDurations = [];
+
+                    var ctx = new (window.AudioContext || window.webkitAudioContext)();
+                    if (ctx.state === 'suspended') await ctx.resume();
+
+                    var buffers = [];
+                    var totalSamples = 0;
+                    var maxChannels = 0;
+                    var sampleRate = 44100;
+
+                    // Phase 1: Load files
+                    for (var i = 0; i < files.length; i++) {
+                        checkCancel();
+                        var pct = 5 + (i / files.length) * 45;
+                        updateLoading('Loading audio files', (i + 1) + '/' + files.length, pct, '📂 ' + files[i].name);
+                        updateStatus('Loading ' + files[i].name + '...', true);
+                        try {
+                            var arrayBuffer = await files[i].arrayBuffer();
+                            checkCancel();
+                            var audioBuffer = await ctx.decodeAudioData(arrayBuffer);
+                            buffers.push(audioBuffer);
+                            state.fileOffsets.push(totalSamples);
+                            state.fileDurations.push(audioBuffer.duration);
+                            totalSamples += audioBuffer.length;
+                            if (audioBuffer.numberOfChannels > maxChannels) maxChannels = audioBuffer.numberOfChannels;
+                            if (audioBuffer.sampleRate > sampleRate) sampleRate = audioBuffer.sampleRate;
+                        } catch (e) { 
+                            if (e.message === 'CANCELLED') throw e;
+                            console.warn('Error decoding:', files[i].name, e); 
+                        }
+                        await new Promise(r => setTimeout(r, 0));
+                    }
+
+                    checkCancel();
+                    if (buffers.length === 0) { await ctx.close(); updateStatus('No valid audio files'); state.isLoading = false; hideLoading(); return; }
+
+                    var channels = Math.min(maxChannels, 2);
+                    for (var b = 0; b < buffers.length; b++) { if (buffers[b].numberOfChannels > 1) { channels = 2; break; } }
+
+                    // Phase 2: Merge
+                    updateLoading('Merging audio', 'Combining ' + files.length + ' files', 52, '🔄 Creating unified track...');
+                    updateStatus('Creating merged audio...', true);
+
+                    var mergedBuffer = ctx.createBuffer(channels, totalSamples, sampleRate);
+                    var writePos = 0;
+                    var CHUNK_SIZE = 500000;
+
+                    for (var k = 0; k < buffers.length; k++) {
+                        checkCancel();
+                        var buf = buffers[k];
+                        var bufChannels = Math.min(buf.numberOfChannels, channels);
+                        for (var start = 0; start < buf.length; start += CHUNK_SIZE) {
+                            checkCancel();
+                            var end = Math.min(start + CHUNK_SIZE, buf.length);
+                            for (var ch = 0; ch < channels; ch++) {
+                                var srcChannel = ch < bufChannels ? buf.getChannelData(ch) : buf.getChannelData(0);
+                                var dstChannel = mergedBuffer.getChannelData(ch);
+                                for (var s = start; s < end; s++) {
+                                    dstChannel[writePos + s] = srcChannel[s] || 0;
+                                }
+                            }
+                            await new Promise(r => setTimeout(r, 0));
+                        }
+                        writePos += buf.length;
+                        var pct2 = 52 + (k / buffers.length) * 18;
+                        updateLoading('Merging audio', (k + 1) + '/' + buffers.length, pct2, '📦 Processing ' + files[k].name);
+                    }
+
+                    state.audioData = mergedBuffer.getChannelData(0);
+                    state.sampleRate = sampleRate;
+                    state.mergedBuffer = mergedBuffer;
+
+                    // Phase 3: Analyze
+                    updateLoading('Analyzing segments', 'Detecting silence patterns', 72, '🔍 Scanning audio...');
+                    updateStatus('Analyzing segments...', true);
+
+                    state.fileSegments = [];
+                    for (var i2 = 0; i2 < files.length; i2++) {
+                        checkCancel();
+                        var startSample = state.fileOffsets[i2] || 0;
+                        var endSample = startSample + (state.fileDurations[i2] * sampleRate);
+                        var fileDataLength = Math.floor(endSample - startSample);
+                        var tempBuffer = ctx.createBuffer(channels, fileDataLength, sampleRate);
+                        for (var ch2 = 0; ch2 < channels; ch2++) {
+                            var srcChannel2 = mergedBuffer.getChannelData(ch2);
+                            var dstChannel2 = tempBuffer.getChannelData(ch2);
+                            for (var s2 = 0; s2 < fileDataLength; s2++) {
+                                dstChannel2[s2] = srcChannel2[Math.floor(startSample + s2)] || 0;
+                            }
+                        }
+                        state.fileSegments[i2] = sliceAudioBySilence(tempBuffer, state.settings.db, state.settings.dur);
+                        var pct3 = 72 + (i2 / files.length) * 18;
+                        updateLoading('Analyzing segments', (i2 + 1) + '/' + files.length, pct3, '✂️ ' + files[i2].name + ' → ' + state.fileSegments[i2].length + ' segments');
+                        await new Promise(r => setTimeout(r, 0));
+                    }
+
+                    state.cachedSegments = state.fileSegments.slice();
+                    state.cachedDb = state.settings.db;
+                    state.cachedDur = state.settings.dur;
+
+                    state.currentFileIdx = 0;
+                    state.segments = state.fileSegments[0] || [];
+                    state.currentSegIdx = 0;
+                    state.repeatCount = 0;
+                    state.currentFileStartTime = 0;
+
+                    // Phase 4: Export WAV
+                    updateLoading('Creating audio file', 'Converting to WAV format', 92, '💾 Encoding...');
+                    updateStatus('Creating audio file...', true);
+
+                    checkCancel();
+                    var wavData = bufferToWav(mergedBuffer);
+                    var blob = new Blob([wavData], { type: 'audio/wav' });
+                    var url = URL.createObjectURL(blob);
+                    if (state.originalFileUrl) URL.revokeObjectURL(state.originalFileUrl);
+                    state.originalFileUrl = url;
+
+                    updateLoading('Loading audio', 'Preparing for playback', 96, '🎵 Finalizing...');
+                    updateStatus('Loading audio...', true);
+                    el.audio.pause();
+                    el.audio.src = '';
+                    el.audio.load();
+                    el.audio.src = url;
+                    el.audio.load();
+                    el.audio.playbackRate = state.speed;
+
+                    await new Promise(function(resolve) {
+                        var onCanPlay = function() { el.audio.removeEventListener('canplaythrough', onCanPlay); clearTimeout(timeout); resolve(); };
+                        el.audio.addEventListener('canplaythrough', onCanPlay);
+                        var timeout = setTimeout(resolve, 5000);
+                    });
+
+                    if (state.segments.length > 0) {
+                        var firstSeg = state.segments[0];
+                        el.audio.currentTime = firstSeg.start;
+                    }
+
+                    await ctx.close();
+
+                    state.isLoading = false;
+                    state.isReady = true;
+                    state.isPlaying = false;
+                    state._isProcessing = false;
+                    state._cancelRequested = false;
+                    state._cancelled = false;
+                    updateStatus('Ready');
+                    updateProgress(0);
+                    updateUI();
+                    drawWaveform(0);
+                    updateMediaSession();
+                    savePlaybackState();
+                    startCheckTimer();
+
+                    hideLoading();
+                    console.log('Loaded', state.files.length, 'files,', state.segments.length, 'segments');
+
+                } catch (e) {
+                    if (e.message === 'CANCELLED') {
+                        console.log('Loading cancelled by user');
+                        state.isLoading = false;
+                        state._cancelRequested = false;
+                        restorePreviousState();
+                        return;
+                    }
+                    console.error('Load error:', e);
+                    updateStatus('Error: ' + e.message);
+                    state.isLoading = false;
+                    state.isReady = true;
+                    state._isProcessing = false;
+                    hideLoading();
+                    updateUI();
+                }
+            }
+
+            function restorePreviousState() {
+                if (state._previousFiles.length > 0) {
+                    state.files = state._previousFiles;
+                    state.currentFileIdx = state._previousFileIdx;
+                    state.currentSegIdx = state._previousSegIdx;
+                    if (state.fileSegments[state.currentFileIdx]) {
+                        state.segments = state.fileSegments[state.currentFileIdx];
+                    } else {
+                        state.segments = [];
+                    }
+                    state.isReady = true;
+                    updateUI();
+                    drawWaveform(state.currentSegIdx);
+                    updateStatus('Restored previous session');
+                } else {
+                    state.files = [];
+                    state.segments = [];
+                    state.isReady = false;
+                    updateUI();
+                    updateStatus('Cancelled');
+                }
+                state.isLoading = false;
+                state._cancelRequested = false;
+                state._cancelled = false;
+                hideLoading();
+                el.cancelLoadBtn.disabled = false;
+                el.cancelLoadBtn.textContent = '✕ Cancel';
+            }
+
+            // ===== WAV export =====
+            function writeString(view, offset, string) { for (var i = 0; i < string.length; i++) { view.setUint8(offset + i, string.charCodeAt(i)); } }
+
+            function bufferToWav(buffer) {
+                var numChannels = buffer.numberOfChannels;
+                var sampleRate = buffer.sampleRate;
+                var bitDepth = 16;
+                var bytesPerSample = bitDepth / 8;
+                var blockAlign = numChannels * bytesPerSample;
+                var byteRate = sampleRate * blockAlign;
+                var dataSize = buffer.length * blockAlign;
+                var headerSize = 44;
+                var totalSize = headerSize + dataSize;
+                var arrayBuffer = new ArrayBuffer(totalSize);
+                var view = new DataView(arrayBuffer);
+                writeString(view, 0, 'RIFF');
+                view.setUint32(4, totalSize - 8, true);
+                writeString(view, 8, 'WAVE');
+                writeString(view, 12, 'fmt ');
+                view.setUint32(16, 16, true);
+                view.setUint16(20, 1, true);
+                view.setUint16(22, numChannels, true);
+                view.setUint32(24, sampleRate, true);
+                view.setUint32(28, byteRate, true);
+                view.setUint16(32, blockAlign, true);
+                view.setUint16(34, bitDepth, true);
+                writeString(view, 36, 'data');
+                view.setUint32(40, dataSize, true);
+                var offset = 44;
+                var scale = Math.pow(2, bitDepth - 1);
+                for (var ch = 0; ch < numChannels; ch++) {
+                    var channelData = buffer.getChannelData(ch);
+                    for (var i = 0; i < buffer.length; i++) {
+                        var idx = offset + (i * numChannels + ch) * 2;
+                        var val = Math.max(-1, Math.min(1, channelData[i]));
+                        view.setInt16(idx, Math.round(val * (scale - 1)), true);
+                    }
+                }
+                return arrayBuffer;
+            }
+
+            // ===== UI Helpers =====
             function initDropdown(dropdownEl, menuEl, toggleEl, displayEl, onSelect) {
                 if (!dropdownEl || !menuEl || !toggleEl || !displayEl) return;
-                toggleEl.addEventListener('click', function(e) { 
-                    e.stopPropagation();
-                    e.preventDefault();
-                    dropdownEl.classList.toggle('open'); 
-                });
+                toggleEl.addEventListener('click', function(e) { e.stopPropagation(); e.preventDefault(); dropdownEl.classList.toggle('open'); });
                 menuEl.querySelectorAll('.item').forEach(function(item) {
                     item.addEventListener('click', function(e) {
-                        e.stopPropagation();
-                        e.preventDefault();
+                        e.stopPropagation(); e.preventDefault();
                         var value = this.dataset.value;
                         var label = this.textContent.trim();
                         menuEl.querySelectorAll('.item').forEach(function(i) { i.classList.remove('selected'); });
@@ -412,8 +684,7 @@
                 applySettings();
             }
 
-            function saveSettings() { var data = Object.assign({}, state.settings, { speed: state.speed });
-                localStorage.setItem('hs_settings', JSON.stringify(data)); }
+            function saveSettings() { var data = Object.assign({}, state.settings, { speed: state.speed }); localStorage.setItem('hs_settings', JSON.stringify(data)); }
 
             function applySettings() {
                 document.body.classList.toggle('light', state.settings.theme === 'light');
@@ -455,18 +726,13 @@
                     if (el.totalSegments) el.totalSegments.textContent = state.segments.length; 
                     if (el.jumpInput) { 
                         el.jumpInput.max = state.segments.length; 
-                        // Обновляем значение ТОЛЬКО если поле НЕ в фокусе
-                        if (!state._isJumpInputFocused) {
-                            el.jumpInput.value = Math.min(idx, state.segments.length);
-                        }
+                        if (!state._isJumpInputFocused) el.jumpInput.value = Math.min(idx, state.segments.length);
                     } 
-                } else { 
-                    if (el.segInfo) el.segInfo.textContent = 'Ready'; 
-                }
-                if (el.repeatCount) { el.repeatCount.textContent = Math.min(state.repeatCount + 1, state.settings.n); }
-                if (el.silenceDuration) { el.silenceDuration.textContent = state.settings.silence.toFixed(1); }
-                if (el.silenceLabel) { el.silenceLabel.style.display = state.settings.silence > 0.01 ? 'inline' : 'none'; }
-                if (el.fileCounter) { el.fileCounter.textContent = totalFiles > 0 ? '[' + currentFile + '/' + totalFiles + ']' : ''; }
+                } else { if (el.segInfo) el.segInfo.textContent = 'Ready'; }
+                if (el.repeatCount) el.repeatCount.textContent = Math.min(state.repeatCount + 1, state.settings.n);
+                if (el.silenceDuration) el.silenceDuration.textContent = state.settings.silence.toFixed(1);
+                if (el.silenceLabel) el.silenceLabel.style.display = state.settings.silence > 0.01 ? 'inline' : 'none';
+                if (el.fileCounter) el.fileCounter.textContent = totalFiles > 0 ? '[' + currentFile + '/' + totalFiles + ']' : '';
                 if (totalFiles > 0 && state.files[state.currentFileIdx]) { if (el.trackName) el.trackName.textContent = state.files[state.currentFileIdx].name; } else { if (el.trackName) el.trackName.textContent = '—'; }
                 updatePlaylist();
             }
@@ -526,8 +792,7 @@
                 var audioWidth = totalDuration > 0 ? ((seg.end - seg.start) / totalDuration) * w : w;
                 var silenceWidth = w - audioWidth;
                 ctx.clearRect(0, 0, w, h);
-                if (el.waveSilence) { el.waveSilence.style.width = silenceWidth + 'px';
-                    el.waveSilence.style.display = (silence > 0.01 && silenceWidth > 2) ? 'block' : 'none'; }
+                if (el.waveSilence) { el.waveSilence.style.width = silenceWidth + 'px'; el.waveSilence.style.display = (silence > 0.01 && silenceWidth > 2) ? 'block' : 'none'; }
                 var startSample = Math.floor(seg.start * state.sampleRate);
                 var endSample = Math.floor(seg.end * state.sampleRate);
                 if (startSample >= state.audioData.length || endSample > state.audioData.length) return;
@@ -548,8 +813,8 @@
                 }
                 ctx.beginPath();
                 ctx.moveTo(0, h / 2);
-                for (var k = 0; k < points.length; k++) { ctx.lineTo(k, points[k].top); }
-                for (var l = points.length - 1; l >= 0; l--) { ctx.lineTo(l, points[l].bottom); }
+                for (var k = 0; k < points.length; k++) ctx.lineTo(k, points[k].top);
+                for (var l = points.length - 1; l >= 0; l--) ctx.lineTo(l, points[l].bottom);
                 ctx.closePath();
                 ctx.fillStyle = color + '44';
                 ctx.fill();
@@ -557,193 +822,16 @@
                 ctx.strokeStyle = color;
                 ctx.lineWidth = 1.2;
                 ctx.globalAlpha = 0.6;
-                for (var m = 0; m < points.length; m++) { if (m === 0) ctx.moveTo(m, points[m].top);
-                    else ctx.lineTo(m, points[m].top); }
+                for (var m = 0; m < points.length; m++) { if (m === 0) ctx.moveTo(m, points[m].top); else ctx.lineTo(m, points[m].top); }
                 ctx.stroke();
                 ctx.beginPath();
-                for (var n = 0; n < points.length; n++) { if (n === 0) ctx.moveTo(n, points[n].bottom);
-                    else ctx.lineTo(n, points[n].bottom); }
+                for (var n = 0; n < points.length; n++) { if (n === 0) ctx.moveTo(n, points[n].bottom); else ctx.lineTo(n, points[n].bottom); }
                 ctx.stroke();
                 ctx.globalAlpha = 1;
                 if (el.waveProgress) el.waveProgress.style.width = '0%';
             }
 
-            async function mergeAllFiles(files) {
-                if (!files || files.length === 0) return null;
-                updateStatus('Merging audio files...', true);
-                updateProgress(5, 'Loading...');
-                var ctx = new(window.AudioContext || window.webkitAudioContext)();
-                if (ctx.state === 'suspended') await ctx.resume();
-                var buffers = [];
-                state.fileOffsets = [];
-                state.fileDurations = [];
-                var totalSamples = 0;
-                var maxChannels = 0;
-                for (var i = 0; i < files.length; i++) {
-                    var progress = 5 + (i / files.length) * 80;
-                    updateProgress(progress, (i + 1) + '/' + files.length);
-                    updateStatus('Loading ' + (i + 1) + '/' + files.length + '...', true);
-                    try {
-                        var arrayBuffer = await files[i].arrayBuffer();
-                        var audioBuffer = await ctx.decodeAudioData(arrayBuffer);
-                        buffers.push(audioBuffer);
-                        state.fileOffsets.push(totalSamples);
-                        state.fileDurations.push(audioBuffer.duration);
-                        totalSamples += audioBuffer.length;
-                        if (audioBuffer.numberOfChannels > maxChannels) { maxChannels = audioBuffer.numberOfChannels; }
-                    } catch (e) { console.warn('Error decoding:', files[i].name, e); }
-                }
-                if (buffers.length === 0) { await ctx.close();
-                    updateStatus('No valid audio files'); return null; }
-                var channels = Math.min(maxChannels, 2);
-                for (var b = 0; b < buffers.length; b++) { if (buffers[b].numberOfChannels > 1) { channels = 2; break; } }
-                updateProgress(90, 'Creating merged buffer...');
-                updateStatus('Creating merged audio...', true);
-                var sampleRate = buffers[0].sampleRate;
-                var mergedBuffer = ctx.createBuffer(channels, totalSamples, sampleRate);
-                var writePos = 0;
-                for (var k = 0; k < buffers.length; k++) {
-                    var buf = buffers[k];
-                    var bufChannels = Math.min(buf.numberOfChannels, channels);
-                    for (var ch = 0; ch < channels; ch++) {
-                        var srcChannel = ch < bufChannels ? buf.getChannelData(ch) : buf.getChannelData(0);
-                        var dstChannel = mergedBuffer.getChannelData(ch);
-                        for (var s = 0; s < buf.length; s++) { dstChannel[writePos + s] = srcChannel[s] || 0; }
-                    }
-                    writePos += buf.length;
-                    if (k % 5 === 0 || k === buffers.length - 1) { updateProgress(90 + (k / buffers.length) * 10, 'Building ' + (k + 1) + '/' + buffers.length); }
-                }
-                state.audioData = mergedBuffer.getChannelData(0);
-                updateProgress(100, 'Done');
-                await ctx.close();
-                updateStatus('Ready');
-                return mergedBuffer;
-            }
-
-            function writeString(view, offset, string) { for (var i = 0; i < string.length; i++) { view.setUint8(offset + i, string.charCodeAt(i)); } }
-
-            async function bufferToWav(buffer) {
-                var numChannels = buffer.numberOfChannels;
-                var sampleRate = buffer.sampleRate;
-                var bitDepth = 16;
-                var bytesPerSample = bitDepth / 8;
-                var blockAlign = numChannels * bytesPerSample;
-                var byteRate = sampleRate * blockAlign;
-                var dataSize = buffer.length * blockAlign;
-                var headerSize = 44;
-                var totalSize = headerSize + dataSize;
-                var arrayBuffer = new ArrayBuffer(totalSize);
-                var view = new DataView(arrayBuffer);
-                writeString(view, 0, 'RIFF');
-                view.setUint32(4, totalSize - 8, true);
-                writeString(view, 8, 'WAVE');
-                writeString(view, 12, 'fmt ');
-                view.setUint32(16, 16, true);
-                view.setUint16(20, 1, true);
-                view.setUint16(22, numChannels, true);
-                view.setUint32(24, sampleRate, true);
-                view.setUint32(28, byteRate, true);
-                view.setUint16(32, blockAlign, true);
-                view.setUint16(34, bitDepth, true);
-                writeString(view, 36, 'data');
-                view.setUint32(40, dataSize, true);
-                var offset = 44;
-                var scale = Math.pow(2, bitDepth - 1);
-                for (var ch = 0; ch < numChannels; ch++) {
-                    var channelData = buffer.getChannelData(ch);
-                    for (var i = 0; i < buffer.length; i++) {
-                        var idx = offset + (i * numChannels + ch) * 2;
-                        var val = Math.max(-1, Math.min(1, channelData[i]));
-                        view.setInt16(idx, Math.round(val * (scale - 1)), true);
-                    }
-                }
-                return arrayBuffer;
-            }
-
-            async function loadMergedFiles(files) {
-                if (state.isLoading) return;
-                state.isLoading = true;
-                state.isReady = false;
-                state._isProcessing = false;
-                state._shouldResume = false;
-                clearInterval(state._checkTimer);
-                state._checkTimer = null;
-                updateUI();
-                try {
-                    state.files = files;
-                    state.fileSegments = [];
-                    var merged = await mergeAllFiles(files);
-                    if (!merged) { state.isLoading = false;
-                        updateStatus('No valid audio files'); return; }
-                    state.mergedBuffer = merged;
-                    state.sampleRate = merged.sampleRate;
-                    updateStatus('Analyzing segments...', true);
-                    updateProgress(50, 'Analyzing...');
-                    for (var i = 0; i < files.length; i++) {
-                        updateProgress(50 + (i / files.length) * 40, 'Analyzing ' + (i + 1) + '/' + files.length);
-                        updateStatus('Analyzing ' + files[i].name + '...', true);
-                        var startSample = state.fileOffsets[i] || 0;
-                        var endSample = startSample + (state.fileDurations[i] * state.sampleRate);
-                        var numChannels = merged.numberOfChannels;
-                        var fileDataLength = Math.floor(endSample - startSample);
-                        var tempBuffer = new AudioBuffer({ length: fileDataLength, numberOfChannels: numChannels, sampleRate: state.sampleRate });
-                        for (var ch = 0; ch < numChannels; ch++) {
-                            var srcChannel = merged.getChannelData(ch);
-                            var dstChannel = tempBuffer.getChannelData(ch);
-                            for (var s = 0; s < fileDataLength; s++) { dstChannel[s] = srcChannel[Math.floor(startSample + s)] || 0; }
-                        }
-                        var segments = sliceAudioBySilence(tempBuffer, state.settings.db, state.settings.dur);
-                        state.fileSegments[i] = segments;
-                    }
-                    state.currentFileIdx = 0;
-                    state.segments = state.fileSegments[0] || [];
-                    state.currentSegIdx = 0;
-                    state.repeatCount = 0;
-                    state.currentFileStartTime = 0;
-                    updateStatus('Converting to WAV...', true);
-                    updateProgress(90, 'Converting...');
-                    var wavData = await bufferToWav(merged);
-                    var blob = new Blob([wavData], { type: 'audio/wav' });
-                    var url = URL.createObjectURL(blob);
-                    if (state.originalFileUrl) URL.revokeObjectURL(state.originalFileUrl);
-                    state.originalFileUrl = url;
-                    updateStatus('Loading audio...', true);
-                    updateProgress(95, 'Loading audio...');
-                    el.audio.pause();
-                    el.audio.src = '';
-                    el.audio.load();
-                    el.audio.src = url;
-                    el.audio.load();
-                    el.audio.playbackRate = state.speed;
-                    await new Promise(function(resolve) {
-                        var onCanPlay = function() { el.audio.removeEventListener('canplaythrough', onCanPlay);
-                            clearTimeout(timeout);
-                            resolve(); };
-                        el.audio.addEventListener('canplaythrough', onCanPlay);
-                        var timeout = setTimeout(resolve, 5000);
-                    });
-                    if (state.segments.length > 0) { var firstSeg = state.segments[0];
-                        el.audio.currentTime = firstSeg.start; }
-                    state.isLoading = false;
-                    state.isReady = true;
-                    state.isPlaying = false;
-                    state._isProcessing = false;
-                    updateStatus('Ready');
-                    updateProgress(0);
-                    updateUI();
-                    drawWaveform(0);
-                    updateMediaSession();
-                    savePlaybackState();
-                    startCheckTimer();
-                    console.log('Loaded', state.files.length, 'files,', state.segments.length, 'segments');
-                } catch (e) { console.error('Load error:', e);
-                    updateStatus('Error: ' + e.message);
-                    state.isLoading = false;
-                    state.isReady = true;
-                    state._isProcessing = false;
-                    updateUI(); }
-            }
-
+            // ===== Playback control =====
             function startCheckTimer() {
                 clearInterval(state._checkTimer);
                 state._checkTimer = setInterval(function() {
@@ -755,15 +843,14 @@
                     var segEnd = seg.end;
                     var silence = state.settings.silence || 0;
                     var virtualEnd = segEnd + silence;
-                    if (currentTime >= virtualEnd) {
-                        handleSegmentEnd();
-                    }
+                    if (currentTime >= virtualEnd) handleSegmentEnd();
                 }, 50);
             }
 
             function switchToFile(fileIdx) {
                 if (fileIdx < 0 || fileIdx >= state.files.length) return;
                 var wasPlaying = state.isPlaying;
+                if (wasPlaying) { el.audio.pause(); state.isPlaying = false; clearInterval(state._checkTimer); state._checkTimer = null; }
                 state.currentFileIdx = fileIdx;
                 state.currentSegIdx = 0;
                 state.repeatCount = 0;
@@ -774,25 +861,18 @@
                 drawWaveform(0);
                 updateMediaSession();
                 savePlaybackState();
-                if (state.segments.length > 0) { var firstSeg = state.segments[0];
-                    el.audio.currentTime = firstSeg.start + state.currentFileStartTime; }
-                if (wasPlaying && state.segments.length > 0) { 
+                if (state.segments.length > 0) { var firstSeg = state.segments[0]; el.audio.currentTime = firstSeg.start + state.currentFileStartTime; }
+                if (wasPlaying && state.segments.length > 0) {
                     state._shouldResume = true;
-                    setTimeout(function() { 
-                        el.audio.play().catch(function() {});
-                        state._shouldResume = false;
-                    }, 50); 
+                    setTimeout(function() { el.audio.play().catch(function() {}); state._shouldResume = false; }, 50);
                 }
-                console.log('Switched to file', fileIdx + 1, 'segments:', state.segments.length);
             }
 
             function setupAudio() {
                 try {
                     if (!state.audioCtx) { state.audioCtx = new(window.AudioContext || window.webkitAudioContext)(); }
-                    if (state.audioCtx.state === 'suspended') { state.audioCtx.resume(); }
-                    if (!state.gainNode) { state.gainNode = state.audioCtx.createGain();
-                        state.gainNode.gain.value = 1.0;
-                        state.gainNode.connect(state.audioCtx.destination); }
+                    if (state.audioCtx.state === 'suspended') state.audioCtx.resume();
+                    if (!state.gainNode) { state.gainNode = state.audioCtx.createGain(); state.gainNode.gain.value = 1.0; state.gainNode.connect(state.audioCtx.destination); }
                     if (!window._sourceNode) { window._sourceNode = state.audioCtx.createMediaElementSource(el.audio); }
                     try { window._sourceNode.disconnect(); } catch (e) {}
                     window._sourceNode.connect(state.gainNode);
@@ -818,12 +898,8 @@
                         updateUI();
                         updateMediaSession();
                         startCheckTimer();
-                    }).catch(function(e) { console.warn('Play error:', e);
-                        state.isPlaying = false;
-                        updateUI(); });
-                } catch (e) { console.error('Play error:', e);
-                    state.isPlaying = false;
-                    updateUI(); }
+                    }).catch(function(e) { console.warn('Play error:', e); state.isPlaying = false; updateUI(); });
+                } catch (e) { console.error('Play error:', e); state.isPlaying = false; updateUI(); }
             }
 
             function pauseAudio() {
@@ -839,7 +915,7 @@
 
             function togglePlay() {
                 if (state.isLoading || state.segments.length === 0) return;
-                if (state.isPlaying) { pauseAudio(); } else { playAudio(); }
+                if (state.isPlaying) pauseAudio(); else playAudio();
             }
 
             function prevSegment() {
@@ -854,12 +930,9 @@
                     drawWaveform(state.currentSegIdx);
                     updateUI();
                     updateMediaSession();
-                    if (state.isPlaying) { 
+                    if (state.isPlaying) {
                         state._shouldResume = true;
-                        setTimeout(function() { 
-                            el.audio.play().catch(function() {});
-                            state._shouldResume = false;
-                        }, 50); 
+                        setTimeout(function() { el.audio.play().catch(function() {}); state._shouldResume = false; }, 50);
                     }
                 }
             }
@@ -869,8 +942,8 @@
                 var nextIdx = state.currentSegIdx + 1;
                 if (nextIdx >= state.segments.length) {
                     var nextFile = state.currentFileIdx + 1;
-                    if (nextFile < state.files.length) { switchToFile(nextFile); } 
-                    else if (state.files.length > 1) { switchToFile(0); } 
+                    if (nextFile < state.files.length) switchToFile(nextFile);
+                    else if (state.files.length > 1) switchToFile(0);
                     else {
                         state.currentSegIdx = 0;
                         state.repeatCount = 0;
@@ -881,12 +954,9 @@
                         drawWaveform(0);
                         updateUI();
                         updateMediaSession();
-                        if (state.isPlaying) { 
+                        if (state.isPlaying) {
                             state._shouldResume = true;
-                            setTimeout(function() { 
-                                el.audio.play().catch(function() {});
-                                state._shouldResume = false;
-                            }, 50); 
+                            setTimeout(function() { el.audio.play().catch(function() {}); state._shouldResume = false; }, 50);
                         }
                     }
                 } else {
@@ -899,12 +969,9 @@
                     drawWaveform(state.currentSegIdx);
                     updateUI();
                     updateMediaSession();
-                    if (state.isPlaying) { 
+                    if (state.isPlaying) {
                         state._shouldResume = true;
-                        setTimeout(function() { 
-                            el.audio.play().catch(function() {});
-                            state._shouldResume = false;
-                        }, 50); 
+                        setTimeout(function() { el.audio.play().catch(function() {}); state._shouldResume = false; }, 50);
                     }
                 }
             }
@@ -924,12 +991,82 @@
                 drawWaveform(state.currentSegIdx);
                 updateUI();
                 updateMediaSession();
-                if (state.isPlaying) { 
+                if (state.isPlaying) {
                     state._shouldResume = true;
-                    setTimeout(function() { 
-                        el.audio.play().catch(function() {});
-                        state._shouldResume = false;
-                    }, 50); 
+                    setTimeout(function() { el.audio.play().catch(function() {}); state._shouldResume = false; }, 50);
+                }
+            }
+
+            function handleSegmentEnd() {
+                if (state._isProcessing) return;
+                state._isProcessing = true;
+                var wasPlaying = state.isPlaying;
+                el.audio.pause();
+                state.repeatCount++;
+                if (state.repeatCount >= state.settings.n) {
+                    state.repeatCount = 0;
+                    var nextSegIdx = state.currentSegIdx + 1;
+                    if (nextSegIdx >= state.segments.length) {
+                        state._isProcessing = false;
+                        handleFileEnd();
+                        return;
+                    } else {
+                        state.currentSegIdx = nextSegIdx;
+                    }
+                }
+                var seg = state.segments[state.currentSegIdx];
+                var startTime = state.currentFileStartTime || 0;
+                if (seg && seg.end > seg.start) {
+                    el.audio.currentTime = seg.start + startTime;
+                    drawWaveform(state.currentSegIdx);
+                    updateUI();
+                    updateMediaSession();
+                    if (wasPlaying) {
+                        setTimeout(function() {
+                            el.audio.play().then(function() { state.isPlaying = true; state._isProcessing = false; updateUI(); })
+                            .catch(function(e) { state.isPlaying = false; state._isProcessing = false; updateUI(); });
+                        }, 30);
+                    } else { state._isProcessing = false; }
+                } else { state._isProcessing = false; }
+            }
+
+            function handleFileEnd() {
+                var after = state.settings.after || 'stop';
+                var wasPlaying = state.isPlaying;
+                state._isProcessing = true;
+                el.audio.pause();
+                if (after === 'loop') {
+                    state.currentSegIdx = 0; state.repeatCount = 0;
+                    var seg = state.segments[0];
+                    var startTime = state.currentFileStartTime || 0;
+                    el.audio.currentTime = seg.start + startTime;
+                    drawWaveform(0); updateUI(); updateMediaSession();
+                    if (wasPlaying) {
+                        setTimeout(function() {
+                            el.audio.play().then(function() { state.isPlaying = true; state._isProcessing = false; updateUI(); })
+                            .catch(function(e) { state.isPlaying = false; state._isProcessing = false; updateUI(); });
+                        }, 30);
+                    } else { state._isProcessing = false; }
+                } else if (after === 'next') {
+                    var nextFileIdx = state.currentFileIdx + 1;
+                    if (nextFileIdx < state.files.length) {
+                        switchToFile(nextFileIdx);
+                        state._isProcessing = false;
+                    } else if (state.files.length > 1) {
+                        switchToFile(0);
+                        state._isProcessing = false;
+                        if (wasPlaying) {
+                            setTimeout(function() { if (state.segments.length > 0) playAudio(); }, 100);
+                        }
+                    } else {
+                        state.isPlaying = false; state._isProcessing = false;
+                        clearInterval(state._checkTimer); state._checkTimer = null;
+                        updateUI(); updateStatus('Finished'); updateMediaSession();
+                    }
+                } else {
+                    state.isPlaying = false; state._isProcessing = false;
+                    clearInterval(state._checkTimer); state._checkTimer = null;
+                    updateUI(); updateStatus('Finished'); updateMediaSession();
                 }
             }
 
@@ -965,17 +1102,20 @@
                 } catch (e) {}
             }
 
+            // ===== Event handlers =====
             function handleFiles(input) {
                 var files = Array.from(input.files).filter(function(f) {
                     return f.type.startsWith('audio/') || /\.(mp3|wav|ogg|m4a|flac|aac|opus|webm)$/i.test(f.name);
                 });
                 if (!files.length) { updateStatus('No audio files selected'); return; }
+                if (state.isPlaying) { el.audio.pause(); state.isPlaying = false; clearInterval(state._checkTimer); state._checkTimer = null; }
                 loadMergedFiles(files.sort(function(a, b) { return a.name.localeCompare(b.name); }));
                 input.value = '';
             }
 
             function togglePopover(e) {
                 e.stopPropagation();
+                if (state.isLoading) return;
                 if (!el.popover || !el.btnOpen) return;
                 var isOpen = el.popover.classList.contains('active');
                 if (isOpen) { el.popover.classList.remove('active'); return; }
@@ -991,6 +1131,7 @@
             }
 
             function openModal() {
+                if (state.isLoading) return;
                 if (!el.settingsModal) return;
                 state.savedSettings = JSON.parse(JSON.stringify(state.settings));
                 if (el.setDb) el.setDb.value = state.settings.db;
@@ -1012,138 +1153,13 @@
                 document.body.classList.remove('no-scroll');
             }
 
-            function handleSegmentEnd() {
-                if (state._isProcessing) return;
-                state._isProcessing = true;
-                
-                var wasPlaying = state.isPlaying;
-                el.audio.pause();
-                
-                state.repeatCount++;
-                
-                if (state.repeatCount >= state.settings.n) {
-                    state.repeatCount = 0;
-                    var nextSegIdx = state.currentSegIdx + 1;
-                    
-                    if (nextSegIdx >= state.segments.length) {
-                        state._isProcessing = false;
-                        handleFileEnd();
-                        return;
-                    } else {
-                        state.currentSegIdx = nextSegIdx;
-                    }
-                }
-                
-                var seg = state.segments[state.currentSegIdx];
-                var startTime = state.currentFileStartTime || 0;
-                
-                if (seg && seg.end > seg.start) {
-                    el.audio.currentTime = seg.start + startTime;
-                    drawWaveform(state.currentSegIdx);
-                    updateUI();
-                    updateMediaSession();
-                    
-                    if (wasPlaying) {
-                        setTimeout(function() {
-                            el.audio.play().then(function() {
-                                state.isPlaying = true;
-                                state._isProcessing = false;
-                                updateUI();
-                            }).catch(function(e) {
-                                console.warn('Resume after segment error:', e);
-                                state.isPlaying = false;
-                                state._isProcessing = false;
-                                updateUI();
-                            });
-                        }, 30);
-                    } else {
-                        state._isProcessing = false;
-                    }
-                } else {
-                    state._isProcessing = false;
-                }
-            }
-
-            function handleFileEnd() {
-    var after = state.settings.after || 'stop';
-    var wasPlaying = state.isPlaying;
-    
-    state._isProcessing = true;
-    el.audio.pause();
-    
-    if (after === 'loop') {
-        state.currentSegIdx = 0;
-        state.repeatCount = 0;
-        var seg = state.segments[0];
-        var startTime = state.currentFileStartTime || 0;
-        el.audio.currentTime = seg.start + startTime;
-        drawWaveform(0);
-        updateUI();
-        updateMediaSession();
-        
-        if (wasPlaying) {
-            setTimeout(function() {
-                el.audio.play().then(function() {
-                    state.isPlaying = true;
-                    state._isProcessing = false;
-                    updateUI();
-                }).catch(function(e) {
-                    state.isPlaying = false;
-                    state._isProcessing = false;
-                    updateUI();
-                });
-            }, 30);
-        } else {
-            state._isProcessing = false;
-        }
-    } else if (after === 'next') {
-        var nextFileIdx = state.currentFileIdx + 1;
-        
-        if (nextFileIdx < state.files.length) {
-            switchToFile(nextFileIdx);
-            state._isProcessing = false;
-        } else if (state.files.length > 1) {
-            // Переключаемся на первый файл
-            switchToFile(0);
-            state._isProcessing = false;
-            // Если играли - возобновляем воспроизведение
-            if (wasPlaying) {
-                setTimeout(function() {
-                    if (state.segments.length > 0) {
-                        playAudio();
-                    }
-                }, 100);
-            }
-        } else {
-            // Один файл - останавливаемся
-            state.isPlaying = false;
-            state._isProcessing = false;
-            clearInterval(state._checkTimer);
-            state._checkTimer = null;
-            updateUI();
-            updateStatus('Finished');
-            updateMediaSession();
-        }
-    } else {
-        state.isPlaying = false;
-        state._isProcessing = false;
-        clearInterval(state._checkTimer);
-        state._checkTimer = null;
-        updateUI();
-        updateStatus('Finished');
-        updateMediaSession();
-    }
-}
-
             function setupAudioEvents() {
                 var lastUpdateTime = 0;
-
                 el.audio.addEventListener('timeupdate', function() {
                     if (state.isLoading || state.segments.length === 0 || state._isProcessing) return;
                     var now = Date.now();
                     if (now - lastUpdateTime < 50) return;
                     lastUpdateTime = now;
-
                     var seg = state.segments[state.currentSegIdx];
                     if (!seg) return;
                     var startTime = state.currentFileStartTime || 0;
@@ -1152,7 +1168,6 @@
                     var segStart = seg.start;
                     var silence = state.settings.silence || 0;
                     var virtualEnd = segEnd + silence;
-
                     if (seg && virtualEnd > segStart) {
                         var totalDuration = virtualEnd - segStart;
                         var progressInSeg = Math.max(0, currentTime - segStart);
@@ -1160,44 +1175,29 @@
                         var pct = (Math.min(progressInSeg, segEnd - segStart) / (segEnd - segStart)) * 100;
                         if (el.waveProgress) el.waveProgress.style.width = Math.min(pct, 100) + '%';
                     }
-
                     if (state.isPlaying && !state.isLoading && !state._isProcessing) {
-                        if (currentTime >= virtualEnd) {
-                            handleSegmentEnd();
-                        }
+                        if (currentTime >= virtualEnd) handleSegmentEnd();
                     }
                 });
-
                 el.audio.addEventListener('play', function() {
                     state.isPlaying = true;
                     state._isProcessing = false;
                     updateUI();
                     updateMediaSession();
-                    if (state.audioCtx && state.audioCtx.state === 'suspended') { state.audioCtx.resume(); }
-                    if (!state._checkTimer && state.segments.length > 0) { startCheckTimer(); }
+                    if (state.audioCtx && state.audioCtx.state === 'suspended') state.audioCtx.resume();
+                    if (!state._checkTimer && state.segments.length > 0) startCheckTimer();
                 });
-
                 el.audio.addEventListener('pause', function() {
-                    if (!state._isProcessing) {
-                        state.isPlaying = false;
-                        updateUI();
-                        updateMediaSession();
-                    }
+                    if (!state._isProcessing) { state.isPlaying = false; updateUI(); updateMediaSession(); }
                 });
-
                 el.audio.addEventListener('error', function(e) {
                     console.error('Audio error:', e);
-                    state.isPlaying = false;
-                    state._isProcessing = false;
-                    clearInterval(state._checkTimer);
-                    state._checkTimer = null;
+                    state.isPlaying = false; state._isProcessing = false;
+                    clearInterval(state._checkTimer); state._checkTimer = null;
                     updateUI();
                 });
-
                 el.audio.addEventListener('ended', function() {
-                    if (state.isPlaying && !state._isProcessing) {
-                        handleSegmentEnd();
-                    }
+                    if (state.isPlaying && !state._isProcessing) handleSegmentEnd();
                 });
             }
 
@@ -1214,26 +1214,23 @@
                 var wasPlaying = state.isPlaying;
                 el.audio.pause();
                 el.audio.currentTime = clampedTime + startTime;
-                if (wasPlaying) { 
-                    setTimeout(function() { el.audio.play().catch(function() {}); }, 50); 
-                }
+                if (wasPlaying) setTimeout(function() { el.audio.play().catch(function() {}); }, 50);
                 var progressInSeg = clampedTime - seg.start;
                 var pct = (progressInSeg / (seg.end - seg.start)) * 100;
                 if (el.waveProgress) el.waveProgress.style.width = Math.min(pct, 100) + '%';
                 updateTimeInfo(Math.min(progressInSeg, totalDuration), totalDuration);
             }
 
+            // ===== Init =====
             function init() {
-                console.log('HablaSlice v38.0 - PWA Ready + Fixed Jump Input');
+                console.log('HablaSlice v46.0 - Fixed Cancel with detailed progress');
                 
-                // REGISTER SERVICE WORKER - ИСПРАВЛЕННЫЙ ПУТЬ ДЛЯ GITHUB PAGES
                 if ('serviceWorker' in navigator) {
-                  window.addEventListener('load', function() {
-                    // Путь изменен с '/sw.js' на '/HablaSlice/sw.js'
-                    navigator.serviceWorker.register('/HablaSlice/sw.js')
-                      .then(function(reg) { console.log('[App] SW зарегистрирован успешно в области:', reg.scope); })
-                      .catch(function(err) { console.error('[App] Ошибка регистрации SW:', err); });
-                  });
+                    window.addEventListener('load', function() {
+                        navigator.serviceWorker.register('/HablaSlice/sw.js')
+                            .then(function(reg) { console.log('[App] SW registered:', reg.scope); })
+                            .catch(function(err) { console.error('[App] SW error:', err); });
+                    });
                 }
                 
                 loadSettings();
@@ -1242,7 +1239,25 @@
                 setupAudioEvents();
                 setupMediaSession();
 
-                // ===== ОБРАБОТЧИКИ КНОПОК =====
+                // Cancel button - now properly working with red color
+                el.cancelLoadBtn.addEventListener('click', function() {
+                    if (state.isLoading && !state._cancelRequested) {
+                        state._cancelRequested = true;
+                        el.cancelLoadBtn.disabled = true;
+                        el.cancelLoadBtn.textContent = '⏳ Cancelling...';
+                        el.loadSpinner.style.display = 'none';
+                        updateLoading('Cancelling...', 'Please wait', undefined, '⏹️ Stopping operation...');
+                        // Force timeout to ensure UI updates
+                        setTimeout(function() {
+                            if (state._cancelRequested) {
+                                // If still not cancelled after 3s, force restore
+                                state.isLoading = false;
+                                restorePreviousState();
+                            }
+                        }, 3000);
+                    }
+                });
+
                 el.btnOpen.addEventListener('click', togglePopover);
                 el.btnSettings.addEventListener('click', openModal);
                 el.btnPlay.addEventListener('click', togglePlay);
@@ -1251,82 +1266,44 @@
                 el.jumpBtn.addEventListener('click', jumpToSegment);
                 el.waveformOverlay.addEventListener('click', handleWaveformClick);
 
-                // ===== ИСПРАВЛЕНИЕ ДЛЯ JUMP INPUT =====
-                // Отслеживаем фокус на поле ввода
-                el.jumpInput.addEventListener('focus', function() {
-                    state._isJumpInputFocused = true;
-                    this.select();
-                });
-
-                // Когда пользователь уходит с поля
+                el.jumpInput.addEventListener('focus', function() { state._isJumpInputFocused = true; this.select(); });
                 el.jumpInput.addEventListener('blur', function() {
                     state._isJumpInputFocused = false;
                     var val = parseInt(this.value);
                     if (isNaN(val) || val < 1) val = 1;
-                    if (state.segments.length > 0 && val > state.segments.length) {
-                        val = state.segments.length;
-                    }
+                    if (state.segments.length > 0 && val > state.segments.length) val = state.segments.length;
                     this.value = val;
                 });
-
-                // Enter - перейти к фрагменту
-                el.jumpInput.addEventListener('keydown', function(e) { 
-                    if (e.key === 'Enter') {
-                        e.preventDefault();
-                        state._isJumpInputFocused = false;
-                        jumpToSegment();
-                        this.blur();
-                    }
+                el.jumpInput.addEventListener('keydown', function(e) {
+                    if (e.key === 'Enter') { e.preventDefault(); state._isJumpInputFocused = false; jumpToSegment(); this.blur(); }
                 });
 
-                // Остальные обработчики
-                el.popFile.addEventListener('click', function() { 
-                    el.popover.classList.remove('active');
-                    el.fileInput.click(); 
-                });
-                el.popFolder.addEventListener('click', function() { 
-                    el.popover.classList.remove('active');
-                    el.folderInput.click(); 
-                });
-                document.addEventListener('click', function(e) { 
-                    if (el.popover && !el.popover.contains(e.target) && e.target !== el.btnOpen) { 
-                        el.popover.classList.remove('active'); 
-                    } 
+                el.popFile.addEventListener('click', function() { el.popover.classList.remove('active'); el.fileInput.click(); });
+                el.popFolder.addEventListener('click', function() { el.popover.classList.remove('active'); el.folderInput.click(); });
+                document.addEventListener('click', function(e) {
+                    if (el.popover && !el.popover.contains(e.target) && e.target !== el.btnOpen) el.popover.classList.remove('active');
                 });
 
                 el.fileInput.addEventListener('change', function() { handleFiles(this); });
                 el.folderInput.addEventListener('change', function() { handleFiles(this); });
 
-                el.settingsModal.addEventListener('click', function(e) { 
-                    if (e.target === el.settingsModal) { 
-                        if (state.savedSettings) { 
-                            Object.assign(state.settings, state.savedSettings);
-                            applySettings();
-                            saveSettings(); 
-                        }
-                        closeModal(); 
-                    } 
+                el.settingsModal.addEventListener('click', function(e) {
+                    if (e.target === el.settingsModal) {
+                        if (state.savedSettings) { Object.assign(state.settings, state.savedSettings); applySettings(); saveSettings(); }
+                        closeModal();
+                    }
                 });
 
-                el.btnCancel.addEventListener('click', function() { 
-                    if (state.savedSettings) { 
-                        Object.assign(state.settings, state.savedSettings);
-                        applySettings();
-                        saveSettings(); 
-                    }
-                    closeModal(); 
+                el.btnCancel.addEventListener('click', function() {
+                    if (state.savedSettings) { Object.assign(state.settings, state.savedSettings); applySettings(); saveSettings(); }
+                    closeModal();
                 });
 
                 el.btnReset.addEventListener('click', function() {
-                    state.settings.n = 3;
-                    state.settings.db = -40;
-                    state.settings.dur = 0.5;
-                    state.settings.after = 'next';
-                    state.settings.theme = 'dark';
-                    state.settings.silence = 0.3;
+                    state.settings.n = 3; state.settings.db = -40; state.settings.dur = 0.5;
+                    state.settings.after = 'next'; state.settings.theme = 'dark'; state.settings.silence = 0.3;
                     state.speed = 1.0;
-                    applySettings();
-                    saveSettings();
+                    applySettings(); saveSettings();
                     if (el.setDb) el.setDb.value = state.settings.db;
                     if (el.setDur) el.setDur.value = state.settings.dur;
                     if (el.setSil) el.setSil.value = state.settings.silence;
@@ -1337,87 +1314,88 @@
                 });
 
                 el.btnApply.addEventListener('click', async function() {
+                    if (state.isLoading) return;
                     var oldDb = state.settings.db;
                     var oldDur = state.settings.dur;
-                    
                     var newDb = parseInt(el.setDb.value);
                     var newDur = parseFloat(el.setDur.value);
                     var newSilence = parseFloat(el.setSil.value);
                     var newAfter = state.settings.after;
-                    
                     state.settings.db = newDb;
                     state.settings.dur = newDur;
                     state.settings.silence = newSilence;
                     state.settings.after = newAfter;
-                    
-                    saveSettings();
-                    applySettings();
-                    closeModal();
-                    updateUI();
-                    
+                    saveSettings(); applySettings(); closeModal(); updateUI();
                     if ((oldDb !== newDb || oldDur !== newDur) && state.files.length > 0 && state.mergedBuffer) {
-                        state.fileSegments = [];
-                        var numChannels = state.mergedBuffer.numberOfChannels;
-                        for (var i = 0; i < state.files.length; i++) {
-                            var startSample = state.fileOffsets[i] || 0;
-                            var endSample = startSample + (state.fileDurations[i] * state.sampleRate);
-                            var fileDataLength = Math.floor(endSample - startSample);
-                            var tempBuffer = new AudioBuffer({ 
-                                length: fileDataLength, 
-                                numberOfChannels: numChannels,
-                                sampleRate: state.sampleRate 
-                            });
-                            for (var ch = 0; ch < numChannels; ch++) {
-                                var srcChannel = state.mergedBuffer.getChannelData(ch);
-                                var dstChannel = tempBuffer.getChannelData(ch);
-                                for (var s = 0; s < fileDataLength; s++) { 
-                                    dstChannel[s] = srcChannel[Math.floor(startSample + s)] || 0; 
+                        if (state.isPlaying) { el.audio.pause(); state.isPlaying = false; clearInterval(state._checkTimer); state._checkTimer = null; }
+                        state.isLoading = true;
+                        state._cancelRequested = false;
+                        showLoading('Re-processing segments...', 'Applying new settings', 0, '⚙️ Updating segmentation...');
+                        updateStatus('Re-processing segments...', true);
+                        try {
+                            var numChannels = state.mergedBuffer.numberOfChannels;
+                            if (state.cachedSegments && state.cachedDb === newDb && state.cachedDur === newDur) {
+                                state.fileSegments = state.cachedSegments.slice();
+                            } else {
+                                state.fileSegments = [];
+                                var ctx = new (window.AudioContext || window.webkitAudioContext)();
+                                var totalFiles = state.files.length;
+                                for (var i = 0; i < totalFiles; i++) {
+                                    checkCancel();
+                                    var startSample = Math.floor((state.fileOffsets[i] || 0) * state.sampleRate);
+                                    var endSample = Math.floor((state.fileOffsets[i] + state.fileDurations[i]) * state.sampleRate);
+                                    var fileDataLength = endSample - startSample;
+                                    var tempBuffer = ctx.createBuffer(numChannels, fileDataLength, state.sampleRate);
+                                    for (var ch = 0; ch < numChannels; ch++) {
+                                        var srcChannel = state.mergedBuffer.getChannelData(ch);
+                                        var dstChannel = tempBuffer.getChannelData(ch);
+                                        for (var s = 0; s < fileDataLength; s++) {
+                                            dstChannel[s] = srcChannel[Math.floor(startSample + s)] || 0;
+                                        }
+                                    }
+                                    state.fileSegments[i] = sliceAudioBySilence(tempBuffer, newDb, newDur);
+                                    var pct = (i / totalFiles) * 100;
+                                    updateLoading('Processing ' + state.files[i].name, (i + 1) + '/' + totalFiles, pct, '✂️ ' + state.fileSegments[i].length + ' segments found');
+                                    await new Promise(r => setTimeout(r, 0));
                                 }
+                                await ctx.close();
+                                state.cachedSegments = state.fileSegments.slice();
+                                state.cachedDb = newDb;
+                                state.cachedDur = newDur;
                             }
-                            state.fileSegments[i] = sliceAudioBySilence(tempBuffer, newDb, newDur);
-                        }
-                        state.segments = state.fileSegments[state.currentFileIdx] || [];
-                        state.currentSegIdx = 0;
-                        state.repeatCount = 0;
-                        state._isProcessing = false;
-                        var startTime = state.currentFileStartTime || 0;
-                        if (state.segments.length > 0) { 
-                            el.audio.currentTime = state.segments[0].start + startTime; 
-                        }
-                        drawWaveform(0);
-                        updateUI();
-                        updateMediaSession();
-                        if (state.isPlaying) { 
-                            clearInterval(state._checkTimer);
-                            state._checkTimer = null;
-                            startCheckTimer(); 
+                            state.segments = state.fileSegments[state.currentFileIdx] || [];
+                            state.currentSegIdx = 0; state.repeatCount = 0; state._isProcessing = false;
+                            var startTime = state.currentFileStartTime || 0;
+                            if (state.segments.length > 0) el.audio.currentTime = state.segments[0].start + startTime;
+                            drawWaveform(0);
+                            state.isLoading = false;
+                            state._cancelRequested = false;
+                            updateStatus('Ready');
+                            updateUI();
+                            updateMediaSession();
+                            hideLoading();
+                        } catch (e) {
+                            if (e.message === 'CANCELLED') {
+                                console.log('Re-processing cancelled');
+                                state.isLoading = false;
+                                state._cancelRequested = false;
+                                restorePreviousState();
+                                return;
+                            }
+                            console.error('Re-processing error:', e);
+                            state.isLoading = false;
+                            hideLoading();
+                            updateStatus('Error: ' + e.message);
                         }
                     }
                 });
 
-                el.themeDark.addEventListener('click', function() { 
-                    state.settings.theme = 'dark';
-                    document.body.classList.remove('light');
-                    saveSettings(); 
-                    if (state.savedSettings) state.savedSettings.theme = 'dark'; 
-                });
-                el.themeLight.addEventListener('click', function() { 
-                    state.settings.theme = 'light';
-                    document.body.classList.add('light');
-                    saveSettings(); 
-                    if (state.savedSettings) state.savedSettings.theme = 'light'; 
-                });
+                el.themeDark.addEventListener('click', function() { state.settings.theme = 'dark'; document.body.classList.remove('light'); saveSettings(); if (state.savedSettings) state.savedSettings.theme = 'dark'; });
+                el.themeLight.addEventListener('click', function() { state.settings.theme = 'light'; document.body.classList.add('light'); saveSettings(); if (state.savedSettings) state.savedSettings.theme = 'light'; });
 
-                el.setDb.addEventListener('input', function() { 
-                    if (el.dbVal) el.dbVal.textContent = el.setDb.value; 
-                });
-                el.setDur.addEventListener('input', function() { 
-                    if (el.durVal) el.durVal.textContent = parseFloat(el.setDur.value).toFixed(1); 
-                });
-                el.setSil.addEventListener('input', function() { 
-                    if (el.silVal) el.silVal.textContent = parseFloat(el.setSil.value).toFixed(2); 
-                    if (state.segments.length > 0) drawWaveform(state.currentSegIdx); 
-                });
+                el.setDb.addEventListener('input', function() { if (el.dbVal) el.dbVal.textContent = el.setDb.value; });
+                el.setDur.addEventListener('input', function() { if (el.durVal) el.durVal.textContent = parseFloat(el.setDur.value).toFixed(1); });
+                el.setSil.addEventListener('input', function() { if (el.silVal) el.silVal.textContent = parseFloat(el.setSil.value).toFixed(2); if (state.segments.length > 0) drawWaveform(state.currentSegIdx); });
 
                 document.querySelectorAll('.step-btn').forEach(function(btn) {
                     btn.addEventListener('click', function() {
@@ -1455,23 +1433,19 @@
 
                 document.addEventListener('keydown', function(e) {
                     if (e.target.tagName === 'INPUT' || e.target.closest('.dropdown')) return;
-                    if (e.code === 'Space') { e.preventDefault();
-                        togglePlay(); } 
+                    if (state.isLoading) return;
+                    if (e.code === 'Space') { e.preventDefault(); togglePlay(); }
                     else if (e.code === 'ArrowLeft') prevSegment();
                     else if (e.code === 'ArrowRight') nextSegment();
-                    else if (e.code === 'Escape' && el.settingsModal && el.settingsModal.classList.contains('active')) { 
-                        if (state.savedSettings) { 
-                            Object.assign(state.settings, state.savedSettings);
-                            applySettings();
-                            saveSettings(); 
-                        }
-                        closeModal(); 
+                    else if (e.code === 'Escape' && el.settingsModal && el.settingsModal.classList.contains('active')) {
+                        if (state.savedSettings) { Object.assign(state.settings, state.savedSettings); applySettings(); saveSettings(); }
+                        closeModal();
                     }
                 });
 
                 document.addEventListener('visibilitychange', function() {
                     if (!document.hidden && state.isPlaying && el.audio.paused && !state._isProcessing) {
-                        if (state.audioCtx && state.audioCtx.state === 'suspended') { state.audioCtx.resume(); }
+                        if (state.audioCtx && state.audioCtx.state === 'suspended') state.audioCtx.resume();
                         el.audio.play().catch(function() {});
                     }
                 });
@@ -1489,11 +1463,8 @@
                 console.log('HablaSlice ready');
             }
 
-            if (document.readyState === 'complete') { 
-                init(); 
-            } else { 
-                document.addEventListener('DOMContentLoaded', init); 
-            }
+            if (document.readyState === 'complete') init();
+            else document.addEventListener('DOMContentLoaded', init);
         })();
     </script>
 </body>
