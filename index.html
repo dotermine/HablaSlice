@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#000000">
+  <meta name="description" content="HablaSlice — silence-aware audio segment player">
+  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="icon" href="./icons/icon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="./styles.css">
+  <title>HablaSlice</title>
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <div class="brand-mark" aria-hidden="true">
+        <svg viewBox="0 0 24 24"><path d="M7 5.5v13l11-6.5L7 5.5Z"/></svg>
+      </div>
+      <div>
+        <h1>HablaSlice</h1>
+        <p>Silence-aware audio practice</p>
+      </div>
+    </div>
+    <button id="themeBtn" class="icon-button" type="button" aria-label="Toggle theme" title="Toggle theme">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v2m0 14v2M4.22 4.22l1.42 1.42m12.72 12.72 1.42 1.42M3 12h2m14 0h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42M12 7a5 5 0 1 0 0 10 5 5 0 0 0 0-10Z"/></svg>
+    </button>
+  </header>
+
+  <main class="app-shell">
+    <section id="dropZone" class="drop-zone" tabindex="0" aria-label="Open audio file">
+      <input id="fileInput" type="file" accept="audio/*" hidden>
+      <div class="drop-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24"><path d="M12 3v11m0-11 4 4m-4-4L8 7M5 13v5a3 3 0 0 0 3 3h8a3 3 0 0 0 3-3v-5"/></svg>
+      </div>
+      <h2>Open an audio file</h2>
+      <p>Playback starts immediately. Silence analysis continues in the background.</p>
+      <button id="openBtn" class="primary-button" type="button">Choose audio</button>
+      <p class="subtle">MP3, WAV, M4A, AAC, OGG and browser-supported formats</p>
+    </section>
+
+    <section id="playerPanel" class="panel hidden" aria-live="polite">
+      <div class="file-row">
+        <div class="file-info">
+          <span id="fileName">No file</span>
+          <span id="statusText">Ready</span>
+        </div>
+        <button id="closeBtn" class="secondary-button" type="button">Close</button>
+      </div>
+
+      <audio id="audio" preload="auto"></audio>
+
+      <div class="now-playing">
+        <div class="time-row"><span id="currentTime">0:00</span><span id="totalTime">0:00</span></div>
+        <input id="seekBar" class="range" type="range" min="0" max="0" step="0.001" value="0" aria-label="Seek">
+      </div>
+
+      <div class="transport">
+        <button id="backBtn" class="control-button" type="button" aria-label="Previous segment" title="Previous segment">
+          <svg viewBox="0 0 24 24"><path d="M6 5v14m3-7 10-7v14L9 12Z"/></svg>
+        </button>
+        <button id="playBtn" class="play-button" type="button" aria-label="Play">
+          <svg id="playIcon" viewBox="0 0 24 24"><path d="M8 5v14l11-7L8 5Z"/></svg>
+        </button>
+        <button id="nextBtn" class="control-button" type="button" aria-label="Next segment" title="Next segment">
+          <svg viewBox="0 0 24 24"><path d="m15 5-7 7 7 7M19 5v14"/></svg>
+        </button>
+        <button id="repeatBtn" class="control-button repeat" type="button" aria-label="Repeat current segment" aria-pressed="false" title="Repeat current segment">
+          <svg viewBox="0 0 24 24"><path d="M17 3h4v4M21 7a8 8 0 0 0-14-2M7 21H3v-4M3 17a8 8 0 0 0 14 2"/></svg>
+        </button>
+      </div>
+
+      <div class="speed-row">
+        <span>Playback speed</span>
+        <div class="segmented" role="group" aria-label="Playback speed">
+          <button type="button" data-speed="0.75">0.75×</button>
+          <button type="button" data-speed="1" class="selected">1×</button>
+          <button type="button" data-speed="1.25">1.25×</button>
+          <button type="button" data-speed="1.5">1.5×</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="segmentsPanel" class="panel hidden">
+      <div class="section-heading">
+        <div>
+          <h2>Segments</h2>
+          <p id="segmentMeta">Waiting for analysis</p>
+        </div>
+        <button id="reAnalyzeBtn" class="secondary-button" type="button">Re-analyze</button>
+      </div>
+      <div id="segments" class="segments"></div>
+      <div id="analysisProgress" class="progress-wrap hidden">
+        <div class="progress-track"><div id="progressFill" class="progress-fill"></div></div>
+        <span id="progressLabel">Analyzing…</span>
+      </div>
+    </section>
+
+    <section class="panel settings-panel">
+      <div class="section-heading">
+        <div>
+          <h2>Detection</h2>
+          <p>Adjust the boundary rules for your recording.</p>
+        </div>
+      </div>
+      <div class="settings-grid">
+        <label>Silence threshold <output id="thresholdOut">-45 dB</output>
+          <input id="threshold" type="range" min="-60" max="-25" step="1" value="-45">
+        </label>
+        <label>Minimum silence <output id="silenceOut">450 ms</output>
+          <input id="silenceDuration" type="range" min="150" max="1500" step="25" value="450">
+        </label>
+        <label>Minimum segment <output id="minSegmentOut">500 ms</output>
+          <input id="minSegment" type="range" min="150" max="3000" step="50" value="500">
+        </label>
+        <label>Boundary padding <output id="paddingOut">35 ms</output>
+          <input id="padding" type="range" min="0" max="120" step="5" value="35">
+        </label>
+      </div>
+    </section>
+
+    <p class="footer-note">All processing stays in your browser. No audio is uploaded.</p>
+  </main>
+
+  <script type="module" src="./app.js"></script>
+</body>
+</html>

@@ -1,0 +1,10 @@
+{
+  "name": "HablaSlice",
+  "short_name": "HablaSlice",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#000000",
+  "theme_color": "#000000",
+  "description": "Silence-aware audio segmentation and repeat practice.",
+  "icons": [{"src":"./icons/icon.svg","sizes":"any","type":"image/svg+xml","purpose":"any maskable"}]
+}
