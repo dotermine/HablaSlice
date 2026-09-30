@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#000000">
+<meta name="description" content="Offline-first audio fragment player">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icons/icon-192.png" sizes="192x192">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<title>HablaSlice</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body class="dark-theme">
+<div class="app-container">
+  <main class="tab-content active" id="tab-player">
+    <header class="app-header">
+      <div class="brand"><div class="brand-mark"><svg viewBox="0 0 24 24"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/></svg></div><div><h1>HablaSlice</h1><span id="fileCounter">No files</span></div></div>
+      <button class="icon-btn" id="btnSettings" aria-label="Settings" title="Settings"><svg viewBox="0 0 24 24"><path d="M19.14 12.94a7.07 7.07 0 0 0 0-1.88l2.03-1.58a.49.49 0 0 0 .12-.61l-1.92-3.32a.49.49 0 0 0-.59-.22l-2.39.96a7.04 7.04 0 0 0-1.62-.94l-.36-2.54a.48.48 0 0 0-.48-.41h-3.84a.48.48 0 0 0-.48.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96a.49.49 0 0 0-.59.22L2.74 8.87a.48.48 0 0 0 .12.61l2.03 1.58a7.07 7.07 0 0 0 0 1.88l-2.03 1.58a.49.49 0 0 0-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.22.08.47 0 .59-.22l1.92-3.32a.49.49 0 0 0-.12-.61l-2.03-1.58zM12 15.6A3.6 3.6 0 1 1 15.6 12 3.6 3.6 0 0 1 12 15.6z"/></svg></button>
+    </header>
+
+    <section class="status-row"><span id="statusText">Ready</span><span id="fileProgressText">0%</span><div class="status-progress" id="progressWrap"><div class="progress-track"><div class="progress-fill" id="progressFill"></div></div><span id="progressText">0%</span></div></section>
+
+    <section class="player-scroll">
+      <section class="track-card">
+        <div class="track-top"><div><div class="eyebrow">NOW PLAYING</div><h2 id="trackName">No track selected</h2></div><span class="segment-badge pending" id="segmentBadge">Ready</span></div>
+        <div class="track-meta"><span id="segInfo">Add audio to begin</span><span class="repeat-chip"><svg viewBox="0 0 24 24"><path d="M12 4V1L8 5l4 4V6c3.31 0 6 2.69 6 6 0 1.01-.25 1.97-.7 2.8l1.46 1.46C19.54 15.03 20 13.57 20 12c0-4.42-3.58-8-8-8zm0 14c-3.31 0-6-2.69-6-6 0-1.01.25-1.97.7-2.8L5.24 7.74C4.46 8.97 4 10.43 4 12c0 4.42 3.58 8 8 8v3l4-4-4-4v3z"/></svg><b id="repeatCount">1</b>/<span id="repeatTotal">3</span></span></div>
+        <div class="time-info" id="timeInfo">0.0s / 0.0s</div>
+        <div class="visualizer-container" id="waveCont"><canvas id="waveCanvas"></canvas><div class="waveform-silence" id="waveSilence"></div><div class="timeline-carriage" id="timelineCarriage"></div><div class="waveform-loading" id="waveformLoading"><div class="loader-dots"><span></span><span></span><span></span></div></div><div class="waveform-overlay" id="waveformOverlay"></div></div>
+        <div class="waveform-legend"><span>Audio timeline</span><span id="silenceLabel">Pause <span id="silenceDuration">0.15</span>s</span></div>
+        <div class="segment-progress-bar" id="segmentProgressBar"><div class="segment-markers" id="segmentMarkers"></div><div class="progress-fill" id="segmentProgressFill"></div><div class="progress-handle" id="segmentProgressHandle"></div></div>
+        <div class="segment-jump"><span>Fragment</span><input id="jumpInput" min="1" step="1" type="number" value="1"><span class="seg-total">/ <span id="totalSegments">0</span></span><button class="text-btn" id="jumpBtn">Go</button></div>
+      </section>
+
+      <section class="playlist-card">
+        <div class="section-head"><div><div class="eyebrow">PLAYLIST</div><h3>Your audio</h3></div><button class="btn-gold" id="btnOpen"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>Add</button></div>
+        <div class="playlist-header"><span>Title</span><span>Fragments</span></div>
+        <div class="playlist" id="playlist"></div>
+        <div class="empty-msg" id="emptyMsg">Select audio files or a folder to build your playlist.</div>
+      </section>
+
+      <section class="controls-card">
+        <div class="controls-topline">
+          <div class="loop-controls">
+            <button class="icon-btn labeled" id="loopPlaylistBtn" title="Loop playlist"><svg viewBox="0 0 24 24"><path d="M17 2H5a3 3 0 0 0-3 3v10a3 3 0 0 0 3 3h12M7 22h12a3 3 0 0 0 3-3V9a3 3 0 0 0-3-3H7M14 0l3 2-3 2M10 20l-3 2 3 2"/></svg><span>Loop playlist</span></button>
+            <button class="icon-btn labeled" id="loopTrackBtn" title="Loop track"><svg viewBox="0 0 24 24"><path d="M17 2H5a3 3 0 0 0-3 3v10a3 3 0 0 0 3 3h12M7 22h12a3 3 0 0 0 3-3V9a3 3 0 0 0-3-3H7M14 0l3 2-3 2M10 20l-3 2 3 2"/><path d="M12 8v8M9.5 10.5 12 8l2.5 2.5"/></svg><span>Loop track</span></button>
+          </div>
+          <div class="dropdown-cluster">
+            <div class="control-dropdown" id="silencePauseDropdown"><div class="dropdown-toggle" id="silencePauseToggle"><span class="dropdown-icon"><svg viewBox="0 0 24 24"><line x1="9" y1="5" x2="9" y2="13"/><line x1="15" y1="5" x2="15" y2="13"/><line x1="4" y1="18" x2="20" y2="18"/><polyline points="7 15 4 18 7 21"/><polyline points="17 15 20 18 17 21"/></svg></span><span><small>Silence Pause</small><b id="silencePauseDisplay">150 ms</b></span><svg class="chevron" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg></div><div class="dropdown-menu" id="silencePauseMenu"><div class="item" data-value="0">0 ms</div><div class="item" data-value="250">250 ms</div><div class="item" data-value="500">500 ms</div><div class="item" data-value="750">750 ms</div><div class="item" data-value="1000">1000 ms</div><div class="item" data-value="1500">1500 ms</div><div class="item selected" data-value="500">500 ms</div><div class="item" data-value="2000">2000 ms</div><div class="item" data-value="2500">2500 ms</div><div class="item" data-value="3000">3000 ms</div></div></div>
+            <div class="control-dropdown" id="repeatsDropdown"><div class="dropdown-toggle" id="repeatsToggle"><span><small>Repetitions</small><b id="repeatsDisplay">3</b></span><svg class="chevron" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg></div><div class="dropdown-menu" id="repeatsMenu"><div class="item" data-value="1">1</div><div class="item" data-value="2">2</div><div class="item selected" data-value="3">3</div><div class="item" data-value="4">4</div><div class="item" data-value="5">5</div><div class="item" data-value="6">6</div><div class="item" data-value="7">7</div><div class="item" data-value="8">8</div><div class="item" data-value="9">9</div><div class="item" data-value="10">10</div></div></div>
+            <div class="control-dropdown" id="speedDropdown"><div class="dropdown-toggle" id="speedToggle"><span><small>Playback speed</small><b id="speedDisplay">1.0x</b></span><svg class="chevron" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg></div><div class="dropdown-menu" id="speedMenu"><div class="item" data-value="0.5">0.5x</div><div class="item" data-value="0.6">0.6x</div><div class="item" data-value="0.7">0.7x</div><div class="item" data-value="0.8">0.8x</div><div class="item" data-value="0.9">0.9x</div><div class="item selected" data-value="1.0">1.0x</div><div class="item" data-value="1.1">1.1x</div><div class="item" data-value="1.2">1.2x</div><div class="item" data-value="1.3">1.3x</div><div class="item" data-value="1.4">1.4x</div><div class="item" data-value="1.5">1.5x</div></div></div>
+          </div>
+        </div>
+        <div class="transport">
+          <button class="transport-btn" id="btnPrevTrack" disabled aria-label="Previous track"><svg viewBox="0 0 24 24"><path d="M5 6h2v12H5zm3 6 9 6V6z"/></svg></button>
+          <button class="transport-btn" id="btnPrev" disabled aria-label="Previous fragment"><svg viewBox="0 0 24 24"><path d="M6 6h2v12H6zm3.5 6l8.5 6V6z"/></svg></button>
+          <button class="play-btn" id="btnPlay" disabled aria-label="Play"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></button>
+          <button class="transport-btn" id="btnNext" disabled aria-label="Next fragment"><svg viewBox="0 0 24 24"><path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z"/></svg></button>
+          <button class="transport-btn" id="btnNextTrack" disabled aria-label="Next track"><svg viewBox="0 0 24 24"><path d="M19 6h-2v12h2zM16 12 7 6v12z"/></svg></button>
+        </div>
+      </section>
+    </section>
+
+    <nav class="bottom-nav"><button class="nav-btn" id="navFiles"><svg viewBox="0 0 24 24"><path d="M20 6h-8l-2-2H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2z"/></svg><span>Files</span></button><button class="nav-btn active" id="navPlayer"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg><span>Player</span></button><button class="nav-btn" id="navSettings"><svg viewBox="0 0 24 24"><path d="M19.14 12.94a7.07 7.07 0 0 0 0-1.88l2.03-1.58a.49.49 0 0 0 .12-.61l-1.92-3.32a.49.49 0 0 0-.59-.22l-2.39.96a7.04 7.04 0 0 0-1.62-.94l-.36-2.54a.48.48 0 0 0-.48-.41h-3.84a.48.48 0 0 0-.48.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96a.49.49 0 0 0-.59.22L2.74 8.87a.48.48 0 0 0 .12.61l2.03 1.58a7.07 7.07 0 0 0 0 1.88l-2.03 1.58a.49.49 0 0 0-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.22.08.47 0 .59-.22l1.92-3.32a.49.49 0 0 0-.12-.61zM12 15.6A3.6 3.6 0 1 1 15.6 12 3.6 3.6 0 0 1 12 15.6z"/></svg><span>Settings</span></button></nav>
+  </main>
+
+  <div class="popover" id="popover"><button class="popover-item" id="popFile"><svg viewBox="0 0 24 24"><path d="M20 6h-8l-2-2H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2z"/></svg>Select files</button><button class="popover-item" id="popFolder"><svg viewBox="0 0 24 24"><path d="M20 6h-8l-2-2H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2z"/></svg>Select folder</button></div>
+  <input accept="audio/*" id="fileInput" multiple type="file"><input id="folderInput" multiple type="file" webkitdirectory>
+
+  <div class="modal-bg" id="settingsModal"><div class="modal">
+    <div class="modal-head"><div><div class="eyebrow">PLAYER SETTINGS</div><h2>Settings</h2></div><button class="icon-btn" id="modalClose" aria-label="Close"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div>
+    <div class="setting"><div class="label-row"><label>Theme</label></div><div class="segmented"><button class="active" data-theme="dark" id="themeDark">Dark</button><button data-theme="light" id="themeLight">Light</button></div></div>
+    <div class="setting"><div class="label-row"><label>Time-stretching</label><span class="value" id="stretchDisplay">Pitch preserved</span></div><div class="control-dropdown inline" id="stretchDropdown"><div class="dropdown-toggle" id="stretchToggle"><span>Playback algorithm</span><svg class="chevron" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg></div><div class="dropdown-menu" id="stretchMenu"><div class="item selected" data-value="native">Pitch preserved</div><div class="item" data-value="off">Standard browser rate</div></div></div></div>
+    <div class="section-divider"><span>Segmentation</span><div class="line"></div></div>
+    <div class="setting"><div class="label-row"><label>Analysis algorithm</label></div><div class="segmented algo-select"><button class="active" data-algo="rms">RMS</button><button data-algo="fft">FFT</button></div></div>
+    <div class="setting"><div class="label-row"><label>Preset</label></div><div class="preset-select"><button class="active" data-preset="podcasts">Podcasts</button><button data-preset="movies">Movies / TV</button><button data-preset="audiobooks">Audiobooks</button><button data-preset="music">Music</button></div></div>
+    <div class="setting"><div class="label-row"><label>Threshold (dB)</label><span class="value" id="dbVal">-40</span></div><div class="slider-row"><button class="step-btn" data-dir="-1" data-target="setDb">−</button><input id="setDb" max="-10" min="-60" type="range" value="-40"><button class="step-btn" data-dir="1" data-target="setDb">+</button></div></div>
+    <div class="setting"><div class="label-row"><label>Minimum silence (s)</label><span class="value" id="durVal">0.4</span></div><div class="slider-row"><button class="step-btn" data-dir="-1" data-target="setDur">−</button><input id="setDur" max="3" min="0.1" step="0.1" type="range" value="0.4"><button class="step-btn" data-dir="1" data-target="setDur">+</button></div></div>
+    <div class="setting"><div class="label-row"><label>Minimum fragment (s)</label><span class="value" id="fragVal">0.80</span></div><div class="slider-row"><button class="step-btn" data-dir="-1" data-target="setFrag">−</button><input id="setFrag" max="10" min="0.2" step="0.1" type="range" value="0.8"><button class="step-btn" data-dir="1" data-target="setFrag">+</button></div></div>
+    <div class="setting"><div class="label-row"><label>After track ends</label></div><div class="control-dropdown inline" id="afterDropdown"><div class="dropdown-toggle" id="afterToggle"><span id="afterDisplay">Next track</span><svg class="chevron" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg></div><div class="dropdown-menu" id="afterMenu"><div class="item" data-value="loop">Loop track</div><div class="item selected" data-value="next">Next track</div><div class="item" data-value="stop">Stop</div></div></div></div>
+    <input id="setSil" type="hidden" value="0.5"><span id="silVal" hidden>0.5</span>
+    <div class="modal-actions"><button class="btn-secondary" id="btnReset">Reset</button><button class="btn-secondary" id="btnCancel">Cancel</button><button class="btn-primary" id="btnApply">Apply</button></div>
+  </div></div>
+
+  <div class="loading-overlay" id="loadingOverlay"><div class="big-spinner"></div><div class="loading-text" id="loadingText">Processing</div><div class="loading-sub" id="loadingSub">Please wait</div><div class="loading-progress"><div class="loading-progress-fill" id="loadingProgressFill"></div></div><div class="loading-detail" id="loadingDetail">Initializing</div><button class="cancel-btn" id="cancelLoadBtn">Cancel</button></div>
+  <audio crossorigin="anonymous" id="audio-engine" preload="auto"></audio>
+</div>
+<script src="app.js" defer></script>
+</body>
+</html>
